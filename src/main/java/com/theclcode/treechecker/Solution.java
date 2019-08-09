@@ -2,7 +2,6 @@ package com.theclcode.treechecker;
 
 import java.util.Scanner;
 
-//Unfinished
 public class Solution {
 
     public static void main(String[] args){
@@ -21,7 +20,6 @@ public class Solution {
                 int kid = sc.nextInt();
                 if( parent>largestVertex || kid>largestVertex || kids[kid]) {
                     isTree=false;
-                    break;
                 }
                 if(tree[parent]==null){
                     tree[parent] = new int[largestVertex+1];
@@ -68,7 +66,6 @@ public class Solution {
         if(tree[parent]==null){
             return false;
         }
-
         for(int i : tree[parent]){
             if(searchByDfs(i, lookingForKid, visited, tree)){
                 return true;
