@@ -41,8 +41,8 @@ public class Solution {
                 if(roots!=1){
                     isTree = false;
                 } else {
-                    int[] visited = new int[largestVertex+1];
                     for(int i=0; i<tree.length; i++){
+                        int[] visited = new int[largestVertex+1];
                         if(i!=root && tree[i]!=null && !searchByDfs(root, i, visited, tree)){
                             isTree=false;
                             break;
@@ -55,15 +55,15 @@ public class Solution {
     }
 
     public static boolean searchByDfs(int parent, int lookingForKid, int[] visited, int[][] tree){
+        if(parent==lookingForKid){
+            return true;
+        }
         if(parent>0 && visited[parent]==0){
             visited[parent] = parent;
         } else if(parent==0 && visited[parent]!=-1){
             visited[parent]=-1;
         } else {
             return false;
-        }
-        if(parent==lookingForKid){
-            return true;
         }
         if(tree[parent]==null){
             return false;
