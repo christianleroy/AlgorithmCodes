@@ -3,7 +3,7 @@ public class Solution {
 
     public static void main(String[] args){
 //        String permutation="671-11-35";
-        String permutation="69";
+        String permutation="1-11";
         boolean isOperator=false;
         String operation = "";
         String[] operators = new String[2];

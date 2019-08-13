@@ -1,6 +1,5 @@
 package com.theclcode.maxcalculator;
 
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Solution {
@@ -33,30 +32,102 @@ public class Solution {
                 if(operators[beginning] || operators[end]){
                     continue;
                 }
+                StringBuilder expression = new StringBuilder();
+                for(int i=0; i<permutation.length(); i++){
+                    int index = Integer.parseInt(permutation.substring(i,i+1));
+                    expression.append(characters[index]);
+                }
 
-
+                int evaluation = evaluateString(expression.toString());
+                if(evaluation>maxResult){
+                    maxResult = evaluation;
+                }
             }
-
-
+            System.out.println("Case #"+t+": "+maxResult);
         }
-        /*
-        1. Build a string containing all characters, ie: [1, -2, 3] = 1-23
-        2. Build an integer until hyphen is found (-).
-        3. If hyphen is found, evaluate which operator it refers to.
-        4. Build another integer until meet another hyphen. Repeat step 3.
-        5. Evaluate entire operation.
-        6. Record highest result yielded.
-        */
+
     }
 
+    public static int evaluateString(String permutation){
+        boolean isOperator=false;
+        boolean isPrevOperator=false;
+        String operation = "";
+        String[] operators = new String[2];
+        int index=0;
+        for(int i=0; i<permutation.length(); i++){
+            if(isOperator){
+                char op = permutation.charAt(i);
+                switch(op){
+                    case '1':
+                        operators[index]="+";
+                        break;
+                    case '2':
+                        operators[index]="-";
+                        break;
+                    case '3':
+                        operators[index]="*";
+                        break;
+                    case '4':
+                        operators[index]="/";
+                        break;
+                }
+                index++;
+                isOperator=false;
+                isPrevOperator=true;
+                operation+="_";
+                continue;
+            }
 
+            if(permutation.charAt(i)!='-'){
+                operation+=permutation.charAt(i);
+                isPrevOperator=false;
+            } else{
+                if(isPrevOperator){
+                    return 0;
+                }
+                isOperator=true;
+            }
+        }
+        String[] str = operation.split("_");
+        int[] numbers = new int[3];
+        for(int counter=0; counter<str.length; counter++){
+            numbers[counter] = Integer.parseInt(str[counter]);
+        }
+
+        int result = 0;
+        if(index-1==-1){
+           result = numbers[0];
+        } else if(index-1==0) {
+           result = evaluateExpression(operators[0], numbers[0], numbers[1]);
+        } else if(index-1==1){
+            if((operators[0]=="+" || operators[0]=="-") && (operators[1]=="*" || operators[1]=="/")){
+                result = evaluateExpression(operators[1], numbers[1], numbers[2]);
+                result = evaluateExpression(operators[0], numbers[0], result);
+            } else {
+                result = evaluateExpression(operators[0], numbers[0], numbers[1]);
+                result = evaluateExpression(operators[1], result, numbers[2]);
+            }
+        }
+        return result;
+    }
+
+    public static int evaluateExpression(String operator, int number1, int number2){
+        int result=0;
+        if(operator.equals("+")){
+            result=number1+number2;
+        } else if(operator.equals("-")){
+            result=number1-number2;
+        } else if(operator.equals("*")){
+            result=number1*number2;
+
+        } else if(operator.equals("/")){
+            result=number1/number2;
+        }
+        return result;
+    }
 
     static void printCString(char[] str, Result result){
-        for (int i = 0; i < str.length && str[i] != 0; i++){
-            System.out.print(str[i]);
-        }
         result.getPermutations()[result.getIndex()]=new String(str);
-        System.out.print("\n");
     }
 
     static void swap(char[] str, int x, int y){
