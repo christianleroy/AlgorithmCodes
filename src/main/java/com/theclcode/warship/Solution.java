@@ -11,13 +11,127 @@ public class Solution {
     private final static int CRUISER 	= 3;
     private final static int SUBMARINE 	= 4;
     private final static int DESTROYER 	= 5;
+    private static int limitCopy=0;
 
     public static void init(int limit) {
 
     }
 
     public static void play() {
+        int shipsHitCount=0;
+        limitCopy = limit;
 
+        for(int i=0; i<board.length && limitCopy>0 && shipsHitCount<5; i++){
+            int j = i==0 ? 0 : i%2;
+            for(j=j; j<board[i].length && limitCopy>0 && shipsHitCount<5; j+=2){
+                int result = fire(i,j);
+                limitCopy--;
+                if(result>0){
+                    int remaining=getShipSize(result)-1;
+                    move(i,j, remaining);
+                }
+
+            }
+        }
+    }
+
+    public static int getShipSize(int shipId){
+        switch(shipId){
+            case 1:
+                return 5;
+            case 2:
+                return 4;
+            case 3:
+                return 3;
+            case 4:
+                return 3;
+            case 5:
+                return 2;
+            default:
+                return 0;
+        }
+    }
+
+    public static void canFire(int result, int remaining, int latitude, int longitude){
+        
+    }
+
+    public static void move(int latitude, int longitude, int remaining){
+            int result=0;
+            if(canMoveNorth(latitude) && limitCopy>0){
+                int lat=latitude-1;
+                result=fire(lat, longitude);
+                limitCopy--;
+                while(result>0 && remaining>0){
+                    remaining--;
+                    if(remaining>0 && canMoveNorth(lat)){
+                        result = fire(--lat, longitude);
+                        limitCopy--;
+                    }
+                }
+            }
+            if(canMoveEast(longitude) && limitCopy>0){
+                int lon = longitude+1;
+                result=fire(latitude, lon);
+                limitCopy--;
+                while(result>0 && remaining>0){
+                    remaining--;
+                    if(remaining>0 && canMoveEast(lon)){
+                        result = fire(latitude, ++lon);
+                        limitCopy--;
+                    }
+                }
+            }
+            if(canMoveSouth(latitude) && limitCopy>0){
+                int lat=latitude+1;
+                result=fire(lat, longitude);
+                limitCopy--;
+                while(result>0 && remaining>0){
+                    remaining--;
+                    if(remaining>0 && canMoveSouth(lat)){
+                        result = fire(++lat, longitude);
+                        limitCopy--;
+                    }
+                }
+            }
+            if(canMoveWest(longitude) && limitCopy>0){
+                int lon = longitude-1;
+                result=fire(latitude, lon);
+                limitCopy--;
+                while(result>0 && remaining>0){
+                    remaining--;
+                    if(remaining>0 && canMoveWest(lon)){
+                        result = fire(latitude, --lon);
+                        limitCopy--;
+                    }
+                }
+            }
+    }
+
+    public static void printMap(){
+        for(int i=0; i<10; i++){
+            for(int j=0; j<10; j++){
+                System.out.print(board[i][j]+" ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public static boolean canMoveNorth(int latitude){
+        return latitude>0;
+    }
+
+    public static boolean canMoveSouth(int latitude){
+        return latitude<9;
+    }
+
+    public static boolean canMoveWest(int longitude){
+        return longitude>0;
+    }
+
+    public static boolean canMoveEast(int longitude){
+        return longitude<9;
     }
 
     /***************** END OF USER SOLUTION *****************/
@@ -38,7 +152,8 @@ public class Solution {
 
         int ret = board[r][c];
 
-        if (board[r][c] > 0) --hit;
+        if (board[r][c] > 0){ --hit;
+            printMap();}
         board[r][c] = 0;
 
         return ret;
@@ -141,10 +256,10 @@ public class Solution {
 
             init(limit);
 
-            for (int game = 0; game < 10; ++game)
+            for (int game = 0; game < 1; ++game)
             {
                 doarrangement();
-
+                printMap();
                 hit = 0;
                 for (int k = 0; k < 5; ++k)
                     hit += len[k];
@@ -159,6 +274,7 @@ public class Solution {
                     score = 0;
 
                 callcount4tc += callcount;
+                printMap();
             }
 
             System.out.println("#" + testcase + " " + score);
@@ -170,4 +286,5 @@ public class Solution {
         System.out.println("total score = " + totalscore / TC);
         sc.close();
     }
+
 }
