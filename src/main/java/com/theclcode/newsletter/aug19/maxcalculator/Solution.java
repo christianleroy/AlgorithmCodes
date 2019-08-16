@@ -1,4 +1,4 @@
-package com.theclcode.maxcalculator;
+package com.theclcode.newsletter.aug19.maxcalculator;
 
 import java.util.Scanner;
 

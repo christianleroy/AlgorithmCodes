@@ -1,4 +1,4 @@
-package com.theclcode.warship;
+package com.theclcode.newsletter.aug19.warship;
 
 import java.util.Scanner;
 
