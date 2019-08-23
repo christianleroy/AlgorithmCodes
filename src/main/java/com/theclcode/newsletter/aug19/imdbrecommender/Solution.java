@@ -132,14 +132,47 @@ public class Solution {
         }
 
         if(!candidateSimilarUsers.isEmpty()){
-            //Check if there are ties as in patas
+            //Check if there are ties as in patas, how?
+            //1. Sort the candidate similar users
+            //2. Once sorted, use the top. Then order using the next priority.
             //If patas, get the best
             //Build
-            buildTopUsers(similarUsers, candidateSimilarUsers,false);
+            User[] candidateSimilarUsersArray = sortMap(candidateSimilarUsers);
+
+            if(!hasTie(candidateSimilarUsersArray, candidateSimilarUsers, false)){
+                buildTopUsers(similarUsers, candidateSimilarUsers,false);
+            } else {
+
+            }
+
         } else {
             getUsersById(similarUsers, candidateSimilarUsers);
         }
     }
+
+    private static boolean hasTie(
+            User[] candidateSimilarUsersArray, Map<User, Integer> candidateSimilarUsers, boolean isAscending) {
+        int topValue=0;
+        if(isAscending){
+            topValue = candidateSimilarUsers.get(candidateSimilarUsersArray[0]);
+            for(int i=1; i<candidateSimilarUsersArray.length; i++){
+                if(topValue==candidateSimilarUsers.get(candidateSimilarUsersArray[i])){
+                    return true;
+                }
+            }
+        } else {
+            topValue = candidateSimilarUsers.get(candidateSimilarUsersArray[candidateSimilarUsersArray.length-1]);
+            for(int i=candidateSimilarUsersArray.length-2; i>=0; i--){
+                if(topValue==candidateSimilarUsers.get(candidateSimilarUsersArray[i])){
+                     return true;
+                }
+            }
+
+        }
+        return false;
+    }
+
+
 
     private static void getUsersById(User[] similarUsers, Map<User, Integer> candidateSimilarUsers) {
         for(Map.Entry<Integer, User> similarUser : users.entrySet()){
