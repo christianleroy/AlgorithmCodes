@@ -1,4 +1,4 @@
-package com.theclcode.merge;
+package com.theclcode.sorting.merge;
 
 import java.util.Arrays;
 
