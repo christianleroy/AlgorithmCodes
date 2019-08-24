@@ -75,8 +75,8 @@ public class Solution {
     private static User[] sortMap(Map<User, Integer> candidateSimilarUsers) {
         User[] candidateSimilarUsersArray = new User[candidateSimilarUsers.size()];
         int counter=0;
-        for(Map.Entry<User, Integer> userWithSameMoviesWatched : candidateSimilarUsers.entrySet()){
-            candidateSimilarUsersArray[counter] = userWithSameMoviesWatched.getKey();
+        for(Map.Entry<User, Integer> candidateSimilarUser : candidateSimilarUsers.entrySet()){
+            candidateSimilarUsersArray[counter] = candidateSimilarUser.getKey();
             counter++;
         }
 
@@ -108,11 +108,12 @@ public class Solution {
              }
         }
 
+        int similarUsersSize = similarUsers.length;
         if(!candidateSimilarUsers.isEmpty()){
             User[] candidateSimilarUsersArray = sortMap(candidateSimilarUsers);
             Map<User, Integer> candidateTopUsers = checkIfMultipleTopUsersAndGetTopUsers(
                     candidateSimilarUsersArray, candidateSimilarUsers, false);
-            if(candidateTopUsers.size()>1){
+            if(candidateTopUsers.size()>similarUsersSize){
                 candidateSimilarUsers.clear();
                 getUsersByWatchCount(similarUsers, candidateSimilarUsers, candidateTopUsers);
             } else{
@@ -136,11 +137,12 @@ public class Solution {
             }
         }
 
+        int similarUsersSize = similarUsers.length;
         if(!candidateSimilarUsers.isEmpty()){
             User[] candidateSimilarUsersArray = sortMap(candidateSimilarUsers);
             Map<User, Integer> candidateTopUsers = checkIfMultipleTopUsersAndGetTopUsers(
                     candidateSimilarUsersArray, candidateSimilarUsers, false);
-            if(candidateTopUsers.size()>1){
+            if(candidateTopUsers.size()>similarUsersSize){
                 candidateSimilarUsers.clear();
                 getUsersById(similarUsers, candidateSimilarUsers, candidateTopUsers);
             } else{
@@ -308,6 +310,9 @@ public class Solution {
         ANS = sc.nextInt();
 
         for (tc = 1; tc <= T; ++tc) {
+            if(tc==3){
+                String x = "null";
+            }
             System.out.printf("Case #%d:\n", tc);
             run();
         }

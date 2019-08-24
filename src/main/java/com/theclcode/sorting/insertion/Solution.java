@@ -4,16 +4,16 @@ import java.util.Arrays;
 
 public class Solution {
     public static void main(String[] args){
-        int[] toSort = new int[]{5,3,1,4,2};
-        for(int i=1; i<toSort.length; i++){
-            int temp = toSort[i];
+        int[] arr = new int[]{5,4,3,2,1};
+        for(int i=1; i<arr.length; i++){
+            int key = arr[i];
             int j=i-1;
-            while(j >= 0 && temp < toSort[j]){
-                toSort[i] = toSort[j];
+            while(j >= 0 && arr[j] > key){
+                arr[i] = arr[j];
                 j--;
             }
-            toSort[j+1] = temp;
+            arr[j+1] = key;
         }
-        System.out.println(Arrays.toString(toSort));
+        System.out.println(Arrays.toString(arr));
     }
 }
