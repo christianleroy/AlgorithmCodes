@@ -27,3 +27,4 @@ target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.l
 .idea/sonarlint/issuestore/0/9/0932f9edb3795e2278fe43903db47002ccc75f91
 .idea/sonarlint/*
 .idea/*
+.DS_Store

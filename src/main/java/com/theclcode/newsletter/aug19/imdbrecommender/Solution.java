@@ -8,22 +8,22 @@ public class Solution {
     public static final int MAX_MOVIE = 5000;
     public static final int MAX_WATCH = 5000;
     public static final int MAX_USER = 1000;
-    private static Map<Integer, User> users;
-    private static Map<Integer, Movie> movies;
+    private static Map<Integer, User> users = new HashMap<>();
+    private static Map<Integer, Movie> movies = new HashMap<>();
     private static int addedOn;
 
     /**************** START OF USER SOLUTION ****************/
 
     static void init()
     {
-        users = new HashMap<>();
-        movies = new HashMap<>();
+        users.clear();
+        movies.clear();
         addedOn=1;
     }
 
     static void newMovie(int mid)
     {
-        if(movies.get(mid)==null){
+        if(movies.get(mid)==null && movies.size()<MAX_MOVIE){
             Movie movie = new Movie(mid, new ArrayList<>(), addedOn++);
             movies.put(mid, movie);
         }
@@ -31,7 +31,7 @@ public class Solution {
 
     static void addUser(int uid)
     {
-        if(users.get(uid)==null){
+        if(users.get(uid)==null && users.size()<MAX_USER){
             User user = new User(uid, new HashMap<>());
             users.put(uid, user);
         }
@@ -42,7 +42,7 @@ public class Solution {
         User user = users.get(uid);
         Movie movie = movies.get(mid);
 
-        if(user!=null && movie!=null){
+        if(user!=null && movie!=null && user.moviesWatched.size()<MAX_WATCH){
             if(user.getMoviesWatched().containsKey(movie)){
                 int movieWatchedCount = user.getMoviesWatched().get(movie);
                 user.getMoviesWatched().put(movie, ++movieWatchedCount);
@@ -55,15 +55,7 @@ public class Solution {
             }
         }
     }
-     /*
-        1. Get the viewers of all movies watched
-        2. Once you get a master list of all the users with common movies watched,
-        begin the scoring process
-        3. To get the number of similar movies watched, add the user to similarUsers map with user as the key
-            and the number of movies commonly watched as the integer value.
-        4. If there's a tie, break by using the watchCounters of user to score them then rank.
-        5. If another tie, break by multiplying user ID by -1.
-     */
+
     static int getRecommendedMovie(int uid)
     {
         int numberOfTopUsers = users.size()*0.01 > 1 ? (int)(users.size()*0.01) : 1;
@@ -117,74 +109,83 @@ public class Solution {
         }
 
         if(!candidateSimilarUsers.isEmpty()){
-            //Check if there are ties as in patas
-            //If patas, get the best
-            //Build
-            buildTopUsers(similarUsers, candidateSimilarUsers,false);
+            User[] candidateSimilarUsersArray = sortMap(candidateSimilarUsers);
+            Map<User, Integer> candidateTopUsers = checkIfMultipleTopUsersAndGetTopUsers(
+                    candidateSimilarUsersArray, candidateSimilarUsers, false);
+            if(candidateTopUsers.size()>1){
+                candidateSimilarUsers.clear();
+                getUsersByWatchCount(similarUsers, candidateSimilarUsers, candidateTopUsers);
+            } else{
+                buildTopUsers(similarUsers, candidateSimilarUsers,false);
+            }
         } else {
-            getUsersByWatchCount(similarUsers, candidateSimilarUsers);
+            getUsersByWatchCount(similarUsers, candidateSimilarUsers, null);
         }
     }
 
-    private static void getUsersByWatchCount(User[] similarUsers, Map<User, Integer> candidateSimilarUsers) {
-        for(Map.Entry<Integer, User> similarUser : users.entrySet()){
-            candidateSimilarUsers.put(similarUser.getValue(), similarUser.getValue().getWatchCounter());
+    private static void getUsersByWatchCount(User[] similarUsers,
+        Map<User, Integer> candidateSimilarUsers, Map<User, Integer> candidateMultipleTopSimilarUsers) {
+
+        if(candidateMultipleTopSimilarUsers==null){
+            for(Map.Entry<Integer, User> similarUser : users.entrySet()){
+                candidateSimilarUsers.put(similarUser.getValue(), similarUser.getValue().getWatchCounter());
+            }
+        } else {
+            for(Map.Entry<User, Integer> topUser : candidateMultipleTopSimilarUsers.entrySet()){
+                candidateSimilarUsers.put(topUser.getKey(), topUser.getKey().getWatchCounter());
+            }
         }
 
         if(!candidateSimilarUsers.isEmpty()){
-            //Check if there are ties as in patas, how?
-            //1. Sort the candidate similar users
-            //2. Once sorted, use the top. Then order using the next priority.
-            //If patas, get the best
-            //Build
             User[] candidateSimilarUsersArray = sortMap(candidateSimilarUsers);
-
-            if(!hasTie(candidateSimilarUsersArray, candidateSimilarUsers, false)){
+            Map<User, Integer> candidateTopUsers = checkIfMultipleTopUsersAndGetTopUsers(
+                    candidateSimilarUsersArray, candidateSimilarUsers, false);
+            if(candidateTopUsers.size()>1){
+                candidateSimilarUsers.clear();
+                getUsersById(similarUsers, candidateSimilarUsers, candidateTopUsers);
+            } else{
                 buildTopUsers(similarUsers, candidateSimilarUsers,false);
-            } else {
-
             }
 
         } else {
-            getUsersById(similarUsers, candidateSimilarUsers);
+            getUsersById(similarUsers, candidateSimilarUsers, null);
         }
     }
 
-    private static boolean hasTie(
-            User[] candidateSimilarUsersArray, Map<User, Integer> candidateSimilarUsers, boolean isAscending) {
-        int topValue=0;
-        if(isAscending){
-            topValue = candidateSimilarUsers.get(candidateSimilarUsersArray[0]);
-            for(int i=1; i<candidateSimilarUsersArray.length; i++){
-                if(topValue==candidateSimilarUsers.get(candidateSimilarUsersArray[i])){
-                    return true;
-                }
+    private static void getUsersById(User[] similarUsers, Map<User,
+        Integer> candidateSimilarUsers, Map<User, Integer> candidateMultipleTopSimilarUsers) {
+        if(candidateMultipleTopSimilarUsers==null){
+            for(Map.Entry<Integer, User> similarUser : users.entrySet()){
+                candidateSimilarUsers.put(similarUser.getValue(), similarUser.getValue().getUid());
             }
         } else {
-            topValue = candidateSimilarUsers.get(candidateSimilarUsersArray[candidateSimilarUsersArray.length-1]);
-            for(int i=candidateSimilarUsersArray.length-2; i>=0; i--){
-                if(topValue==candidateSimilarUsers.get(candidateSimilarUsersArray[i])){
-                     return true;
-                }
+            for(Map.Entry<User, Integer> topUser : candidateMultipleTopSimilarUsers.entrySet()){
+                candidateSimilarUsers.put(topUser.getKey(), topUser.getKey().getUid());
             }
-
-        }
-        return false;
-    }
-
-
-
-    private static void getUsersById(User[] similarUsers, Map<User, Integer> candidateSimilarUsers) {
-        for(Map.Entry<Integer, User> similarUser : users.entrySet()){
-            candidateSimilarUsers.put(similarUser.getValue(), similarUser.getValue().getUid());
         }
         buildTopUsers(similarUsers, candidateSimilarUsers,true);
     }
 
+    private static Map<User, Integer> checkIfMultipleTopUsersAndGetTopUsers(
+            User[] candidateSimilarUsersArray, Map<User, Integer> candidateSimilarUsers, boolean isAscending) {
+
+        Map<User, Integer> candidateTopUsers = new HashMap<>();
+        int highestValue = 0;
+        if(isAscending){
+            highestValue = candidateSimilarUsers.get(candidateSimilarUsersArray[0]);
+        } else {
+            highestValue = candidateSimilarUsers.get(candidateSimilarUsersArray[candidateSimilarUsersArray.length-1]);
+        }
+        for(Map.Entry<User, Integer> candidateTopUser : candidateSimilarUsers.entrySet()){
+            if(candidateTopUser.getValue()==highestValue){
+                candidateTopUsers.put(candidateTopUser.getKey(), candidateTopUser.getValue());
+            }
+        }
+        return candidateTopUsers;
+    }
 
     private static void buildTopUsers(User[] similarUsers, Map<User, Integer> candidateSimilarUsers, boolean isAscending) {
         User[] candidateSimilarUsersArray = sortMap(candidateSimilarUsers);
-
         if(isAscending){
             for(int i=0; i<similarUsers.length; i++){
                 similarUsers[i] = candidateSimilarUsersArray[i];
