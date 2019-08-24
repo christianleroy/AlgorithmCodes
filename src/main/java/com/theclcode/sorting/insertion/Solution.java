@@ -9,7 +9,7 @@ public class Solution {
             int key = arr[i];
             int j=i-1;
             while(j >= 0 && arr[j] > key){
-                arr[i] = arr[j];
+                arr[j+1] = arr[j];
                 j--;
             }
             arr[j+1] = key;

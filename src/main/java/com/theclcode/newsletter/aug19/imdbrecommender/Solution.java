@@ -85,7 +85,7 @@ public class Solution {
             User tempUser = candidateSimilarUsersArray[i];
             int j = i-1;
             while(j >= 0 && temp < candidateSimilarUsers.get(candidateSimilarUsersArray[j])){
-                candidateSimilarUsersArray[i] = candidateSimilarUsersArray[j];
+                candidateSimilarUsersArray[j+1] = candidateSimilarUsersArray[j];
                 j--;
             }
             candidateSimilarUsersArray[j+1] = tempUser;
