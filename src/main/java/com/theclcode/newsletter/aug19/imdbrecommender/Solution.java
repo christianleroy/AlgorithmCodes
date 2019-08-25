@@ -193,7 +193,7 @@ public class Solution {
                 similarUsers[i] = candidateSimilarUsersArray[i];
             }
         } else {
-            for(int i=0,j=candidateSimilarUsersArray.length-1; i<similarUsers.length; i++){
+            for(int i=0,j=candidateSimilarUsersArray.length-1; i<similarUsers.length; i++, j--){
                 similarUsers[i] = candidateSimilarUsersArray[j];
             }
         }
@@ -310,7 +310,7 @@ public class Solution {
         ANS = sc.nextInt();
 
         for (tc = 1; tc <= T; ++tc) {
-            if(tc==3){
+            if(tc==2){
                 String x = "null";
             }
             System.out.printf("Case #%d:\n", tc);
