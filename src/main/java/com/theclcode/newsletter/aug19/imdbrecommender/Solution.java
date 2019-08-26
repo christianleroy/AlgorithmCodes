@@ -93,6 +93,52 @@ public class Solution {
         return candidateSimilarUsersArray;
     }
 
+    private static void findSimilarTasteGroupSmart(User user, User[] similarUsers, Map<User, Integer> candidateSimilarUsers) {
+        for(Map.Entry<Movie, Integer> movie : user.getMoviesWatched().entrySet()){
+            for(User similarUser: movie.getKey().getWatchers()){
+                if(similarUser==user){
+                    continue;
+                }
+                if(candidateSimilarUsers.containsKey(similarUser)){
+                    int numOfSameMoviesWatched = candidateSimilarUsers.get(similarUser);
+                    candidateSimilarUsers.put(similarUser, numOfSameMoviesWatched+1);
+                } else {
+                    candidateSimilarUsers.put(similarUser, 1);
+                }
+            }
+        }
+
+        buildTopUsers(similarUsers, candidateSimilarUsers, false);
+    }
+
+    private static void buildTopUsersSmart(User[] similarUsers, Map<User, Integer> candidateSimilarUsers) {
+        User[] candidateSimilarUsersArray = sortMapSmart(candidateSimilarUsers);
+        for(int i=0; i<similarUsers.length; i++){
+            similarUsers[i] = candidateSimilarUsersArray[i];
+        }
+
+    }
+
+    private static User[] sortMapSmart(Map<User, Integer> candidateSimilarUsers) {
+        User[] candidateSimilarUsersArray = new User[candidateSimilarUsers.size()];
+        int counter=0;
+        for(Map.Entry<User, Integer> candidateSimilarUser : candidateSimilarUsers.entrySet()){
+            candidateSimilarUsersArray[counter] = candidateSimilarUser.getKey();
+            counter++;
+        }
+
+        for(int i=1; i<candidateSimilarUsers.size(); i++){
+            int temp = candidateSimilarUsers.get(candidateSimilarUsersArray[i]);
+            User tempUser = candidateSimilarUsersArray[i];
+            int j = i-1;
+            while(j >= 0 && temp < candidateSimilarUsers.get(candidateSimilarUsersArray[j])) {
+                candidateSimilarUsersArray[j + 1] = candidateSimilarUsersArray[j];
+                j--;
+            }
+        }
+        return candidateSimilarUsersArray;
+    }
+
     private static void findSimilarTasteGroup(User user, User[] similarUsers, Map<User, Integer> candidateSimilarUsers) {
         for(Map.Entry<Movie, Integer> movie : user.getMoviesWatched().entrySet()){
              for(User similarUser: movie.getKey().getWatchers()){
