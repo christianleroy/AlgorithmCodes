@@ -3,7 +3,6 @@ package com.theclcode.newsletter.aug19.imdbrecommender;
 import java.util.Scanner;
 import java.util.*;
 
-//Incomplete
 public class Solution {
     public static final int MAX_MOVIE = 5000;
     public static final int MAX_WATCH = 5000;
@@ -23,7 +22,7 @@ public class Solution {
 
     static void newMovie(int mid)
     {
-        if(movies.get(mid)==null && movies.size()<MAX_MOVIE){
+        if(movies.get(mid)==null && movies.size()<=MAX_MOVIE){
             Movie movie = new Movie(mid, new ArrayList<>(), addedOn++);
             movies.put(mid, movie);
         }
@@ -31,7 +30,7 @@ public class Solution {
 
     static void addUser(int uid)
     {
-        if(users.get(uid)==null && users.size()<MAX_USER){
+        if(users.get(uid)==null && users.size()<=MAX_USER){
             User user = new User(uid, new HashMap<>());
             users.put(uid, user);
         }
@@ -42,7 +41,7 @@ public class Solution {
         User user = users.get(uid);
         Movie movie = movies.get(mid);
 
-        if(user!=null && movie!=null && user.moviesWatched.size()<MAX_WATCH){
+        if(user!=null && movie!=null && user.moviesWatched.size()<=MAX_WATCH){
             if(user.getMoviesWatched().containsKey(movie)){
                 int movieWatchedCount = user.getMoviesWatched().get(movie);
                 user.getMoviesWatched().put(movie, ++movieWatchedCount);
@@ -63,34 +62,13 @@ public class Solution {
         User user = users.get(uid);
         Map<User, Integer> candidateSimilarUsers = new HashMap<>();
 
-        findSimilarTasteGroup(user, similarUsers, candidateSimilarUsers);
+        findSimilarTasteGroupSmart(user, similarUsers, candidateSimilarUsers);
         if(candidateSimilarUsers.isEmpty()) {
             return -1;
         }
         Map<Movie, Integer> candidateRecommendedMovies = getCandidateRecommendedMovies(user, similarUsers);
         int topMovie = getTopMovie(candidateRecommendedMovies);
         return topMovie;
-    }
-
-    private static User[] sortMap(Map<User, Integer> candidateSimilarUsers) {
-        User[] candidateSimilarUsersArray = new User[candidateSimilarUsers.size()];
-        int counter=0;
-        for(Map.Entry<User, Integer> candidateSimilarUser : candidateSimilarUsers.entrySet()){
-            candidateSimilarUsersArray[counter] = candidateSimilarUser.getKey();
-            counter++;
-        }
-
-        for(int i=1; i<candidateSimilarUsers.size(); i++){
-            int temp = candidateSimilarUsers.get(candidateSimilarUsersArray[i]);
-            User tempUser = candidateSimilarUsersArray[i];
-            int j = i-1;
-            while(j >= 0 && temp < candidateSimilarUsers.get(candidateSimilarUsersArray[j])){
-                candidateSimilarUsersArray[j+1] = candidateSimilarUsersArray[j];
-                j--;
-            }
-            candidateSimilarUsersArray[j+1] = tempUser;
-        }
-        return candidateSimilarUsersArray;
     }
 
     private static void findSimilarTasteGroupSmart(User user, User[] similarUsers, Map<User, Integer> candidateSimilarUsers) {
@@ -108,16 +86,17 @@ public class Solution {
             }
         }
 
-        buildTopUsers(similarUsers, candidateSimilarUsers, false);
+        if(!candidateSimilarUsers.isEmpty()){
+            buildTopUsersSmart(similarUsers, candidateSimilarUsers);
+        }
     }
-
     private static void buildTopUsersSmart(User[] similarUsers, Map<User, Integer> candidateSimilarUsers) {
         User[] candidateSimilarUsersArray = sortMapSmart(candidateSimilarUsers);
-        for(int i=0; i<similarUsers.length; i++){
-            similarUsers[i] = candidateSimilarUsersArray[i];
+        for(int i=0,j=candidateSimilarUsersArray.length-1; i<similarUsers.length; i++,j--){
+            similarUsers[i] = candidateSimilarUsersArray[j];
         }
-
     }
+
 
     private static User[] sortMapSmart(Map<User, Integer> candidateSimilarUsers) {
         User[] candidateSimilarUsersArray = new User[candidateSimilarUsers.size()];
@@ -126,123 +105,43 @@ public class Solution {
             candidateSimilarUsersArray[counter] = candidateSimilarUser.getKey();
             counter++;
         }
-
         for(int i=1; i<candidateSimilarUsers.size(); i++){
             int temp = candidateSimilarUsers.get(candidateSimilarUsersArray[i]);
             User tempUser = candidateSimilarUsersArray[i];
             int j = i-1;
-            while(j >= 0 && temp < candidateSimilarUsers.get(candidateSimilarUsersArray[j])) {
-                candidateSimilarUsersArray[j + 1] = candidateSimilarUsersArray[j];
+            while(j >= 0 && temp < candidateSimilarUsers.get(candidateSimilarUsersArray[j])){
+                candidateSimilarUsersArray[j+1] = candidateSimilarUsersArray[j];
+                j--;
+            }
+            candidateSimilarUsersArray[j+1] = tempUser;
+        }
+        for(int i=1; i<candidateSimilarUsers.size(); i++){
+            int temp = candidateSimilarUsers.get(candidateSimilarUsersArray[i]);
+            User tempUser = candidateSimilarUsersArray[i];
+            int j = i-1;
+            while(j >= 0 && temp==candidateSimilarUsers.get(candidateSimilarUsersArray[j])){
+                if(tempUser.getWatchCounter()<candidateSimilarUsersArray[j].getWatchCounter()){
+                    candidateSimilarUsersArray[j+1] = candidateSimilarUsersArray[j];
+                    candidateSimilarUsersArray[j]=tempUser;
+                }
                 j--;
             }
         }
-        return candidateSimilarUsersArray;
-    }
-
-    private static void findSimilarTasteGroup(User user, User[] similarUsers, Map<User, Integer> candidateSimilarUsers) {
-        for(Map.Entry<Movie, Integer> movie : user.getMoviesWatched().entrySet()){
-             for(User similarUser: movie.getKey().getWatchers()){
-                 if(similarUser==user){
-                     continue;
-                 }
-                if(candidateSimilarUsers.containsKey(similarUser)){
-                    int numOfSameMoviesWatched = candidateSimilarUsers.get(similarUser);
-                    candidateSimilarUsers.put(similarUser, numOfSameMoviesWatched+1);
-                } else {
-                    candidateSimilarUsers.put(similarUser, 1);
+        for(int i=1; i<candidateSimilarUsers.size(); i++){
+            int temp = candidateSimilarUsersArray[i].getWatchCounter();
+            User tempUser = candidateSimilarUsersArray[i];
+            int j = i-1;
+            while(j >= 0 && temp==candidateSimilarUsersArray[j].getWatchCounter()
+            && candidateSimilarUsers.get(candidateSimilarUsersArray[j])==candidateSimilarUsers.get(tempUser)){
+                if(tempUser.getUid()>candidateSimilarUsersArray[j].getUid()){
+                    candidateSimilarUsersArray[j+1] = candidateSimilarUsersArray[j];
                 }
-             }
+                j--;
+            }
+            candidateSimilarUsersArray[j+1] = tempUser;
+
         }
-
-        int similarUsersSize = similarUsers.length;
-        if(!candidateSimilarUsers.isEmpty()){
-            User[] candidateSimilarUsersArray = sortMap(candidateSimilarUsers);
-            Map<User, Integer> candidateTopUsers = checkIfMultipleTopUsersAndGetTopUsers(
-                    candidateSimilarUsersArray, candidateSimilarUsers, false);
-            if(candidateTopUsers.size()>similarUsersSize){
-                candidateSimilarUsers.clear();
-                getUsersByWatchCount(similarUsers, candidateSimilarUsers, candidateTopUsers);
-            } else{
-                buildTopUsers(similarUsers, candidateSimilarUsers,false);
-            }
-        } else {
-            getUsersByWatchCount(similarUsers, candidateSimilarUsers, null);
-        }
-    }
-
-    private static void getUsersByWatchCount(User[] similarUsers,
-        Map<User, Integer> candidateSimilarUsers, Map<User, Integer> candidateMultipleTopSimilarUsers) {
-
-        if(candidateMultipleTopSimilarUsers==null){
-            for(Map.Entry<Integer, User> similarUser : users.entrySet()){
-                candidateSimilarUsers.put(similarUser.getValue(), similarUser.getValue().getWatchCounter());
-            }
-        } else {
-            for(Map.Entry<User, Integer> topUser : candidateMultipleTopSimilarUsers.entrySet()){
-                candidateSimilarUsers.put(topUser.getKey(), topUser.getKey().getWatchCounter());
-            }
-        }
-
-        int similarUsersSize = similarUsers.length;
-        if(!candidateSimilarUsers.isEmpty()){
-            User[] candidateSimilarUsersArray = sortMap(candidateSimilarUsers);
-            Map<User, Integer> candidateTopUsers = checkIfMultipleTopUsersAndGetTopUsers(
-                    candidateSimilarUsersArray, candidateSimilarUsers, false);
-            if(candidateTopUsers.size()>similarUsersSize){
-                candidateSimilarUsers.clear();
-                getUsersById(similarUsers, candidateSimilarUsers, candidateTopUsers);
-            } else{
-                buildTopUsers(similarUsers, candidateSimilarUsers,false);
-            }
-
-        } else {
-            getUsersById(similarUsers, candidateSimilarUsers, null);
-        }
-    }
-
-    private static void getUsersById(User[] similarUsers, Map<User,
-        Integer> candidateSimilarUsers, Map<User, Integer> candidateMultipleTopSimilarUsers) {
-        if(candidateMultipleTopSimilarUsers==null){
-            for(Map.Entry<Integer, User> similarUser : users.entrySet()){
-                candidateSimilarUsers.put(similarUser.getValue(), similarUser.getValue().getUid());
-            }
-        } else {
-            for(Map.Entry<User, Integer> topUser : candidateMultipleTopSimilarUsers.entrySet()){
-                candidateSimilarUsers.put(topUser.getKey(), topUser.getKey().getUid());
-            }
-        }
-        buildTopUsers(similarUsers, candidateSimilarUsers,true);
-    }
-
-    private static Map<User, Integer> checkIfMultipleTopUsersAndGetTopUsers(
-            User[] candidateSimilarUsersArray, Map<User, Integer> candidateSimilarUsers, boolean isAscending) {
-
-        Map<User, Integer> candidateTopUsers = new HashMap<>();
-        int highestValue = 0;
-        if(isAscending){
-            highestValue = candidateSimilarUsers.get(candidateSimilarUsersArray[0]);
-        } else {
-            highestValue = candidateSimilarUsers.get(candidateSimilarUsersArray[candidateSimilarUsersArray.length-1]);
-        }
-        for(Map.Entry<User, Integer> candidateTopUser : candidateSimilarUsers.entrySet()){
-            if(candidateTopUser.getValue()==highestValue){
-                candidateTopUsers.put(candidateTopUser.getKey(), candidateTopUser.getValue());
-            }
-        }
-        return candidateTopUsers;
-    }
-
-    private static void buildTopUsers(User[] similarUsers, Map<User, Integer> candidateSimilarUsers, boolean isAscending) {
-        User[] candidateSimilarUsersArray = sortMap(candidateSimilarUsers);
-        if(isAscending){
-            for(int i=0; i<similarUsers.length; i++){
-                similarUsers[i] = candidateSimilarUsersArray[i];
-            }
-        } else {
-            for(int i=0,j=candidateSimilarUsersArray.length-1; i<similarUsers.length; i++, j--){
-                similarUsers[i] = candidateSimilarUsersArray[j];
-            }
-        }
+        return candidateSimilarUsersArray;
     }
 
     private static int getTopMovie(Map<Movie, Integer> candidateRecommendedMovies) {
