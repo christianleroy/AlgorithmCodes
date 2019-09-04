@@ -1,91 +1,59 @@
 package com.theclcode.permutation;
 
-import java.util.Scanner;
+import java.util.Arrays;
 
-//Not my code
-class Solution
-{
-    static final int MAX_STRING_LENGTH = 10;
-    static int stackTop = 0;
-    static char[] combinationStack = new char[MAX_STRING_LENGTH];
+public class Solution {
+    static char[] stack;
+    static int stackMarker=0;
 
-    static void printCString(char[] str)
-    {
-        for (int i = 0; i < str.length && str[i] != 0; i++)
-        {
-            System.out.print(str[i]);
-        }
-        System.out.print("\n");
+    public static void main(String[] args){
+        char[] arr = {'A', 'B', 'C', 'D'};
+        permute(arr, 0, arr.length-1);
+        init(arr);
+        combine(arr, 0, 2);
     }
 
-    static void swap(char[] str, int x, int y)
-    {
-        char temp = str[x];
-        str[x] = str[y];
-        str[y] = temp;
+    static void swap(char[] arr, int left, int right){
+        char temp = arr[right];
+        arr[right] = arr[left];
+        arr[left] = temp;
     }
 
-    static void permutation(char[] str, int left, int right)
-    {
-        if (left == right)
-        {
-            printCString(str);
-        }
-        else
-        {
-            for (int startAt = left; startAt <= right; startAt++)
-            {
-                swap(str, left, startAt);
-                permutation(str, left+1, right);
-                swap(str, left, startAt); //backtrack
+    static void permute(char[] arr, int start, int end){
+        if(start==end){
+            System.out.println(Arrays.toString(arr));
+        } else {
+            for(int i=start; i<=end; i++){
+                swap(arr, start, i);
+                permute(arr, start+1, end);
+                swap(arr, start, i);
             }
         }
     }
 
-    static void push(char ch)
-    {
-        combinationStack[stackTop++] = ch;
-        combinationStack[stackTop] = '\0';
+    static void init(char[] arr){
+        stack = new char[arr.length];
     }
 
-    static void pop()
-    {
-        combinationStack[--stackTop] = '\0';
-    }
-
-    static void combination(char[] str, int length, int offset, int k)
-    {
-
-        if (k == 0)
-        {
-            printCString(combinationStack);
+    static void combine(char[] arr, int start, int limit){
+        int length = arr.length;
+        if(limit==0){
+            System.out.println(new String(stack));
             return;
         }
-        for (int i = offset; i <= length - k; ++i)
-        {
-            push(str[i]);
-            combination(str, length, i+1, k-1);
+
+        for(int i=start; i<=length-limit; i++){
+            push(arr[i]);
+            combine(arr, i+1, limit-1);
             pop();
         }
     }
 
+    static void pop(){
+        stack[--stackMarker]='\0';
+    }
 
-    public static void main(String args[]) throws Exception
-    {
-        Scanner sc = new Scanner(System.in);
-        int T = sc.nextInt();
-        for (int test_case = 1; test_case <= T; test_case++)
-        {
-            String input = sc.next();
-            int N = sc.nextInt();
-            int K = sc.nextInt();
-            char[] str = input.toCharArray();
-
-            System.out.printf("#%d\n", test_case);
-//            str[N] = 0;
-            permutation(str, 0, N-1);
-//            combination(str, N, 0, K);
-        }
-        sc.close();
+    static void push(char character){
+        stack[stackMarker++] = character;
     }
 }

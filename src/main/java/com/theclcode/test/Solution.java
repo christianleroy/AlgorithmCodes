@@ -1,16 +1,60 @@
 package com.theclcode.test;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Solution {
 
+    static char[] stack;
+    static int stackMarker=0;
+
     public static void main(String[] args){
-       Map<String, Integer> test = new HashMap<>();
-       Integer num = test.get("a");
-       if(num!=null)
-       test.put("a", num+1);
-       System.out.println(test.get("a"));
+        char[] arr = {'A', 'B', 'C'};
+//        permute(arr, 0, arr.length-1);
+        init(arr);
+        combine(arr, 0, 2);
+    }
+
+    static void swap(char[] arr, int left, int right){
+        char temp = arr[right];
+        arr[right] = arr[left];
+        arr[left] = temp;
+    }
+
+    static void permute(char[] arr, int start, int end){
+        if(start==end){
+            System.out.println(Arrays.toString(arr));
+        } else {
+            for(int i=start; i<=end; i++){
+                swap(arr, start, i);
+                permute(arr, start+1, end);
+                swap(arr, start, i);
+            }
+        }
+    }
+
+    static void init(char[] arr){
+        stack = new char[arr.length];
+    }
+
+    static void combine(char[] arr, int start, int limit){
+        int length = arr.length;
+        if(limit==0){
+            System.out.println(new String(stack));
+            return;
+        }
+
+        for(int i=start; i<=length-limit; i++){
+            push(arr[i]);
+            combine(arr, i+1, limit-1);
+            pop();
+        }
+    }
+
+    static void pop(){
+        stack[--stackMarker]='\0';
+    }
+
+    static void push(char character){
+        stack[stackMarker++] = character;
     }
 }

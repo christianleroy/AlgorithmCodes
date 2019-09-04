@@ -255,9 +255,6 @@ public class Solution {
         ANS = sc.nextInt();
 
         for (tc = 1; tc <= T; ++tc) {
-            if(tc==2){
-                String x = "null";
-            }
             System.out.printf("Case #%d:\n", tc);
             run();
         }
