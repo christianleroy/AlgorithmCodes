@@ -6,8 +6,14 @@ import java.util.Arrays;
 public class Solution {
 
     public static void main(String[] args){
-        int[] inputArray = {4,5,6,7,1,2,3};
-        merge(inputArray, 0, 3, 6);
+        int[] inputArray = {3,4,5,6,1,2,3,4};
+        int middle = inputArray.length%2==0 ? inputArray.length/2-1 : inputArray.length/2;
+
+        merge(inputArray, 0, middle, inputArray.length-1);
+    }
+
+    public static void mergeSort(int[] array, int start, int end){
+
     }
 
     public static void merge(int[] array, int start, int middle, int end){
@@ -23,7 +29,7 @@ public class Solution {
         }
 
         for(int index=start,i=0,j=0; index<=end; index++){
-            if(i<left.length && left[i]<=right[j]){
+            if(j==right.length || (i<left.length && left[i]<=right[j])){
                 array[index]=left[i];
                 i++;
             } else {
