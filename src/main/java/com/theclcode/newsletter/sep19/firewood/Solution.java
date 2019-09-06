@@ -34,9 +34,37 @@ public class Solution {
     }
 
     public static void findPath(int[][] forest, int x, int y){
-
+        int yCopy=0;
+        int xCopy=0;
+        if(y>0){
+            yCopy=y;
+            while(yCopy>0 && forest[x][yCopy-1]==1){
+                forest[x][yCopy-1]=0;
+                yCopy--;
+            }
+        }
+        if(x<forest.length){
+            xCopy=x;
+            while(xCopy<forest.length && forest[xCopy+1][y]==1){
+                forest[xCopy+1][y]=0;
+                xCopy++;
+            }
+        }
+        if(y<forest.length){
+            yCopy=y;
+            while(yCopy<forest.length && forest[x][yCopy+1]==1){
+                forest[x][yCopy+1]=0;
+                yCopy++;
+            }
+        }
+        if(x>0){
+            xCopy=x;
+            while(xCopy>0 && forest[xCopy-1][y]==1){
+                forest[xCopy-1][y]=0;
+                xCopy--;
+            }
+        }
     }
-
 
     private static int[][] buildForest(int thingNum, int gridSize) {
         int[][] forest = new int[gridSize][gridSize];
