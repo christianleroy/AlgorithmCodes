@@ -13,6 +13,8 @@ public class DoublyLinkedList<E>{
         stringLinkedList.add(new Node<>("F"));
         stringLinkedList.add(new Node<>("G"));
         stringLinkedList.print();
+        stringLinkedList.removeHead();
+        stringLinkedList.print();
     }
 
     private Node<E> head;
@@ -39,6 +41,11 @@ public class DoublyLinkedList<E>{
             node=node.next;
         }
         System.out.println();
+    }
+
+    public void removeHead(){
+        head.next.prev = head.prev;
+        head = head.next;
     }
 
     public void push(Node<E> node){

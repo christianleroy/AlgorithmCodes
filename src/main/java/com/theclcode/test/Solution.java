@@ -4,6 +4,14 @@ import java.util.*;
 
 public class Solution {
     public static void main(String[] args){
-        System.out.println(Integer.MAX_VALUE);
+        String a = "a";
+        String b = "b";
+        String c = "c";
+        String r = "";
+
+        r+=a;
+        r+=b;
+        r+=c;
+
     }
 }

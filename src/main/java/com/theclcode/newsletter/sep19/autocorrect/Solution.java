@@ -6,38 +6,115 @@ import java.util.StringTokenizer;
 
 class Solution {
 
-
-
     /**************** START OF USER SOLUTION ****************/
+	static DoublyLinkedList<char[]> sentence;
 
 	static void init()
 	{
-		
+		sentence = new DoublyLinkedList<>();
 	}
 
 	static void appendWord(char str[])
-	{ 
-
+	{
+		char[] newStr = new char[str.length];
+		for(int i=0; i<str.length; i++){
+			if(str[i]=='\0'){
+				break;
+			}
+			newStr[i]=str[i];
+		}
+		sentence.add(newStr);
 	}
 
 	static void changeAllWord(char before[], char after[])
 	{
-
+		Node<char[]> node = sentence.head;
+		while(node!=null){
+			if(isEqual(before, node.getValue())){
+				char[] replacement = new char[11];
+				boolean foundSpace=false;
+				for(int i=0; i<after.length; i++){
+					if(after[i]=='\0'){
+						foundSpace=true;
+					}
+					if(foundSpace){
+						replacement[i]='\0';
+					} else {
+						replacement[i]=after[i];
+					}
+				}
+				node.setValue(replacement);
+			}
+			node=node.next;
+		}
 	}
 
 	static void addAfter(char str[], char new_str[])
 	{
-
+		Node<char[]> node = sentence.head;
+		while(node!=null){
+			if(isEqual(str, node.getValue())){
+				char[] newStr = new char[11];
+				boolean foundSpace=false;
+				for(int i=0; i<new_str.length; i++){
+					if(new_str[i]=='\0'){
+						foundSpace=true;
+					}
+					if(foundSpace){
+						newStr[i]='\0';
+					} else {
+						newStr[i]=new_str[i];
+					}
+				}
+				sentence.insertAfter(node, newStr);
+			}
+			node=node.next;
+		}
 	}
 
 	static void removeWord(int k)
 	{
-
+		sentence.findPositionAndRemove(k);
 	}
 
 	static char getLetter(int pos)
 	{
-		return '\0';
+		String string = build(sentence);
+		char[] s = string.toCharArray();
+		return s[pos-1];
+	}
+
+	static String build(DoublyLinkedList<char[]> sentence){
+		String result="";
+		Node<char[]> node = sentence.head;
+		while(node!=null){
+			for(char c: node.getValue()){
+				if(c!='\0') {
+					result += c;
+				}
+			}
+			if(node.next!=null){
+				result+=" ";
+			}
+			node = node.next;
+		}
+		return result;
+	}
+
+	static boolean isEqual(char[] a, char[] b){
+		if(a.length!=b.length){
+			return false;
+		}
+
+		for(int i=0; i<a.length; i++){
+			if(a[i]=='\0'){
+				break;
+			}
+			if(a[i]!=b[i]){
+				return false;
+			}
+		}
+		return true;
 	}
     
 	/***************** END OF USER SOLUTION *****************/
@@ -129,7 +206,7 @@ class Solution {
 	public static void main(String[] args) throws Exception {
 		int T;
 		double start = System.currentTimeMillis();
-		System.setIn(new java.io.FileInputStream("sample_input.txt"));
+		System.setIn(new java.io.FileInputStream("res/sample_input.txt"));
 		br = new BufferedReader(new InputStreamReader(System.in));
 		
 		StringTokenizer stinit = new StringTokenizer(br.readLine(), " ");
@@ -141,6 +218,106 @@ class Solution {
 		}
 		
 		br.close();
+	}
+
+	public static class Node<E> {
+
+		private E value;
+		private Node prev;
+		private Node next;
+
+		public Node(E value) {
+			this.value = value;
+		}
+
+		public E getValue() {
+			return value;
+		}
+
+		public void setValue(E value) {
+			this.value = value;
+		}
+
+		public Node getPrev() {
+			return prev;
+		}
+
+		public void setPrev(Node prev) {
+			this.prev = prev;
+		}
+
+		public Node getNext() {
+			return next;
+		}
+
+		public void setNext(Node next) {
+			this.next = next;
+		}
+	}
+
+	public static class DoublyLinkedList<E>{
+
+		private Node<E> head;
+		private Node<E> tail;
+
+		public void add(E value){
+			Node<E> node = new Node(value);
+			if(head==null){
+				head = node;
+				tail = head;
+			} else {
+				tail.next = node;
+				node.prev=tail;
+				tail = node;
+			}
+		}
+
+		public void print(){
+			Node node=head;
+			while(node != null){
+				System.out.println(node.getValue());
+				System.out.println();
+				node=node.next;
+			}
+			System.out.println();
+		}
+
+		public void push(E value){
+			Node<E> node = new Node(value);
+			node.next = head;
+			head.prev = node;
+			head = node;
+		}
+
+		public void insertAfter(Node<E> node, E value){
+			if(node==null){
+				return;
+			}
+			Node<E> newNode = new Node(value);
+			newNode.next = node.next;
+			if(node.next!=null){
+				node.next.prev = newNode;
+			}
+			node.next = newNode;
+			newNode.prev=node;
+		}
+
+		public void findPositionAndRemove(int position){
+			Node node = head;
+			int index = 1;
+			while(node!=null){
+				if(position==index){
+					if(node.next!=null){
+						node.next.prev = node.prev;
+					}
+					if(node.prev!=null) {
+						node.prev.next = node.next;
+					}
+				}
+				node = node.next;
+				index++;
+			}
+		}
 	}
 }
 
