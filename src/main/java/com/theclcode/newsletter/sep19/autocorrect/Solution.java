@@ -313,6 +313,10 @@ class Solution {
 					if(node.prev!=null) {
 						node.prev.next = node.next;
 					}
+					if(position==1){
+						head = node.next;
+					}
+					break;
 				}
 				node = node.next;
 				index++;
