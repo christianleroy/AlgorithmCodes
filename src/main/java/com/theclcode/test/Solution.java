@@ -49,8 +49,11 @@ public class Solution {
         node2.getAdjacent().add(node6);
 
         node3.getAdjacent().add(node7);
+        node3.getAdjacent().add(node6);
 
         node4.getAdjacent().add(node11);
+
+        node6.getAdjacent().add(node3);
 
         node7.getAdjacent().add(node8);
         node7.getAdjacent().add(node9);
@@ -58,59 +61,42 @@ public class Solution {
 
         Node node13 = new Node(13);
 
-        Node toFind = node11;
+        Node toFind = node13;
 //
-//        if(!searchByDfs(node1, toFind, new ArrayList<>())){
-//            System.out.println("Cannot find node " + toFind.getId());
-//        }
+        if(!searchByDfs(node1, toFind, new ArrayList<>())){
+            System.out.println("Cannot find node " + toFind.getId());
+        }
 //
 //        searchByBfs(node1, toFind, new ArrayList<>(), new LinkedList<>());
 
-        char[] str = "abcd".toCharArray();
-        permute(str, 0, str.length-1);
+        char[] str = "abc".toCharArray();
+//        permute(str, 0, str.length-1);
 //        combine(str, 0, 2);
 
     }
 
+
+
     public static boolean searchByDfs(Node source, Node destination, List<Integer> visited){
+        if(visited.contains(source.getId())){
+            return false;
+        }
+        System.out.println("Checking node "+source.getId()+"...");
         if(source.getId()==destination.getId()){
             System.out.println("Found destination "+destination.getId());
             return true;
         }
 
-        if(visited.contains(source.getId())){
-            return false;
-        }
         visited.add(source.getId());
-
-        System.out.println("Checking the children of "+source.getId());
-        for(Node node : source.getAdjacent()){
-            if(searchByDfs(node, destination, visited)){
+        System.out.println("Checking children of node "+source.getId());
+        for(Node adjacent : source.getAdjacent()){
+            if(searchByDfs(adjacent, destination, visited)){
                 return true;
             }
         }
         return false;
     }
 
-    public static boolean searchByBfs(Node source, Node destination, List<Integer> visited, LinkedList<Node> linkedList){
-        linkedList.add(source);
-        while(!linkedList.isEmpty()){
-            Node node = linkedList.remove();
-            System.out.println("Checking node "+node.getId());
-            if(node.getId()==destination.getId()){
-                System.out.println(destination.getId() + " found.");
-                return true;
-            }
-            if(visited.contains(node.getId())){
-                continue;
-            }
-            visited.add(node.getId());
-            for(Node adjacent : node.getAdjacent()){
-                linkedList.add(adjacent);
-            }
-        }
-        return false;
-    }
 
     public static void swap(char[] str, int a, int b){
       char temp = str[a];
@@ -120,30 +106,30 @@ public class Solution {
 
     public static void permute(char[] str, int start, int end){
         if(start==end){
-            System.out.println(Arrays.toString(str));
-        } else {
-            for(int i=start; i<=end; i++){
-                swap(str, start, i);
-                permute(str, start+1, end);
-                swap(str, start, i);
-            }
+            System.out.println(new String(str));
+            return;
+        }
+
+        for(int i=start; i<=end; i++){
+            swap(str, start, i);
+            permute(str, start+1, end);
+            swap(str, start, i);
         }
     }
 
-
-    static int limit = 2;
+    static int limit = 3;
     static char[] stack = new char[limit];
-    static int stackMarker=0;
+    static int stackMarker = 0;
 
     public static void combine(char[] str, int start, int limit){
         if(limit==0){
             System.out.println(new String(stack));
-        } else {
-            for(int i=start; i<=str.length-limit; i++){
-                stack[stackMarker++] = str[i];
-                combine(str, i+1, limit-1);
-                stack[--stackMarker] = 0;
-            }
+            return;
+        }
+        for(int i=start; i<=str.length-limit; i++){
+           stack[stackMarker++] = str[i];
+           combine(str, i+1, limit-1);
+           stack[--stackMarker] = '\0';
         }
 
     }
