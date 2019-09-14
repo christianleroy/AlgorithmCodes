@@ -39,23 +39,22 @@ public class Solution {
         if(x==grid.length-1){
             hasFoundPath=true;
             return;
-        } else {
-            if(x<grid.length-1 && grid[x+1][y] && !visited[x+1][y]){
-                visited[x+1][y]=true;
-                search(x+1, y);
-            }
-            if(y<grid.length-1 && grid[x][y+1] && !visited[x][y+1]){
-                visited[x][y+1]=true;
-                search(x,y+1);
-            }
-            if(y>0 && grid[x][y-1] && !visited[x][y-1]){
-                visited[x][y-1]=true;
-                search(x,y-1);
-            }
-            if(x>0 && grid[x-1][y] && !visited[x-1][y]){
-                visited[x-1][y]=true;
-                search(x-1,y);
-            }
+        }
+        if(!hasFoundPath && x<grid.length-1 && grid[x+1][y] && !visited[x+1][y]){
+            visited[x+1][y]=true;
+            search(x+1, y);
+        }
+        if(!hasFoundPath && y<grid.length-1 && grid[x][y+1] && !visited[x][y+1]){
+            visited[x][y+1]=true;
+            search(x,y+1);
+        }
+        if(!hasFoundPath && y>0 && grid[x][y-1] && !visited[x][y-1]){
+            visited[x][y-1]=true;
+            search(x,y-1);
+        }
+        if(!hasFoundPath && x>0 && grid[x-1][y] && !visited[x-1][y]){
+            visited[x-1][y]=true;
+            search(x-1,y);
         }
 
     }
