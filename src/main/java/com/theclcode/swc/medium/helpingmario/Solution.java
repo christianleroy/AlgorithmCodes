@@ -25,8 +25,10 @@ public class Solution {
                 topRowOpen = x==0 ? true : topRowOpen;
                 if(tick>=max && topRowOpen && !hasFoundPath){
                     visited=new boolean[max][max];
-                    for(int k=0; k<max; k++){
-                        search(0, k);
+                    for(int k=0; k<max && !hasFoundPath; k++){
+                        if(grid[0][k]){
+                            search(0, k);
+                        }
                     }
                 }
 
