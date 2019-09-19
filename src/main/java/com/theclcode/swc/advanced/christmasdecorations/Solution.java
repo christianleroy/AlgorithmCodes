@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class Solution {
 
     static int reds, blues, yellows, max;
+    static int[][] decorationModels;
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -15,7 +16,7 @@ public class Solution {
             blues = sc.nextInt();
             yellows = sc.nextInt();
             max=0;
-            int[][] decorationModels = new int[numberOfDecorations][3];
+            decorationModels = new int[numberOfDecorations][3];
             for(int i=0; i<numberOfDecorations; i++){
                 for(int j=0; j<3; j++){
                     decorationModels[i][j]=sc.nextInt();
@@ -58,6 +59,25 @@ public class Solution {
                 limit--;
                 produced++;
             }
+        }
+        return produced;
+    }
+
+    public static int produceDecorationModels(int model, int limit, int produced, int reds, int blues, int yellows){
+        if(model==decorationModels.length){
+            return produced;
+        }
+        for(int i=model; i<decorationModels.length; i++, limit++){
+            int limitCopy = limit;
+            while(limitCopy>0 && reds<=decorationModels[model][0] && blues<=decorationModels[model][1] && yellows<=decorationModels[model][2]){
+                reds-=decorationModels[model][0];
+                blues-=decorationModels[model][1];
+                yellows-=decorationModels[model][2];
+                limitCopy--;
+                produced++;
+            }
+            produceDecorationModels(model+1, limit, produced, reds, blues, yellows);
+//            produced,reds,blues,yellows=returnToDefault;
         }
         return produced;
     }
