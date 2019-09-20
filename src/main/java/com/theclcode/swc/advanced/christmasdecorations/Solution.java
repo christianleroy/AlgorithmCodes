@@ -34,20 +34,18 @@ public class Solution {
             }
             return;
         }
-        for(int i=model; i<decorationModels.length; i++, limit++){
-            int redsCopy = reds;
-            int bluesCopy = blues;
-            int yellowsCopy = yellows;
-            int producedCopy = produced;
-            for(int j=limit; j<=3; j++){
-                if(redsCopy>=decorationModels[i][0] && bluesCopy>=decorationModels[i][1] && yellowsCopy>=decorationModels[i][2]){
-                    redsCopy-=decorationModels[i][0];
-                    bluesCopy-=decorationModels[i][1];
-                    yellowsCopy-=decorationModels[i][2];
-                    producedCopy++;
-                }
-                produceDecorationModels(model+1, 1, producedCopy, redsCopy, bluesCopy, yellowsCopy);
+        int redsCopy = reds;
+        int bluesCopy = blues;
+        int yellowsCopy = yellows;
+        int producedCopy = produced;
+        for(int j=limit; j<=3; j++){
+            if(redsCopy>=decorationModels[model][0] && bluesCopy>=decorationModels[model][1] && yellowsCopy>=decorationModels[model][2]){
+                redsCopy-=decorationModels[model][0];
+                bluesCopy-=decorationModels[model][1];
+                yellowsCopy-=decorationModels[model][2];
+                producedCopy++;
             }
+            produceDecorationModels(model+1, 1, producedCopy, redsCopy, bluesCopy, yellowsCopy);
         }
     }
 
