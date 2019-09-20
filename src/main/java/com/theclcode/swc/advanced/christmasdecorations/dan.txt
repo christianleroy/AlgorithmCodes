@@ -1,0 +1,9 @@
+void traverse(int init) {
+    for (int i = init; i < N; i++) {
+        if (MODELCOUNT[i] < MAX && isValid(i)) {
+            take(i);
+            traverse(i);
+            remove(i);
+        }
+    }
+}
