@@ -27,6 +27,30 @@ public class Solution {
         }
     }
 
+    public static void produceDecorationModels(int model, int limit, int produced, int reds, int blues, int yellows){
+        if(model==decorationModels.length){
+            if(produced>max){
+                max=produced;
+            }
+            return;
+        }
+        for(int i=model; i<decorationModels.length; i++, limit++){
+            int redsCopy = reds;
+            int bluesCopy = blues;
+            int yellowsCopy = yellows;
+            int producedCopy = produced;
+            for(int j=limit; j<=3; j++){
+                if(redsCopy>=decorationModels[i][0] && bluesCopy>=decorationModels[i][1] && yellowsCopy>=decorationModels[i][2]){
+                    redsCopy-=decorationModels[i][0];
+                    bluesCopy-=decorationModels[i][1];
+                    yellowsCopy-=decorationModels[i][2];
+                    producedCopy++;
+                }
+                produceDecorationModels(model+1, 1, producedCopy, redsCopy, bluesCopy, yellowsCopy);
+            }
+        }
+    }
+
     public static void swap(int[][] dms, int left, int right){
         int[] temp = dms[right];
         dms[right] = dms[left];
@@ -35,50 +59,13 @@ public class Solution {
 
     public static void permute(int[][] dms, int start, int end){
         if(start==end){
-            int produced = produceDecorationModels(dms, reds, blues, yellows);
-            if(produced>max){
-                max = produced;
-            }
+            produceDecorationModels(0, 1, 0, reds, blues, yellows);
             return;
         }
-        for(int i=0; i<=end; i++){
-            swap(dms, i, start);
+        for(int i=start; i<=end; i++){
+            swap(dms, start, i);
             permute(dms, start+1, end);
-            swap(dms, i, start);
+            swap(dms, start, i);
         }
-    }
-
-    public static int produceDecorationModels(int[][] dms, int reds, int blues, int yellows){
-        int produced=0;
-        for(int i=0; i<dms.length; i++){
-            int limit=3;
-            if(limit>0 && reds>=dms[i][0] && blues>=dms[i][1] && yellows>=dms[i][2]){
-                reds-=dms[i][0];
-                blues-=dms[i][1];
-                yellows-=dms[i][2];
-                limit--;
-                produced++;
-            }
-        }
-        return produced;
-    }
-
-    public static int produceDecorationModels(int model, int limit, int produced, int reds, int blues, int yellows){
-        if(model==decorationModels.length){
-            return produced;
-        }
-        for(int i=model; i<decorationModels.length; i++, limit++){
-            int limitCopy = limit;
-            while(limitCopy>0 && reds<=decorationModels[model][0] && blues<=decorationModels[model][1] && yellows<=decorationModels[model][2]){
-                reds-=decorationModels[model][0];
-                blues-=decorationModels[model][1];
-                yellows-=decorationModels[model][2];
-                limitCopy--;
-                produced++;
-            }
-            produceDecorationModels(model+1, limit, produced, reds, blues, yellows);
-//            produced,reds,blues,yellows=returnToDefault;
-        }
-        return produced;
     }
 }
