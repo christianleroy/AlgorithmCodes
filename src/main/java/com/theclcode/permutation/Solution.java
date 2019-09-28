@@ -8,9 +8,9 @@ public class Solution {
 
     public static void main(String[] args){
         char[] arr = {'A', 'B', 'C', 'D'};
-        permute(arr, 0, arr.length-1);
+//        permute(arr, 0, arr.length-1);
         init(arr);
-        combine(arr, 0, 2);
+        combine(arr, 0, 4);
     }
 
     static void swap(char[] arr, int left, int right){
