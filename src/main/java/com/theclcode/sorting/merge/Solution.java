@@ -2,23 +2,25 @@ package com.theclcode.sorting.merge;
 
 import java.util.Arrays;
 
-//Unfinished
 public class Solution {
 
     public static void main(String[] args){
-        int[] inputArray = {3,4,5,6,1,2,3,4};
-        int middle = inputArray.length%2==0 ? inputArray.length/2-1 : inputArray.length/2;
-
-        merge(inputArray, 0, middle, inputArray.length-1);
+        int[] inputArray = {4,5,6,7,1,2,3};
+        mergeSort(inputArray, 0, inputArray.length-1);
+        System.out.println(Arrays.toString(inputArray));
     }
 
     public static void mergeSort(int[] array, int start, int end){
-
+        if(start<end){
+            int nextEnd = (start + end)/2;
+            mergeSort(array, start, nextEnd);
+            mergeSort(array, nextEnd+1, end);
+            merge(array, start, nextEnd, end);
+        }
     }
 
     public static void merge(int[] array, int start, int middle, int end){
-        System.out.println(Arrays.toString(array));
-        int[] left = new int[((middle+1)-(start+1))+1];
+        int[] left = new int[(middle-start)+1];
         int[] right = new int[(end+1)-(middle+1)];
 
         for(int i=0; i<left.length; i++){
@@ -37,9 +39,5 @@ public class Solution {
                 j++;
             }
         }
-
-        System.out.println(Arrays.toString(array));
-
-
     }
 }
