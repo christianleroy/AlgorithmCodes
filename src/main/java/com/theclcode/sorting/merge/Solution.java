@@ -5,7 +5,7 @@ import java.util.Arrays;
 public class Solution {
 
     public static void main(String[] args){
-        int[] inputArray = {4,5,6,7,1,2,3};
+        int[] inputArray = {1,2,3,4,5,6,7,8};
         mergeSort(inputArray, 0, inputArray.length-1);
         System.out.println(Arrays.toString(inputArray));
     }
@@ -31,6 +31,7 @@ public class Solution {
         }
 
         for(int index=start,i=0,j=0; index<=end; index++){
+            //checks if right is not yet empty or left is not empty and left is less than or equal its right counterpart
             if(j==right.length || (i<left.length && left[i]<=right[j])){
                 array[index]=left[i];
                 i++;
