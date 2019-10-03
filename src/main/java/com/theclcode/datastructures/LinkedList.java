@@ -3,15 +3,8 @@ package com.theclcode.datastructures;
 public class LinkedList<E>{
 
     public static void main(String[] args) {
-        LinkedList<String> stringLinkedList = new LinkedList<>();
-        stringLinkedList.add("A");
-        stringLinkedList.add("B");
-        stringLinkedList.add("C");
-        stringLinkedList.print();
-        stringLinkedList.push("-A");
-        stringLinkedList.print();
-        stringLinkedList.add("C");
-        stringLinkedList.print();
+        LinkedList<String> linkedList = new LinkedList<>();
+
     }
 
     private Node<E> head;
@@ -20,27 +13,25 @@ public class LinkedList<E>{
     public void add(E value){
         Node<E> node = new Node(value);
         if(head==null){
-            head = node;
-            tail=head;
+            head = tail = node;
         } else {
-           tail.next = node;
-           tail = node;
+            tail.next = node;
+            tail = node;
         }
     }
 
-    public void print(){
-        Node node=head;
-        while(node != null){
-            System.out.print(node.getValue());
-            node=node.next;
+    public E remove(){
+        if(head==null){
+            return null;
+        } else {
+            Node<E> node = head;
+            head = head.next;
+            return node.getValue();
         }
-        System.out.println();
     }
 
-    public void push(E value){
-        Node<E> node = new Node(value);
-        node.next = head;
-        head = node;
+    public boolean hasNext(){
+        return false;
     }
 
     public static class Node<E> {
