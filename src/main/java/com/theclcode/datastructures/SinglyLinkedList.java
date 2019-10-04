@@ -1,10 +1,19 @@
 package com.theclcode.datastructures;
 
-public class LinkedList<E>{
+public class SinglyLinkedList<E> {
 
     public static void main(String[] args) {
-        LinkedList<String> linkedList = new LinkedList<>();
+        SinglyLinkedList<String> singlyLinkedList = new SinglyLinkedList<>();
+        singlyLinkedList.add("a");
+        singlyLinkedList.add("b");
+        singlyLinkedList.add("c");
+        singlyLinkedList.remove();
+        Node<String> node = singlyLinkedList.getHead();
 
+        while(node!=null){
+            System.out.println(node.getValue());
+            node = node.next;
+        }
     }
 
     private Node<E> head;
@@ -20,6 +29,10 @@ public class LinkedList<E>{
         }
     }
 
+    public boolean isEmpty(){
+        return head==null;
+    }
+
     public E remove(){
         if(head==null){
             return null;
@@ -30,8 +43,8 @@ public class LinkedList<E>{
         }
     }
 
-    public boolean hasNext(){
-        return false;
+    public Node<E> getHead() {
+        return head;
     }
 
     public static class Node<E> {
