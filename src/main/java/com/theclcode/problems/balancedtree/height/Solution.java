@@ -18,8 +18,9 @@ public class Solution {
         }
 
         public boolean isBalanced(){
-            int result = findHeight(node, 0);
-            if(result==0){
+            int left = findHeight(node.left, 0);
+            int right = findHeight(node.right, 0);
+            if(left-right>=-1 && left-right<=1){
                 return true;
             }
             return false;
@@ -32,7 +33,11 @@ public class Solution {
             height++;
             int leftHeight = findHeight(node.left, height);
             int rightHeight = findHeight(node.right, height);
-            return height;
+            if(leftHeight>=rightHeight){
+                return leftHeight;
+            } else {
+                return rightHeight;
+            }
         }
     }
 
@@ -40,12 +45,24 @@ public class Solution {
         Node one = new Node(1);
         Node two = new Node(2);
         Node three = new Node(3);
+        Node four = new Node(4);
+        Node five = new Node(5);
+        Node six = new Node(6);
+        Node seven = new Node(7);
+        Node eight = new Node(8);
+        Node nine = new Node(9);
+        Node ten = new Node(10);
 
         one.left=two;
-        two.left=three;
-
+        one.right=three;
+        two.left=four;
+        two.right=five;
+        four.left=six;
+        four.right=eight;
+        five.right=seven;
+        three.right=nine;
+        nine.right=ten;
         boolean res = new BalancedTree(one).isBalanced();
         System.out.print(res);
-
     }
 }
