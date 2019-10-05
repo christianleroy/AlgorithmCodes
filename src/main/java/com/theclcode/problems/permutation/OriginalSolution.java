@@ -1,4 +1,4 @@
-package com.theclcode.permutation;
+package com.theclcode.problems.permutation;
 
 import java.util.Scanner;
 

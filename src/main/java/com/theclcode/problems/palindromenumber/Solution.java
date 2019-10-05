@@ -1,4 +1,4 @@
-package com.theclcode.palindromenumber;
+package com.theclcode.problems.palindromenumber;
 
 import java.util.Scanner;
 
