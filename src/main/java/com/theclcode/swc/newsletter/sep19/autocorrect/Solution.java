@@ -1,4 +1,4 @@
-package com.theclcode.newsletter.sep19.autocorrect;
+package com.theclcode.swc.newsletter.sep19.autocorrect;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

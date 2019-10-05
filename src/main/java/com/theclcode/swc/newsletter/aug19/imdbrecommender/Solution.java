@@ -1,4 +1,4 @@
-package com.theclcode.newsletter.aug19.imdbrecommender;
+package com.theclcode.swc.newsletter.aug19.imdbrecommender;
 
 import java.util.Scanner;
 import java.util.*;

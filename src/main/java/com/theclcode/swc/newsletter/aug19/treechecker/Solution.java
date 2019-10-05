@@ -1,4 +1,4 @@
-package com.theclcode.newsletter.aug19.treechecker;
+package com.theclcode.swc.newsletter.aug19.treechecker;
 
 import java.util.Scanner;
 

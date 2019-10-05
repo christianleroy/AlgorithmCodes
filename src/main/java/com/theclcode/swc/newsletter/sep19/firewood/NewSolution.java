@@ -1,4 +1,4 @@
-package com.theclcode.newsletter.sep19.firewood;
+package com.theclcode.swc.newsletter.sep19.firewood;
 
 import java.util.Scanner;
 
