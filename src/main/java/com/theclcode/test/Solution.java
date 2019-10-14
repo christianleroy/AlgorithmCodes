@@ -1,51 +1,38 @@
 package com.theclcode.test;
 
-import java.util.*;
-
 public class Solution {
-    static int stackMarker;
-    static char[] stack;
+    static long[] powers = new long[12];
+    static final int BASE = 12;
+    static {
+        for(int i=0; i<=11; i++){
+            if(i==0){
+                powers[0]=1;
+            } else if(i==1){
+                powers[i] = BASE;
+            } else {
+                powers[i] = powers[i-1]*BASE;
+            }
+        }
+    }
 
     public static void main(String[] args) {
-        char[] str = {'a','b','c'};
-//        permute(str, 0, str.length-1);
-
-        stackMarker=0;
-        stack=new char[2];
-        combine(str, 0, 2);
-
-
+        String test = "test";
+        long start = System.nanoTime();
+        long result = convertToRadix("ABC");
+        System.out.println(result);
+        result = convertToRadix("BCA");
+        System.out.println(result);
+        long elapsedTime = System.nanoTime() - start;
+        System.out.println(elapsedTime);
     }
 
-    public static void permute(char[] str, int start, int end){
-        if(start==end){
-            System.out.println(new String(str));
-            return;
+    public static long convertToRadix(String word){
+        int length = word.length()-1;
+        int hash=0;
+        for(int x=0, y=length; x<=length; x++, y--){
+            int b = word.charAt(x);
+            hash+=word.charAt(x)*powers[y];
         }
-
-        for(int i=start; i<str.length; i++){
-            swap(str, start, i);
-            permute(str, start+1, end);
-            swap(str, start, i);
-        }
-    }
-
-    private static void swap(char[] str, int left, int right) {
-        char temp = str[right];
-        str[right] = str[left];
-        str[left] = temp;
-    }
-
-    public static void combine(char[] str, int start, int limit){
-        if(limit==0){
-            System.out.println(new String(stack));
-            return;
-        }
-
-        for(int i=start; i<=str.length-limit; i++){
-            stack[stackMarker++]=str[i];
-            combine(str, i+1, limit-1);
-            stack[--stackMarker]='\0';
-        }
+        return hash;
     }
 }
