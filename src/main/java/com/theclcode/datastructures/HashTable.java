@@ -2,9 +2,9 @@ package com.theclcode.datastructures;
 
 import java.util.Scanner;
 
-public class HashTable {
+public class HashTable<K, V> {
 
-    LinkedList<String>[] table;
+    LinkedList<K, V>[] table;
     int capacity;
     static long[] powers = new long[12]; //assuming longest string is 12
     static final int BASE = 37;
@@ -25,28 +25,29 @@ public class HashTable {
         table = new LinkedList[capacity];
     }
 
-    public void put(String key, String value){
-        int index = (int)(hash(key) % capacity);
+    public void put(K key, V value){
+        int index = (int)(hash(key.toString()) % capacity);
+        index = index < 0 ? index*(-1) : index;
         if(table[index]==null){
-            LinkedList<String> linkedList = new LinkedList<>();
-            linkedList.add(value);
+            LinkedList linkedList = new LinkedList();
+            linkedList.add(new Node(key, value));
             table[index] = linkedList;
         } else {
-            if(find(index, value)==null){
-                table[index].add(value);
-            } else {
 
-            }
         }
     }
 
-    public String find(int index, String value){
-        Node<String> node = table[index].head;
-        while(node!=null){
-            if(node.value.equals(value)){
-                return node.value;
+    public V get(K key){
+        int index = (int)(hash(key.toString()) % capacity);
+        if(table[index]!=null){
+            LinkedList<K, V> linkedList = table[index];
+            Node<K, V> node = linkedList.head;
+            while(node!=null){
+                if(key==node.key){
+                    return node.value;
+                }
+                node = node.next;
             }
-            node = node.next;
         }
         return null;
     }
@@ -61,28 +62,30 @@ public class HashTable {
     }
 
     public static void main(String[] args) {
-        HashTable hashTable = new HashTable(701);
+        HashTable<String, Integer> hashTable = new HashTable<>(701);
 
-        boolean cont = true;
-        Scanner sc;
-        while(cont){
-            sc = new Scanner(System.in);
-            System.out.print("Enter word: ");
-            String word = sc.nextLine();
-            hashTable.put(word, word);
-            System.out.print("0 to quit: ");
-            cont = sc.nextInt()==0 ? false : true;
-        }
-        System.out.println("test");
+//        boolean cont = true;
+//        Scanner sc;
+//        while(cont){
+//            sc = new Scanner(System.in);
+//            System.out.print("Enter word: ");
+//            String word = sc.nextLine();
+//            hashTable.put(word, word);
+//            System.out.print("0 to quit: ");
+//            cont = sc.nextInt()==0 ? false : true;
+//        }
+        hashTable.put("a", 23);
+        int x = hashTable.get("a");
+        hashTable.put("a", 25);
+        System.out.println(x);
     }
 
-    class LinkedList<E>{
+    class LinkedList<K, V> {
 
-        private Node<E> head;
-        private Node<E> tail;
+        private Node<K, V> head;
+        private Node<K, V> tail;
 
-        public void add(E value){
-            Node<E> node = new Node(value);
+        public void add(Node<K, V> node){
             if(head==null){
                 head = tail = node;
             } else {
@@ -91,11 +94,11 @@ public class HashTable {
             }
         }
 
-        public E remove(){
+        public V remove(){
             if(head==null){
                 return null;
             } else {
-                E value = head.value;
+                V value = head.value;
                 head = head.next;
                 if(head != null){
                     head.prev = null;
@@ -109,12 +112,14 @@ public class HashTable {
         }
     }
 
-    class Node<E>{
-        public E value;
-        public Node<E> next;
-        public Node<E> prev;
+    class Node<K, V>{
+        public K key;
+        public V value;
+        public Node<K, V> next;
+        public Node<K, V> prev;
 
-        public Node(E value) {
+        public Node(K key, V value) {
+            this.key = key;
             this.value = value;
         }
     }
