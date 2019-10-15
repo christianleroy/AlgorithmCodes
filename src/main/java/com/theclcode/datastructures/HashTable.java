@@ -1,7 +1,5 @@
 package com.theclcode.datastructures;
 
-import java.util.Scanner;
-
 public class HashTable<K, V> {
 
     LinkedList<K, V>[] table;
@@ -9,14 +7,10 @@ public class HashTable<K, V> {
     static long[] powers = new long[12]; //assuming longest string is 12
     static final int BASE = 37;
     static {
-        for(int i=0; i<=11; i++){
-            if(i==0){
-                powers[0]=1;
-            } else if(i==1){
-                powers[i] = BASE;
-            } else {
-                powers[i] = powers[i-1]*BASE;
-            }
+        powers[0]=1;
+        powers[1] = BASE;
+        for(int i=2; i<=11; i++){
+            powers[i] = powers[i-1]*BASE;
         }
     }
 
@@ -62,22 +56,7 @@ public class HashTable<K, V> {
     }
 
     public static void main(String[] args) {
-        HashTable<String, Integer> hashTable = new HashTable<>(701);
 
-//        boolean cont = true;
-//        Scanner sc;
-//        while(cont){
-//            sc = new Scanner(System.in);
-//            System.out.print("Enter word: ");
-//            String word = sc.nextLine();
-//            hashTable.put(word, word);
-//            System.out.print("0 to quit: ");
-//            cont = sc.nextInt()==0 ? false : true;
-//        }
-        hashTable.put("a", 23);
-        int x = hashTable.get("a");
-        hashTable.put("a", 25);
-        System.out.println(x);
     }
 
     class LinkedList<K, V> {
@@ -106,7 +85,6 @@ public class HashTable<K, V> {
                 return value;
             }
         }
-
         public boolean isEmpty(){
             return head == null;
         }
