@@ -1,11 +1,11 @@
-package com.theclcode.hashing.rabinkarp;
+package com.theclcode.hashing.rabinfingerprint;
 
 import java.util.Arrays;
 
 public class RabinFingerprint {
 
-    final int BASE;
-    final int STRING_LIMIT;
+    final int BASE; //The range of expected characters. I.E, alphabet will give you BASE of 26.
+    final int STRING_LIMIT; //The max length expected of String to be hashed.
     long[] powers;
 
     public RabinFingerprint(int base, int stringLimit){
@@ -31,12 +31,12 @@ public class RabinFingerprint {
         );
     }
 
-    public long hash(String word){
-        int mod = 101;
+    public int hash(String word){
+        int mod = Integer.MAX_VALUE;
         long hash=0;
         for(int i=0, j=word.length()-1; i<word.length(); i++, j--){
-            hash+=(word.charAt(i)*powers[j]) % mod;
+            hash+=(word.charAt(i)*powers[j]);
         }
-        return hash;
+        return (int)(hash%mod);
     }
 }

@@ -13,8 +13,8 @@ public class Solution {
         Scanner sc = new Scanner(System.in);
         int testCases = sc.nextInt();
         for(int tc=1; tc<=testCases; tc++){
-            int numberOfDecorations = sc.nextInt();
             supply = new int[]{sc.nextInt(), sc.nextInt(), sc.nextInt()};
+            int numberOfDecorations = sc.nextInt();
             max = produced = 0;
             decorationModels = new int[numberOfDecorations][3];
             modelCount = new int[numberOfDecorations];
@@ -24,7 +24,7 @@ public class Solution {
                 }
             }
             traverse(0);
-            System.out.println("#"+tc+" "+max);
+            System.out.println("Case #"+tc+": "+max);
         }
     }
 
