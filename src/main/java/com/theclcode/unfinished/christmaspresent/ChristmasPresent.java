@@ -1,4 +1,4 @@
-package com.theclcode.unfinished;
+package com.theclcode.unfinished.christmaspresent;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -101,29 +101,63 @@ public class ChristmasPresent {
 //        }
 //    }
 
-    static class Node {
-        int value;
-        Node next;
-        Node(int value){
+    static class Node<E> {
+        E value;
+        Node<E> next;
+        Node<E> prev;
+        Node(E value){
             this.value = value;
         }
     }
 
+    static class DoublyLinkedList<E> {
+        private Node head;
+        private Node tail;
+
+        public void add(E value){
+            Node<E> node = new Node<>(value);
+            if(head == null){
+                head = tail = node;
+            } else {
+                tail.next = node;
+                node.prev = tail;
+                tail = node;
+            }
+        }
+
+        public E remove(){
+            if(head == null){
+                return null;
+            } else {
+                Node<E> node = head;
+                head = head.next;
+                if(head != null){
+                    head.prev = null;
+                }
+                return node.value;
+            }
+        }
+
+    }
+
     public static void main(String[] args) {
-        int[] gifts = new int[]{3,5,1,6,7,4,0,2};
+//        int[] gifts = new int[]{3,5,1,6,7,4,0,2};
+        int[] gifts = new int[]{6,0,1,2,3,4,5};
         boolean[] visited = new boolean[gifts.length];
         for(int i=0; i<gifts.length; i++){
             int index;
-
+            DoublyLinkedList<Integer> cycles = new DoublyLinkedList<>();
             if(!visited[i]){
-                index = gifts[i];
+                index = i;
                 visited[i] = true;
+                cycles.add(i);
                 System.out.print(index+" ");
                 do {
                     index = gifts[index];
                     visited[index]=true;
+                    cycles.add(index);
                     System.out.print(index+" ");
-                }while(index!=gifts[i]);
+                }while(index!=i);
             }
             System.out.println();
 
