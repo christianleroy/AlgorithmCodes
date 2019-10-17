@@ -1,6 +1,7 @@
 package com.theclcode.hashing.rollinghash;
 
 //Rabin Karp Rolling Hash
+//Unfinished, not yet rolling.
 public class RollingHash {
 
     final static int BASE = 37;

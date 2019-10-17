@@ -1,18 +1,17 @@
-package com.theclcode.swc.hard.leafvillage;
+package com.theclcode.unfinished.leafvillage;
 
 import java.util.Scanner;
 
+//Incomplete
+public class Solution {
 
-//Timeout Exceeded
-public class TimeOutExceedSolution {
-
+    public static final String NE = "NE ";
     static int ninjaIndex =1;
     static Ninja[] ninjas = new Ninja[100];
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int testCases = sc.nextInt();
-
         for(int t=1; t<=testCases; t++){
             int commands = sc.nextInt();
             while(commands>0){
@@ -52,43 +51,55 @@ public class TimeOutExceedSolution {
 
 
     public static void findMaster(int ninjaId){
-        if(ninjas[ninjaId-1]==null){
-            System.out.print("NE ");
-            return;
-        }
-        Ninja ninja = ninjas[ninjaId-1];
-        Ninja masterNinja = null;
-        int masterNinjaAgeDifference = Integer.MAX_VALUE;
-        int masterNinjaPowerDifference = Integer.MAX_VALUE;
+        sortNinjas();
+        Ninja ninja=null;
         for(int i=0; i<ninjaIndex-1; i++){
-            Ninja candidateMasterNinja = ninjas[i];
-            if(candidateMasterNinja==ninja
-                    || candidateMasterNinja.getAge()<ninja.getAge()
-                    || candidateMasterNinja.getPower()<ninja.getPower()){
-                continue;
-            }
-            if(masterNinja==null){
-                masterNinja=candidateMasterNinja;
-                masterNinjaAgeDifference = candidateMasterNinja.getAge()-ninja.getAge();
-                masterNinjaPowerDifference = candidateMasterNinja.getPower()-ninja.getPower();
-            } else {
-                if(candidateMasterNinja.getAge()-ninja.getAge()<masterNinjaAgeDifference){
-                    masterNinja=candidateMasterNinja;
-                    masterNinjaAgeDifference = candidateMasterNinja.getAge()-ninja.getAge();
-                    masterNinjaPowerDifference = candidateMasterNinja.getPower()-ninja.getPower();
-                } else if(candidateMasterNinja.getAge()-ninja.getAge()==masterNinjaAgeDifference){
-                    if(candidateMasterNinja.getPower()-ninja.getPower()<masterNinjaPowerDifference){
-                        masterNinja=candidateMasterNinja;
-                        masterNinjaAgeDifference = candidateMasterNinja.getAge()-ninja.getAge();
-                        masterNinjaPowerDifference = candidateMasterNinja.getPower()-ninja.getPower();
+            if(ninjas[i].getId()==ninjaId){
+                ninja = ninjas[i];
+                if(i>0 && ninjas[i-1].getAge()>=ninja.getAge()){
+                    System.out.print(ninjas[i-1].getId()+" ");
+                    break;
+                } else {
+                    while(i<ninjaIndex-1){
+                        if(i<ninjaIndex-2){
+                            Ninja candidateMasterNinja = ninjas[i+1];
+                            if(candidateMasterNinja.getAge()>ninja.getAge() && candidateMasterNinja.getPower()>=ninja.getPower()){
+                                System.out.print(candidateMasterNinja.getId()+" ");
+                                return;
+                            }
+                        }
+                        i++;
                     }
                 }
+                System.out.print(NE);
+                return;
             }
         }
-        if(masterNinja==null){
-            System.out.print("NE ");
-        } else {
-            System.out.print(masterNinja.getId()+" ");
+        if(ninja==null){
+            System.out.print(NE);
+        }
+    }
+
+    public static void sortNinjas(){
+        for(int i=1; i<ninjaIndex-1; i++){
+            Ninja key = ninjas[i];
+            int j = i-1;
+            int keyAge = key.getAge();
+            int keyPower = key.getPower();
+            while(j>=0 && keyAge<=ninjas[j].getAge()){
+                if(keyAge==ninjas[j].getAge()){
+                    if(keyPower>ninjas[j].getPower()){
+                        ninjas[j+1]=ninjas[j];
+                        ninjas[j]=key;
+                    }
+                } else {
+                    if(keyAge<ninjas[j].getAge()){
+                        ninjas[j+1]=ninjas[j];
+                        ninjas[j]=key;
+                    }
+                }
+                j--;
+            }
         }
     }
 
@@ -96,25 +107,20 @@ public class TimeOutExceedSolution {
         private int id;
         private int age;
         private int power;
-
         public Ninja(int id, int age, int power) {
             this.id=id;
             this.age=age;
             this.power=power;
         }
-
         public int getId() {
             return id;
         }
-
         public int getAge() {
             return age;
         }
-
         public int getPower() {
             return power;
         }
-
     }
 
 }
