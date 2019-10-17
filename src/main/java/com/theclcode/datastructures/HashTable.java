@@ -56,9 +56,7 @@ public class HashTable<K, V> {
             return null;
         }
         while (node != null) {
-            if(key == null && node.key == null){
-                return node;
-            } else if (key instanceof String) {
+            if (key instanceof String) {
                 String _key = (String) key;
                 String nodeKey = (String) node.key;
                 if (hash(key) == hash(node.key) && _key.length() == nodeKey.length()) {
@@ -73,7 +71,7 @@ public class HashTable<K, V> {
                         return node;
                     }
                 }
-            } else if(node.key.equals(key)){
+            } else if((key == null && node.key == null) || node.key.equals(key)){
                 return node;
             }
             node = node.next;
@@ -150,7 +148,11 @@ public class HashTable<K, V> {
         mgaPeople.put(people[2], 25);
         mgaPeople.put(people[2], 26);
         mgaPeople.put(null, null);
+        System.out.println(mgaPeople.get(null));
         mgaPeople.put(null, 16);
+        System.out.println(mgaPeople.get(null));
+        mgaPeople.remove(null);
+        System.out.println(mgaPeople.get(null));
 
         HashTable<String, Integer> map = new HashTable<>(1);
         String name = "Tristan";
