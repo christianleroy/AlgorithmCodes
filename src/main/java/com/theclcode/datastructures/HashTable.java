@@ -52,9 +52,6 @@ public class HashTable<K, V> {
     private Node<K, V> find(K key) {
         int index = getAddress(key);
         Node<K, V> node = table[index];
-        if(node == null){
-            return null;
-        }
         while (node != null) {
             if (key instanceof String) {
                 String _key = (String) key;
