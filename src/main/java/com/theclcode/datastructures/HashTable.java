@@ -18,7 +18,7 @@ public class HashTable<K, V> {
     @SuppressWarnings("unchecked")
     public HashTable(int capacity){
         this.capacity = capacity;
-        table = (Node<K, V>[]) new Node[capacity];
+        table = new Node[capacity];
     }
 
     public void put(K key, V value){
@@ -44,9 +44,8 @@ public class HashTable<K, V> {
         Node<K, V> node = find(key);
         if(node == null){
             return null;
-        } else {
-            return node.value;
         }
+        return node.value;
     }
 
     private Node<K, V> find(K key) {
@@ -56,7 +55,7 @@ public class HashTable<K, V> {
             if (key instanceof String) {
                 String _key = (String) key;
                 String nodeKey = (String) node.key;
-                if (hash(key) == hash(node.key) && _key.length() == nodeKey.length()) {
+                if (_key.length() == nodeKey.length() && hash(key) == hash(node.key)) {
                     boolean isEqual = true;
                     for (char i = 0; i < _key.length(); i++) {
                         if (_key.charAt(i) != nodeKey.charAt(i)) {
@@ -68,7 +67,7 @@ public class HashTable<K, V> {
                         return node;
                     }
                 }
-            } else if((key == null && node.key == null) || node.key.equals(key)){
+            } else if((key == null && node.key == null) || (node.key != null && node.key.equals(key))){
                 return node;
             }
             node = node.next;
@@ -90,6 +89,10 @@ public class HashTable<K, V> {
                 table[index] = node.next;
             }
         }
+    }
+
+    public boolean contains(K key){
+        return find(key) != null;
     }
 
     private int getAddress(K key){
@@ -156,9 +159,12 @@ public class HashTable<K, V> {
         map.put(name, 25);
         map.put("John", 45);
         map.put("Side", 35);
+        System.out.println(map.contains("Side"));
         System.out.println(map.get("Side"));
         map.remove("Side");
+        System.out.println(map.contains("Side"));
         System.out.println(map.get("Side"));
+        System.out.print(map.contains("Tristan"));
     }
 
     public static class Person {
