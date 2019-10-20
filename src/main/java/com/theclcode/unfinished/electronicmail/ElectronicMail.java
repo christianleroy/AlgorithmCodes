@@ -11,14 +11,12 @@ public class ElectronicMail {
 	static final int GETCOUNT = 2;
 	static final int DELETEMAIL = 3;
 	static final int SEARCHMAIL = 4;
-	static HashTable<Word, Boolean> words;
 	static HashTable<Integer, User> users;
 	static int inboxCapacity;
 
 	/**************** START OF USER SOLUTION ****************/
 
 	static void init(int N, int K) {
-		words = new HashTable<>();
 		users = new HashTable<>(307);
 		inboxCapacity = K;
 	}
@@ -28,6 +26,7 @@ public class ElectronicMail {
 		Message message = new Message();
 		DoublyLinkedList<Word> subjectObj = new DoublyLinkedList<>();
 		message.setSubject(subjectObj);
+		HashTable<Word, Boolean> words = new HashTable<>();
 		for(int i=0; i<subject.length; i++){
 			if(subject[i]=='\0' || subject[i]==' '){
 				if(!words.contains(word)){
@@ -44,18 +43,35 @@ public class ElectronicMail {
 		}
 
 		for(int r=0; r<cnt; r++){
+			User user;
+			HashTable<Word, Boolean> uniqueWordsInSubject = new HashTable<>();
 			if(users.contains(rIDs[r])){
-				User user = users.get(rIDs[r]);
+				user = users.get(rIDs[r]);
 				if(user.getInbox().size>=inboxCapacity){
 					user.getInbox().remove();
 				}
 				user.getInbox().add(message);
 			} else {
-				User user = new User(rIDs[r]);
+				user = new User(rIDs[r]);
 				DoublyLinkedList<Message> inbox = new DoublyLinkedList<>();
 				inbox.add(message);
 				user.setInbox(inbox);
 				users.put(rIDs[r], user);
+			}
+			DoublyLinkedList.Node<Word> node = message.getSubject().getHead();
+			while(node != null){
+				if(uniqueWordsInSubject.contains(word)){
+					node = node.next;
+					continue;
+				}
+				uniqueWordsInSubject.put(word, true);
+				if(!user.getUniqueWords().contains(node.getValue())){
+					user.getUniqueWords().put(node.getValue(), 1);
+				} else {
+					int count = user.getUniqueWords().get(node.getValue());
+					user.getUniqueWords().put(node.getValue(), ++count);
+				}
+				node = node.next;
 			}
 		}
 	}
@@ -113,7 +129,20 @@ public class ElectronicMail {
 	}
 
 	static int searchMail(int uID, char[] text) {
-
+		User user = users.get(uID);
+		if(user != null){
+			Word word = new Word();
+			for(int i=0; i<text.length; i++){
+				if(text[i] == '\0'){
+					break;
+				}
+				word.add(text[i]);
+			}
+			if(user.getUniqueWords().contains(word)){
+				return user.getUniqueWords().get(word);
+			}
+			return 0;
+		}
 		return 0;
 	}
 
@@ -490,7 +519,7 @@ public class ElectronicMail {
 
 	static class User {
 		int uid;
-		HashTable<Word, Boolean> uniqueWords;
+		HashTable<Word, Integer> uniqueWords = new HashTable<>();
 		DoublyLinkedList<Message> inbox;
 		User(int uid){
 			this.uid = uid;
@@ -502,6 +531,10 @@ public class ElectronicMail {
 
 		public DoublyLinkedList<Message> getInbox() {
 			return inbox;
+		}
+
+		public HashTable<ElectronicMail.Word, Integer> getUniqueWords() {
+			return uniqueWords;
 		}
 
 		@Override
