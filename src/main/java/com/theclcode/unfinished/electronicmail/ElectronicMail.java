@@ -10,25 +10,109 @@ public class ElectronicMail {
 	static final int DELETEMAIL = 3;
 	static final int SEARCHMAIL = 4;
 	static HashTable<Word, Integer> words;
+	static HashTable<Integer, DoublyLinkedList<Message>> users;
+	static int inboxCapacity;
 
 	/**************** START OF USER SOLUTION ****************/
 
 	static void init(int N, int K) {
 		words = new HashTable<>();
+		users = new HashTable<>(307);
+		inboxCapacity = K;
 	}
 
 	static void sendMail(char[] subject, int uID, int cnt, int[] rIDs) {
+		Word word = new Word();
+		HashTable<Word, Boolean> uniqueWordsInSubject = new HashTable<>();
+		Message message = new Message();
+		DoublyLinkedList<Word> subjectObj = new DoublyLinkedList<>();
+		message.setSubject(subjectObj);
+		for(int i=0; i<subject.length; i++){
+			if(subject[i]=='\0' || subject[i]==' '){
+				if(words.contains(word)){
+					if(!uniqueWordsInSubject.contains(word)){
+						int emailCount = words.get(word);
+						words.put(word, emailCount+cnt);
+						uniqueWordsInSubject.put(word, true);
+					}
+				} else {
+					words.put(word, cnt);
+				}
+				subjectObj.add(word);
+				if(subject[i] == '\0'){
+					break;
+				}
+				word = new Word();
+			} else {
+				word.add(subject[i]);
+			}
+		}
 
+		for(int r=0; r<cnt; r++){
+			if(users.contains(rIDs[r])){
+				DoublyLinkedList<Message> inbox = users.get(rIDs[r]);
+				if(inbox.size>=inboxCapacity){
+					inbox.remove();
+				}
+				inbox.add(message);
+			} else {
+				DoublyLinkedList<Message> inbox = new DoublyLinkedList<>();
+				inbox.add(message);
+				users.put(rIDs[r], inbox);
+			}
+		}
 	}
 
 	static int getCount(int uID) {
-
+		if(users.contains(uID)){
+			DoublyLinkedList<Message> inbox = users.get(uID);
+			return inbox.size;
+		}
 		return 0;
 	}
 
 	static int deleteMail(int uID, char[] subject) {
+		DoublyLinkedList<Message> inbox = users.get(uID);
+		DoublyLinkedList<Word> subjectObj = new DoublyLinkedList<>();
+		Word word = new Word();
+		int deleted = 0;
+		for(int i=0; i<subject.length; i++){
+			if(subject[i]=='\0' || subject[i]==' '){
+				subjectObj.add(word);
+				if(subject[i] == '\0'){
+					break;
+				}
+				word = new Word();
+			} else {
+				word.add(subject[i]);
+			}
+		}
 
-		return 0;
+		DoublyLinkedList.Node<Message> inboxNode = inbox.getHead();
+		while(inboxNode != null){
+			Message message = inboxNode.getValue();
+			if(message.getSubject().getSize() == subjectObj.getSize()){
+				DoublyLinkedList<Word> messageSubject = message.getSubject();
+				boolean isEqual = true;
+				DoublyLinkedList.Node<Word> messageSubjectWordNode = messageSubject.getHead();
+				DoublyLinkedList.Node<Word> subjectObjWordNode = subjectObj.getHead();
+				while(messageSubjectWordNode != null){
+					if(!messageSubjectWordNode.getValue().equals(subjectObjWordNode.getValue())){
+						isEqual = false;
+						break;
+					}
+					subjectObjWordNode = subjectObjWordNode.next;
+					messageSubjectWordNode = messageSubjectWordNode.next;
+				}
+				if(isEqual){
+					inbox.remove(inboxNode);
+					deleted++;
+				}
+			}
+			inboxNode = inboxNode.next;
+		}
+
+		return deleted;
 	}
 
 	static int searchMail(int uID, char[] text) {
@@ -271,10 +355,10 @@ public class ElectronicMail {
 			int index = getAddress(key);
 			Node<K, V> node = table[index];
 			while(node != null){
-				if(key instanceof String){
+				if(key instanceof String || key instanceof Word){
 					String _key = key.toString();
 					String nodeKey = node.key.toString();
-					if(_key.length() == nodeKey.length() && hash(key) == hash(node.key)){
+					if(_key.length() == nodeKey.length() && key.equals(node.key)){
 						boolean isEqual = true;
 						for(int i=0; i<_key.length(); i++){
 							if(_key.charAt(i) != nodeKey.charAt(i)){
@@ -301,7 +385,7 @@ public class ElectronicMail {
 		public int hash(K key){
 			String word = key.toString();
 			int hash = 0;
-			for(int i=0, y=3; i<word.length(); i++, y--){
+			for(int i=0, y=2; i<word.length(); i++, y--){
 				if(i<3){
 					hash += word.charAt(i) * POWERS[y];
 				} else {
@@ -327,7 +411,7 @@ public class ElectronicMail {
 
 		Node<E> head;
 		Node<E> tail;
-		int size = 0;
+		private int size = 0;
 
 		public void add(E value){
 			Node<E> node = new Node(value);
@@ -350,33 +434,48 @@ public class ElectronicMail {
 			if(head != null){
 				head.prev = null;
 			}
+			size--;
 			return node.value;
 		}
 
-		public boolean isEmpty(){
-			return size == 0;
+		public E remove(Node<E> node){
+			Node<E> existingNode = getHead();
+			while(existingNode != null){
+				if(node == existingNode){
+					if(node.prev != null){
+						node.prev.next = node.next;
+					}
+					if(node.next != null){
+						node.next.prev = node.prev;
+					}
+				}
+				existingNode = existingNode.next;
+			}
+			return node.getValue();
 		}
 
-		class Node<E> {
+		public Node<E> getHead(){
+			if(head == null){
+				return null;
+			}
+			return head;
+		}
+
+		public int getSize() {
+			return size;
+		}
+
+		static class Node<E> {
 			E value;
 			Node<E> prev;
 			Node<E> next;
 			Node(E value){
 				this.value = value;
 			}
-		}
-	}
 
-	static class User {
-		private int uid;
-		private DoublyLinkedList<Message> inbox; //We do this for easy LIFO when reached max capacity.
-
-		public int getUid() {
-			return uid;
-		}
-
-		public DoublyLinkedList<Message> getInbox() {
-			return inbox;
+			public E getValue() {
+				return value;
+			}
 		}
 	}
 
@@ -386,13 +485,39 @@ public class ElectronicMail {
 		public DoublyLinkedList<Word> getSubject() {
 			return subject;
 		}
+
+		public void setSubject(DoublyLinkedList<Word> subject) {
+			this.subject = subject;
+		}
 	}
 
 	static class Word {
-		char[] value;
 
-		public char[] getValue() {
-			return value;
+		private char[] value = new char[10];
+		private int index = 0;
+
+		public void add(char c){
+			value[index++] = c;
+		}
+
+		@Override
+		public String toString() {
+			return new String(value);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if(obj.toString().length() == toString().length()){
+				String find = obj.toString();
+				String value = toString();
+				for(int i=0; i<value.length(); i++){
+					if(find.charAt(i) != value.charAt(i)){
+						return false;
+					}
+				}
+				return true;
+			}
+			return false;
 		}
 	}
 }
