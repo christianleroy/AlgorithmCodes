@@ -1,5 +1,7 @@
 package com.theclcode.unfinished.electronicmail;
 
+import com.sun.xml.internal.ws.api.model.MEP;
+
 import java.io.*;
 import java.util.StringTokenizer;
 
@@ -9,8 +11,8 @@ public class ElectronicMail {
 	static final int GETCOUNT = 2;
 	static final int DELETEMAIL = 3;
 	static final int SEARCHMAIL = 4;
-	static HashTable<Word, Integer> words;
-	static HashTable<Integer, DoublyLinkedList<Message>> users;
+	static HashTable<Word, Boolean> words;
+	static HashTable<Integer, User> users;
 	static int inboxCapacity;
 
 	/**************** START OF USER SOLUTION ****************/
@@ -23,20 +25,13 @@ public class ElectronicMail {
 
 	static void sendMail(char[] subject, int uID, int cnt, int[] rIDs) {
 		Word word = new Word();
-		HashTable<Word, Boolean> uniqueWordsInSubject = new HashTable<>();
 		Message message = new Message();
 		DoublyLinkedList<Word> subjectObj = new DoublyLinkedList<>();
 		message.setSubject(subjectObj);
 		for(int i=0; i<subject.length; i++){
 			if(subject[i]=='\0' || subject[i]==' '){
-				if(words.contains(word)){
-					if(!uniqueWordsInSubject.contains(word)){
-						int emailCount = words.get(word);
-						words.put(word, emailCount+cnt);
-						uniqueWordsInSubject.put(word, true);
-					}
-				} else {
-					words.put(word, cnt);
+				if(!words.contains(word)){
+					words.put(word, true);
 				}
 				subjectObj.add(word);
 				if(subject[i] == '\0'){
@@ -50,29 +45,31 @@ public class ElectronicMail {
 
 		for(int r=0; r<cnt; r++){
 			if(users.contains(rIDs[r])){
-				DoublyLinkedList<Message> inbox = users.get(rIDs[r]);
-				if(inbox.size>=inboxCapacity){
-					inbox.remove();
+				User user = users.get(rIDs[r]);
+				if(user.getInbox().size>=inboxCapacity){
+					user.getInbox().remove();
 				}
-				inbox.add(message);
+				user.getInbox().add(message);
 			} else {
+				User user = new User(rIDs[r]);
 				DoublyLinkedList<Message> inbox = new DoublyLinkedList<>();
 				inbox.add(message);
-				users.put(rIDs[r], inbox);
+				user.setInbox(inbox);
+				users.put(rIDs[r], user);
 			}
 		}
 	}
 
 	static int getCount(int uID) {
 		if(users.contains(uID)){
-			DoublyLinkedList<Message> inbox = users.get(uID);
-			return inbox.size;
+			User user = users.get(uID);
+			return user.getInbox().size;
 		}
 		return 0;
 	}
 
 	static int deleteMail(int uID, char[] subject) {
-		DoublyLinkedList<Message> inbox = users.get(uID);
+		DoublyLinkedList<Message> inbox = users.get(uID).getInbox();
 		DoublyLinkedList<Word> subjectObj = new DoublyLinkedList<>();
 		Word word = new Word();
 		int deleted = 0;
@@ -358,7 +355,7 @@ public class ElectronicMail {
 				if(key instanceof String || key instanceof Word){
 					String _key = key.toString();
 					String nodeKey = node.key.toString();
-					if(_key.length() == nodeKey.length() && key.equals(node.key)){
+					if(_key.length() == nodeKey.length()){
 						boolean isEqual = true;
 						for(int i=0; i<_key.length(); i++){
 							if(_key.charAt(i) != nodeKey.charAt(i)){
@@ -488,6 +485,28 @@ public class ElectronicMail {
 
 		public void setSubject(DoublyLinkedList<Word> subject) {
 			this.subject = subject;
+		}
+	}
+
+	static class User {
+		int uid;
+		HashTable<Word, Boolean> uniqueWords;
+		DoublyLinkedList<Message> inbox;
+		User(int uid){
+			this.uid = uid;
+		}
+
+		public void setInbox(DoublyLinkedList<Message> inbox) {
+			this.inbox = inbox;
+		}
+
+		public DoublyLinkedList<Message> getInbox() {
+			return inbox;
+		}
+
+		@Override
+		public String toString() {
+			return ""+uid;
 		}
 	}
 
