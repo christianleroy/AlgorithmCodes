@@ -60,11 +60,11 @@ public class ElectronicMail {
 			}
 			DoublyLinkedList.Node<Word> node = message.getSubject().getHead();
 			while(node != null){
-				if(uniqueWordsInSubject.contains(word)){
+				if(uniqueWordsInSubject.contains(node.getValue())){
 					node = node.next;
 					continue;
 				}
-				uniqueWordsInSubject.put(word, true);
+				uniqueWordsInSubject.put(node.getValue(), true);
 				if(!user.getUniqueWords().contains(node.getValue())){
 					user.getUniqueWords().put(node.getValue(), 1);
 				} else {
