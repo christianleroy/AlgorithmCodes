@@ -104,6 +104,7 @@ public class ElectronicMail {
 		DoublyLinkedList.Node<Message> inboxNode = inbox.getHead();
 		while(inboxNode != null){
 			Message message = inboxNode.getValue();
+			HashTable<Word, Boolean> uniqueWordsInSubject = new HashTable<>();
 			if(message.getSubject().getSize() == subjectObj.getSize()){
 				DoublyLinkedList<Word> messageSubject = message.getSubject();
 				boolean isEqual = true;
