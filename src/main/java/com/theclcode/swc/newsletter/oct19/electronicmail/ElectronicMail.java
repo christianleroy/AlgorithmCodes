@@ -263,7 +263,6 @@ public class ElectronicMail {
 			seed = Integer.parseInt(st.nextToken());
 			make_string(seed);
 		}
-		int lineNumber = 2;
 		init(N, K);
 		for (int i = 1; i < Q; ++i) {
 			st = new StringTokenizer(br.readLine());
@@ -296,7 +295,6 @@ public class ElectronicMail {
 				param1 = Integer.parseInt(st.nextToken());
 				ret = getCount(param1);
 				System.out.printf("%d\n", ret);
-				lineNumber++;
 				break;
 			case DELETEMAIL:
 				if (sample == 1) {
@@ -312,14 +310,12 @@ public class ElectronicMail {
 					}
 					ret = deleteMail(param1, str);
 					System.out.printf("%d\n", ret);
-					lineNumber++;
 				}
 				else {
 					param1 = Integer.parseInt(st.nextToken());
 					seed = Integer.parseInt(st.nextToken());
 					ret = delete_mail(param1, seed);
 					System.out.printf("%d\n", ret);
-					lineNumber++;
 				}
 				break;
 			case SEARCHMAIL:
@@ -330,7 +326,6 @@ public class ElectronicMail {
 				str[temp.length()] = 0;
 				ret = searchMail(param1, str);
 				System.out.printf("%d\n", ret);
-				lineNumber++;
 				break;
 			default:
 				break;
