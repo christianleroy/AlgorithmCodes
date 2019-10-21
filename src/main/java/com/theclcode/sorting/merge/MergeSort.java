@@ -11,7 +11,7 @@ public class MergeSort {
     }
 
     public static void mergeSort(int[] array, int start, int end){
-        if(start<end){
+        if(start < end){
             int nextEnd = (start + end)/2;
             mergeSort(array, start, nextEnd);
             mergeSort(array, nextEnd+1, end);

@@ -8,14 +8,20 @@ import java.util.StringTokenizer;
 
 public class ChristmasPresent {
     /**************** START OF USER SOLUTION ****************/
+    static List<DoublyLinkedList<Integer>> twos;
+    static List<DoublyLinkedList<Integer>> threes;
+    static List<DoublyLinkedList<Integer>> solo;
+    static List<DoublyLinkedList<Integer>> big;
 
     public static void arrange(int N, int box[], int limit) {
+
+        twos = new ArrayList<>();
+        threes = new ArrayList<>();
+        solo = new ArrayList<>();
+        big = new ArrayList<>();
+
         int[] gifts = box;
         boolean[] visited = new boolean[N];
-        List<DoublyLinkedList<Integer>> twos = new ArrayList<>();
-        List<DoublyLinkedList<Integer>> threes = new ArrayList<>();
-        List<DoublyLinkedList<Integer>> solo = new ArrayList<>();
-        List<DoublyLinkedList<Integer>> big = new ArrayList<>();
         for(int i=0; i<N; i++){
             int index;
             if(!visited[i]){
@@ -28,7 +34,7 @@ public class ChristmasPresent {
                     visited[index]=true;
                     cycle.add(index);
                 } while(index!=i);
-                groupCycle(twos, threes, solo, big, cycle);
+                groupCycle(cycle);
             }
         }
 
@@ -44,9 +50,7 @@ public class ChristmasPresent {
                 small.add(cycle.getHead());
                 solo.add(small);
             }
-            if(cycle.size-1 > 1){
-                groupCycle(twos, threes, solo, big, cycle);
-            }
+            groupCycle(cycle);
         }
 
         for(DoublyLinkedList<Integer> cycle : solo){
@@ -57,7 +61,7 @@ public class ChristmasPresent {
             if(!twos.isEmpty()){
                 DoublyLinkedList<Integer> two = twos.get(0);
                 twos.remove(two);
-                init( 5, cycle, two);
+                initialize( 5, cycle, two);
             } else {
                 init(cycle);
             }
@@ -66,22 +70,22 @@ public class ChristmasPresent {
         int size = twos.size();
         while(size>0){
             if(size%2 == 0){
-                init(4, twos.get(0), twos.get(1));
+                initialize(4, twos.get(0), twos.get(1));
                 twos.remove(twos.get(0));
                 twos.remove(twos.get(0));
                 size-=2;
             } else {
-                init(2, twos.get(0));
+                initialize(2, twos.get(0));
                 size--;
             }
         }
     }
 
     private static void init(DoublyLinkedList<Integer> cycle){
-        init(cycle.size-1, cycle);
+        initialize(cycle.size-1, cycle);
     }
 
-    private static void init(int length, DoublyLinkedList<Integer>... cycles) {
+    private static void initialize(int length, DoublyLinkedList<Integer>... cycles) {
         int[] origin = new int[length];
         int[] target = new int[length];
         int index = 0;
@@ -99,7 +103,7 @@ public class ChristmasPresent {
         swap5(origin.length, origin, target);
     }
 
-    private static void groupCycle(List<DoublyLinkedList<Integer>> twos, List<DoublyLinkedList<Integer>> threes, List<DoublyLinkedList<Integer>> solo, List<DoublyLinkedList<Integer>> big, DoublyLinkedList<Integer> cycle) {
+    private static void groupCycle(DoublyLinkedList<Integer> cycle) {
         switch (cycle.size - 1) {
             case 1:
                 break;
@@ -121,7 +125,7 @@ public class ChristmasPresent {
     /***************** END OF USER SOLUTION *****************/
 
 
-    private final static int MAXN = 10000;
+    private static final int MAXN = 10000;
 
     private static int N;
     private static int limit;

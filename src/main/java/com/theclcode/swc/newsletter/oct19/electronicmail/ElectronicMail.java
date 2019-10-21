@@ -1,6 +1,4 @@
-package com.theclcode.unfinished.electronicmail;
-
-import com.sun.xml.internal.ws.api.model.MEP;
+package com.theclcode.swc.newsletter.oct19.electronicmail;
 
 import java.io.*;
 import java.util.StringTokenizer;
@@ -25,15 +23,16 @@ public class ElectronicMail {
 		Word word = new Word();
 		Message message = new Message();
 		DoublyLinkedList<Word> subjectObj = new DoublyLinkedList<>();
-		message.setSubject(subjectObj);
-		HashTable<Word, Boolean> words = new HashTable<>();
+		HashTable<Word, Boolean> words = new HashTable<>(13);
+		int bilangNgMgaWords = 0;
 		for(int i=0; i<subject.length; i++){
 			if(subject[i]=='\0' || subject[i]==' '){
 				if(!words.contains(word)){
 					words.put(word, true);
 				}
 				subjectObj.add(word);
-				if(subject[i] == '\0'){
+				bilangNgMgaWords++;
+				if(subject[i] == '\0' || bilangNgMgaWords==10){
 					break;
 				}
 				word = new Word();
@@ -42,13 +41,14 @@ public class ElectronicMail {
 			}
 		}
 
+		message.setSubject(subjectObj);
 		for(int r=0; r<cnt; r++){
 			User user;
 			HashTable<Word, Boolean> uniqueWordsInSubject = new HashTable<>();
 			if(users.contains(rIDs[r])){
 				user = users.get(rIDs[r]);
 				if(user.getInbox().size>=inboxCapacity){
-					user.getInbox().remove();
+					remove(user.getUid(), user.getInbox(), user.getInbox().getHead());
 				}
 				user.getInbox().add(message);
 			} else {
@@ -100,14 +100,12 @@ public class ElectronicMail {
 				word.add(subject[i]);
 			}
 		}
-
 		DoublyLinkedList.Node<Message> inboxNode = inbox.getHead();
 		while(inboxNode != null){
 			Message message = inboxNode.getValue();
-			HashTable<Word, Boolean> uniqueWordsInSubject = new HashTable<>();
 			if(message.getSubject().getSize() == subjectObj.getSize()){
 				DoublyLinkedList<Word> messageSubject = message.getSubject();
-				boolean isEqual = true;
+				boolean isEqual = messageSubject.getHead() != null ? true : false;
 				DoublyLinkedList.Node<Word> messageSubjectWordNode = messageSubject.getHead();
 				DoublyLinkedList.Node<Word> subjectObjWordNode = subjectObj.getHead();
 				while(messageSubjectWordNode != null){
@@ -119,7 +117,7 @@ public class ElectronicMail {
 					messageSubjectWordNode = messageSubjectWordNode.next;
 				}
 				if(isEqual){
-					inbox.remove(inboxNode);
+					remove(uID, inbox, inboxNode);
 					deleted++;
 				}
 			}
@@ -145,6 +143,26 @@ public class ElectronicMail {
 			return 0;
 		}
 		return 0;
+	}
+
+	static void remove(int uID, DoublyLinkedList<Message> inbox, DoublyLinkedList.Node<Message> inboxNode){
+		User user = users.get(uID);
+		Message message = inboxNode.getValue();
+		HashTable<Word, Boolean> uniqueWordsInSubject = new HashTable<>();
+		if(user != null){
+			DoublyLinkedList.Node<Word> word = message.getSubject().getHead();
+			while(word != null){
+				if(user.getUniqueWords().contains(word.getValue()) && !uniqueWordsInSubject.contains(word.getValue())){
+					int count = user.getUniqueWords().get(word.getValue());
+					if(count>0){
+						user.getUniqueWords().put(word.getValue(), --count);
+					}
+					uniqueWordsInSubject.put(word.getValue(), true);
+				}
+				word = word.next;
+			}
+			inbox.remove(inboxNode);
+		}
 	}
 
 	/***************** END OF USER SOLUTION *****************/
@@ -245,7 +263,7 @@ public class ElectronicMail {
 			seed = Integer.parseInt(st.nextToken());
 			make_string(seed);
 		}
-
+		int lineNumber = 2;
 		init(N, K);
 		for (int i = 1; i < Q; ++i) {
 			st = new StringTokenizer(br.readLine());
@@ -278,6 +296,7 @@ public class ElectronicMail {
 				param1 = Integer.parseInt(st.nextToken());
 				ret = getCount(param1);
 				System.out.printf("%d\n", ret);
+				lineNumber++;
 				break;
 			case DELETEMAIL:
 				if (sample == 1) {
@@ -293,12 +312,14 @@ public class ElectronicMail {
 					}
 					ret = deleteMail(param1, str);
 					System.out.printf("%d\n", ret);
+					lineNumber++;
 				}
 				else {
 					param1 = Integer.parseInt(st.nextToken());
 					seed = Integer.parseInt(st.nextToken());
 					ret = delete_mail(param1, seed);
 					System.out.printf("%d\n", ret);
+					lineNumber++;
 				}
 				break;
 			case SEARCHMAIL:
@@ -309,6 +330,7 @@ public class ElectronicMail {
 				str[temp.length()] = 0;
 				ret = searchMail(param1, str);
 				System.out.printf("%d\n", ret);
+				lineNumber++;
 				break;
 			default:
 				break;
@@ -475,6 +497,13 @@ public class ElectronicMail {
 					if(node.next != null){
 						node.next.prev = node.prev;
 					}
+					if(node == head){
+						head = node.next;
+					}
+					if(node == tail){
+						tail = node.prev;
+					}
+					size--;
 				}
 				existingNode = existingNode.next;
 			}
@@ -536,6 +565,10 @@ public class ElectronicMail {
 
 		public HashTable<ElectronicMail.Word, Integer> getUniqueWords() {
 			return uniqueWords;
+		}
+
+		public int getUid() {
+			return uid;
 		}
 
 		@Override
