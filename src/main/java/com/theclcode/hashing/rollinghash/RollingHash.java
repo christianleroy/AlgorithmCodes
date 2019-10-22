@@ -1,66 +1,60 @@
 package com.theclcode.hashing.rollinghash;
 
 //Rabin Karp Rolling Hash
-//Unfinished, not yet rolling.
 public class RollingHash {
 
-    final static int BASE = 37;
-    static int called=0;
-    int[] powers = new int[3];
-    {
-        powers[0] = 1;
-        powers[1] = BASE;
-        powers[2] = powers[1] * BASE;
-    }
+    private static final int BASE = 37;
+    private int[] powers = {1, BASE, BASE * BASE}; //Supports window sizes up to 3.
+    private char[] word = "be there or be square".toCharArray();
+    private char[] wordToFind = "e".toCharArray();
+    private char[] window = new char[wordToFind.length];
+    private int hashToFind = hash(new String(wordToFind));
+    private int[] hashes = new int[window.length];
 
     public void run(){
-        char[] word = new char[]{'a','a','c','a','c','a','b','c','a','a','a','a','c','a','a'};
-        int windowSize = 3;
-        char[] find = new char[]{'a','a','c'};
-        int[] hashes = new int[3];
-        char[] window = new char[windowSize];
         int currentHash = 0;
-        for(int i=0; (i+windowSize)-1<word.length; i++){
+        for(int i=0; (i+window.length)-1<word.length; i++){
             if(i==0){
-                for(int j=0, k=2; j<windowSize; j++, k--){
+                for(int j=0, k=window.length-1; j<window.length; j++, k--){
                     window[j]=word[j];
                     hashes[j]=hash(window[j], k);
                 }
+                currentHash = sum(hashes);
             } else {
-                for(int j=1; j<windowSize; j++){
+                currentHash -= hashes[0];
+                currentHash *= BASE;
+                for(int j=1; j<window.length; j++){
                     window[j-1]=window[j];
                     hashes[j-1]=hashes[j]*BASE;
                 }
-                window[windowSize-1] = word[i];
-                hashes[windowSize-1] = hash(word[i+windowSize-1], 0);
+                window[window.length-1] = word[i];
+                hashes[window.length-1] = hash(word[i+window.length-1], 0);
+                currentHash+=hashes[window.length-1];
             }
-            currentHash = sum(hashes);
-            if(currentHash == hash(new String(find))){
+            if(currentHash == hashToFind){
                 System.out.println("Found at index: " + i);
             }
         }
-        System.out.println("Called hash function: "+ called);
     }
 
-    static int sum(int[] arr){
+    private int sum(int[] arr){
         int sum = 0;
-        for(int i=0; i<arr.length; i++){
-            sum+=arr[i];
+        for(int value : arr){
+            sum += value;
         }
         return sum;
     }
 
-    public int hash(char letter, int order){
-        called++;
-        return letter*powers[order];
-    }
-
-    public int hash(String word){
+    private int hash(String word){
         int hash = 0;
-        for(int i=0, y=powers.length-1; i<word.length(); i++, y--){
-            hash+=word.charAt(i)*powers[y];
+        for(int i=0, y=window.length-1; i<word.length(); i++, y--){
+            hash+=hash(word.charAt(i), y);
         }
         return hash;
+    }
+
+    private int hash(char letter, int order){
+        return letter*powers[order];
     }
 
     public static void main(String[] args) {
