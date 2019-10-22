@@ -44,7 +44,7 @@ public class ElectronicMail {
 		message.setSubject(subjectObj);
 		for(int r=0; r<cnt; r++){
 			User user;
-			HashTable<Word, Boolean> uniqueWordsInSubject = new HashTable<>();
+			HashTable<Word, Boolean> uniqueWordsInSubject = new HashTable<>(13);
 			if(users.contains(rIDs[r])){
 				user = users.get(rIDs[r]);
 				if(user.getInbox().size>=inboxCapacity){
@@ -148,7 +148,7 @@ public class ElectronicMail {
 	static void remove(int uID, DoublyLinkedList<Message> inbox, DoublyLinkedList.Node<Message> inboxNode){
 		User user = users.get(uID);
 		Message message = inboxNode.getValue();
-		HashTable<Word, Boolean> uniqueWordsInSubject = new HashTable<>();
+		HashTable<Word, Boolean> uniqueWordsInSubject = new HashTable<>(13);
 		if(user != null){
 			DoublyLinkedList.Node<Word> word = message.getSubject().getHead();
 			while(word != null){
