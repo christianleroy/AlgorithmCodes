@@ -53,10 +53,10 @@ public class HashTable<K, V> {
         Node<K, V> node = table[index];
         while (node != null) {
             if (key instanceof String) {
-                String _key = (String) key;
-                String nodeKey = (String) node.key;
-                if (_key.length() == nodeKey.length() && hash(key) == hash(node.key)) {
-                    boolean isEqual = true;
+                String _key = key.toString();
+                String nodeKey = node.key.toString();
+                boolean isEqual = true;
+                if (_key.length() == nodeKey.length()) {
                     for (char i = 0; i < _key.length(); i++) {
                         if (_key.charAt(i) != nodeKey.charAt(i)) {
                             isEqual = false;
@@ -93,6 +93,10 @@ public class HashTable<K, V> {
 
     public boolean contains(K key){
         return find(key) != null;
+    }
+
+    public Node<K, V>[] getTable(){
+        return table;
     }
 
     private int getAddress(K key){
@@ -164,7 +168,21 @@ public class HashTable<K, V> {
         map.remove("Side");
         System.out.println(map.contains("Side"));
         System.out.println(map.get("Side"));
-        System.out.print(map.contains("Tristan"));
+        System.out.println(map.contains("Tristan"));
+        map.put("Christian", 25);
+        map.put("Leroy", 25);
+
+        HashTable.Node[] table = map.getTable();
+
+        for(int i=0; i<table.length; i++){
+            if(table[i] != null){
+                HashTable.Node node = table[i];
+                while(node != null){
+                    System.out.println(node.key+": "+node.value);
+                    node = node.next;
+                }
+            }
+        }
     }
 
     public static class Person {
