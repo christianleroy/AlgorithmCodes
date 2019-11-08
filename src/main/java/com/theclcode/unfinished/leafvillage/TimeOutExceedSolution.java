@@ -8,6 +8,7 @@ public class TimeOutExceedSolution {
     static int ninjaId;
     static int oldestNinja;
     static int youngestNinja;
+    final int MID_AGE = 1_000_000_000;
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
