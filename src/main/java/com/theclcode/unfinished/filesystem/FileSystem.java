@@ -42,8 +42,11 @@ public class FileSystem {
     public int rmdir(int m_window, char[] name){
         Window window = getWindow(m_window);
         Node node = window.getLocation();
-        node.remove(name);
-        return -1;
+        Node dirToDelete = node.find(name);
+        if(dirToDelete != null){
+            return dirToDelete.remove(0);
+        }
+        return 0;
     }
 
     public int mvdir(int m_window, char[] name){
@@ -77,7 +80,7 @@ public class FileSystem {
 
     class Node {
         private char value;
-        private int size;
+        private int size=0;
         private boolean isDirectory = false;
         private Node[] children = new Node[26];
         private Node parent;
@@ -121,6 +124,7 @@ public class FileSystem {
                     if(i==name.length-1 && node.children[index].isDirectory){
                         return FAILURE;
                     }
+                    node.size++;
                 }
                 node = node.children[index];
                 if((i==name.length-1 || name[i+1] == '\0') && !node.isDirectory){
@@ -131,27 +135,33 @@ public class FileSystem {
                     return SUCCESS;
                 }
             }
+
+
             return FAILURE;
         }
 
-        public int remove(char[] name){
-            Node node = find(name);
-            if(node != null){
-                node.delete();
+        public int remove(int deletedDirectories){
+            LLNode<Node> llNode = this.childDirectories.head;
+            while(llNode != null){
+                llNode.value.remove(deletedDirectories);
+                llNode = llNode.next;
             }
-            return -1;
-        }
-
-        private void delete(){
-            LLNode<Node> node = childDirectories.head;
-            while(node!= null){
-
-            }
-            Node _node = parent;
+            Node node = this.parent;
             for(int i=0; i<this.name.length && name[i]!='\0'; i++){
-
+                int index = name[i]-97;
+                //Checks node is a directory but it's not the one you're deleting OR it's not a directory but it has more than one children
+                if((node.getChildren()[index].isDirectory && i < name.length-1) || node.getChildren()[index].size>1){
+                    node.getChildren()[index].size -= 1;
+                } else {
+                    if(node.getChildren()[index].isDirectory && node.getChildren()[index].size > 0){
+                        node.getChildren()[index].isDirectory = false;
+                    } else {
+                        node.getChildren()[index] = null;
+                    }
+                    deletedDirectories++;
+                }
             }
-
+            return deletedDirectories;
         }
 
         public Node find(char[] name){
