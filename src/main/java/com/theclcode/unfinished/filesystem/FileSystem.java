@@ -42,15 +42,17 @@ public class FileSystem {
     public int rmdir(int m_window, char[] name){
         Window window = getWindow(m_window);
         Node node = window.getLocation();
-        Node dirToDelete = node.find(name);
-        if(dirToDelete != null){
-            return dirToDelete.remove(0);
-        }
-        return 0;
+        return node.findAndDelete(name, 0);
     }
 
     public int mvdir(int m_window, char[] name){
-        return -1;
+        Window window = getWindow(m_window);
+        Node node = window.getLocation();
+        Node dirToMove = node.find(name);
+        if(dirToMove != null){
+            return SUCCESS;
+        }
+        return FAILURE;
     }
 
     Window getWindow(int m_window){
@@ -64,14 +66,24 @@ public class FileSystem {
         }
     }
 
+    void print(int i){
+        System.out.println(i);
+    }
+
     public void run(){
         init();
-        Node node = getWindow(1).getLocation();
-        System.out.println(mkdir(1, new char[]{'a','b','c','\0','\0','\0'}));
-        System.out.println(mkdir(1,"a".toCharArray()));
-        System.out.println(mkdir(1,"b".toCharArray()));
-        System.out.println(mkdir(1,"c".toCharArray()));
-        System.out.println(mkdir(1,"a".toCharArray()));
+        int result = 0;
+        mkdir(1, "a".toCharArray());
+        mkdir(1, "b".toCharArray());
+        result = chdir(1, "b".toCharArray());
+        mkdir(1, "abc".toCharArray());
+        result = mkdir(1, "abc".toCharArray());
+        result = mkdir(1, "ab".toCharArray());
+        result = mkdir(1, "a".toCharArray());
+        chdir(1, "/".toCharArray());
+        result = rmdir(1, "b".toCharArray());
+        print(result);
+        System.out.println();
     }
 
     public static void main(String[] args) {
@@ -82,10 +94,10 @@ public class FileSystem {
         private char value;
         private int size=0;
         private boolean isDirectory = false;
-        private Node[] children = new Node[26];
+        private Node[] children = new Node[27];
         private Node parent;
         private char[] name;
-        LinkedList<Node> childDirectories = new LinkedList<>();
+        LinkedList<Node> childrenDirectories = new LinkedList<>();
 
         Node(){
             this('/', null);
@@ -95,6 +107,23 @@ public class FileSystem {
         Node(char value, Node parent){
             this.value = value;
             this.parent = parent;
+        }
+
+        private Node getRoot() {
+            Node node;
+            if(this == rootDirectory){
+                node = rootDirectory;
+            } else {
+                if(this.children[26] == null){
+                    this.children[26] = new Node();
+                }
+                node = this.children[26];
+            }
+            if(this.children[26] == null && this != rootDirectory){
+                this.children[26] = new Node();
+                node = this.children[26];
+            }
+            return node;
         }
 
         public int getSize() {
@@ -114,60 +143,45 @@ public class FileSystem {
         }
 
         public int add(char[] name){
-            Node node = this;
+            Node node = getRoot();
             for(int i=0; i<name.length && name[i]!='\0'; i++){
                 int index = name[i]-97;
                 if(node.children[index] == null){
                     node.children[index] = new Node(name[i], this);
                     node.size++;
-                } else {
-                    if(i==name.length-1 && node.children[index].isDirectory){
-                        return FAILURE;
-                    }
-                    node.size++;
                 }
                 node = node.children[index];
-                if((i==name.length-1 || name[i+1] == '\0') && !node.isDirectory){
-                    node.isDirectory=true;
-                    node.name = name;
-                    node.parent = this;
-                    this.childDirectories.add(node);
-                    return SUCCESS;
-                }
             }
-
-
-            return FAILURE;
+            if(node.isDirectory){
+                return FAILURE;
+            } else {
+                node.isDirectory = true;
+                node.parent = this;
+                node.name = name;
+                this.childrenDirectories.add(node);
+                return SUCCESS;
+            }
         }
 
-        public int remove(int deletedDirectories){
-            LLNode<Node> llNode = this.childDirectories.head;
-            while(llNode != null){
-                llNode.value.remove(deletedDirectories);
-                llNode = llNode.next;
-            }
-            Node node = this.parent;
-            for(int i=0; i<this.name.length && name[i]!='\0'; i++){
-                int index = name[i]-97;
-                //Checks node is a directory but it's not the one you're deleting OR it's not a directory but it has more than one children
-                if((node.getChildren()[index].isDirectory && i < name.length-1) || node.getChildren()[index].size>1){
-                    node.getChildren()[index].size -= 1;
-                } else {
-                    if(node.getChildren()[index].isDirectory && node.getChildren()[index].size > 0){
-                        node.getChildren()[index].isDirectory = false;
-                    } else {
-                        node.getChildren()[index] = null;
-                    }
-                    deletedDirectories++;
+        public int findAndDelete(char[] name, int deletedDirectories){
+            Node node = find(name);
+            if(node != null){
+                deletedDirectories++;
+                LLNode<Node> child = this.childrenDirectories.head;
+                while(child != null){
+                    deletedDirectories += child.value.remove(deletedDirectories);
+                    child = child.next;
                 }
+                node.parent.remove(name);
             }
             return deletedDirectories;
         }
 
         public Node find(char[] name){
-            Node node = this;
+            Node node = getRoot();
+            int index = 0;
             for(int i=0; i<name.length && name[i]!='\0'; i++){
-                int index = name[i]-97;
+                index = name[i]-97;
                 if(node.getChildren()[index] == null){
                     return null;
                 }
@@ -193,11 +207,29 @@ public class FileSystem {
             return null;
         }
 
+        public void remove(char[] name){
+            Node root = this.getChildren()[26];
+            for(int i=0; i<name.length-1 && name[i] != '\0'; i++){
+
+            }
+        }
+
+        public int remove(int deletedDirectories) {
+            Node root = getRoot();
+            LLNode<Node> childDirectory=  root.childrenDirectories.head;
+            while(childDirectory != null){
+                deletedDirectories += childDirectory.value.remove(deletedDirectories);
+                childDirectory = childDirectory.next;
+            }
+            return deletedDirectories;
+
+        }
     }
 
     class LinkedList<E> {
         LLNode head;
         LLNode tail;
+        int size;
 
         void add(E value){
             LLNode node = new LLNode(value);
@@ -208,6 +240,7 @@ public class FileSystem {
                 node.prev = tail;
                 tail = node;
             }
+            size++;
         }
 
         void remove(E value){
@@ -242,7 +275,6 @@ public class FileSystem {
         }
 
     }
-
     class Window {
         private Node location;
 
