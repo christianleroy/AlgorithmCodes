@@ -85,11 +85,14 @@ public class FileSystem {
         int result = 0;
         mkdir(1, "a".toCharArray());
         mkdir(1, "b".toCharArray());
+        mkdir(1, "bcd".toCharArray());
         result = chdir(1, "b".toCharArray());
         mkdir(1, "abc".toCharArray());
         result = mkdir(1, "abc".toCharArray());
         result = mkdir(1, "ab".toCharArray());
         result = mkdir(1, "a".toCharArray());
+        chdir(1, "a".toCharArray());
+        mkdir(1, "a".toCharArray());
         chdir(1, "/".toCharArray());
         result = rmdir(1, "b".toCharArray());
         print(result);
@@ -242,7 +245,7 @@ public class FileSystem {
                 deletedDirectories += childDirectory.value.remove(deletedDirectories);
                 childDirectory = childDirectory.next;
             }
-            return deletedDirectories;
+            return deletedDirectories + this.childrenDirectories.size;
 
         }
     }
