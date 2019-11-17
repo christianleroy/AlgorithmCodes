@@ -45,12 +45,22 @@ public class FileSystem {
         return node.findAndDelete(name, 0);
     }
 
-    public int mvdir(int m_window, char[] name){
+    public int mvdir(int m_window, char[] name) {
+        int o_window = m_window == 1 ? 0 : 1;
         Window window = getWindow(m_window);
+        Window otherWindow = getWindow(o_window);
         Node node = window.getLocation();
         Node dirToMove = node.find(name);
-        if(dirToMove != null){
-            return SUCCESS;
+        if (dirToMove != null) {
+            if(node == otherWindow.getLocation()){
+                return FAILURE;
+            }
+            if(mkdir(m_window == 1 ? 0 : 1, dirToMove.name) == 1){
+                Node newNode = otherWindow.getLocation().find(dirToMove.name);
+                newNode.childrenDirectories = node.childrenDirectories;
+                node.remove();
+                return SUCCESS;
+            }
         }
         return FAILURE;
     }
@@ -163,16 +173,34 @@ public class FileSystem {
             }
         }
 
+        private void remove(){
+            Node node = parent;
+            for(int i=0; i<name.length && name[i] != '\0'; i++){
+                int index = name[i] - 97;
+                if(i == name.length - 1){
+                    if(node.getChildren()[index].size > 0){
+                        node.getChildren()[index].isDirectory = false;
+                    } else {
+                        node.getChildren()[index] = null;
+                    }
+                } else if(node.getChildren()[index].isDirectory){
+                    node.getChildren()[index].size -= 1;
+                }
+                node = node.getChildren()[index];
+            }
+
+        }
+
         public int findAndDelete(char[] name, int deletedDirectories){
             Node node = find(name);
             if(node != null){
+                node.remove();
                 deletedDirectories++;
                 LLNode<Node> child = this.childrenDirectories.head;
                 while(child != null){
                     deletedDirectories += child.value.remove(deletedDirectories);
                     child = child.next;
                 }
-                node.parent.remove(name);
             }
             return deletedDirectories;
         }
@@ -205,13 +233,6 @@ public class FileSystem {
                 }
             }
             return null;
-        }
-
-        public void remove(char[] name){
-            Node root = this.getChildren()[26];
-            for(int i=0; i<name.length-1 && name[i] != '\0'; i++){
-
-            }
         }
 
         public int remove(int deletedDirectories) {
