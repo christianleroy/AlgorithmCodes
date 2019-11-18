@@ -52,13 +52,11 @@ public class FileSystem {
         TreeNode treeNode = window.getLocation();
         TreeNode dirToMove = treeNode.find(name);
         if (dirToMove != null) {
-            if(treeNode == otherWindow.getLocation()){
+            if(dirToMove == otherWindow.getLocation()){
                 return FAILURE;
             }
-            if(mkdir(m_window == 1 ? 0 : 1, dirToMove.name) == 1){
-                TreeNode newTreeNode = otherWindow.getLocation().find(dirToMove.name); //Problematic
-                newTreeNode.childrenDirectories = treeNode.childrenDirectories;
-                treeNode.remove();
+            if(otherWindow.getLocation().addWithDirectories(dirToMove.name, dirToMove.getChildren()[26]) == 1){
+                dirToMove.remove();
                 return SUCCESS;
             }
         }
@@ -82,30 +80,16 @@ public class FileSystem {
 
     public void run(){
         init();
+        mkdir(1, "a".toCharArray());
         mkdir(1, "b".toCharArray());
 
         chdir(1, "a".toCharArray());
-        mkdir(1, "b".toCharArray());
-
-        chdir(1, "b".toCharArray());
         mkdir(1, "c".toCharArray());
+        chdir(1, "/".toCharArray());
+        chdir(0, "b".toCharArray());
 
-        chdir(1, "c".toCharArray());
-        mkdir(1, "d".toCharArray());
-
-        chdir(1, "d".toCharArray());
-        mkdir(1, "e".toCharArray());
-
-        chdir(1, "e".toCharArray());
-        mkdir(1, "f".toCharArray());
-
-        chdir(1, "f".toCharArray());
-        mkdir(1, "g".toCharArray());
-        mkdir(1, "h".toCharArray());
-        mkdir(1, "i".toCharArray());
-        mkdir(1, "j".toCharArray());
-
-        System.out.println(rmdir(0, "a".toCharArray()));
+        mvdir(1, "a".toCharArray());
+        System.out.println();
     }
 
     public static void main(String[] args) {
@@ -166,6 +150,28 @@ public class FileSystem {
                 treeNode.isDirectory = true;
                 treeNode.parent = this;
                 treeNode.name = name;
+                getRoot().childrenDirectories.add(treeNode);
+                return SUCCESS;
+            }
+        }
+
+        public int addWithDirectories(char[] name, TreeNode subdirectories){
+            TreeNode treeNode = getRoot();
+            for(int i=0; i<name.length && name[i]!='\0'; i++){
+                int index = name[i]-97;
+                if(treeNode.children[index] == null){
+                    treeNode.children[index] = new TreeNode(this);
+                    treeNode.size++;
+                }
+                treeNode = treeNode.children[index];
+            }
+            if(treeNode.isDirectory){
+                return FAILURE;
+            } else {
+                treeNode.isDirectory = true;
+                treeNode.parent = this;
+                treeNode.name = name;
+                treeNode.getChildren()[26] = subdirectories;
                 getRoot().childrenDirectories.add(treeNode);
                 return SUCCESS;
             }
