@@ -89,6 +89,7 @@ public class FileSystem {
         chdir(0, "b".toCharArray());
 
         mvdir(1, "a".toCharArray());
+        System.out.println(rmdir(1, "b".toCharArray()));
         System.out.println();
     }
 

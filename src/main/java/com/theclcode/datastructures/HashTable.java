@@ -1,18 +1,13 @@
 package com.theclcode.datastructures;
 
 public class HashTable<K, V> {
-    int capacity;
+    int capacity = 13;
+    final int BASE = 37;
+    final int[] POWERS = {1, BASE, BASE*BASE};
     Node<K, V>[] table;
-    static final int[] powers = new int[3];
-    static final int BASE = 37;
-    static {
-        powers[0]=1;
-        powers[1] = BASE;
-        powers[2] = powers[1] * BASE;
-    }
 
     public HashTable(){
-        this(701);
+        table = new Node[capacity];
     }
 
     @SuppressWarnings("unchecked")
@@ -55,8 +50,8 @@ public class HashTable<K, V> {
             if (key instanceof String) {
                 String _key = key.toString();
                 String nodeKey = node.key.toString();
-                boolean isEqual = true;
                 if (_key.length() == nodeKey.length()) {
+                    boolean isEqual = true;
                     for (char i = 0; i < _key.length(); i++) {
                         if (_key.charAt(i) != nodeKey.charAt(i)) {
                             isEqual = false;
@@ -109,7 +104,7 @@ public class HashTable<K, V> {
         int hash=0;
         for(int x=0, y=2; x<=length; x++, y--){
             if(x<3){
-                hash+=word.charAt(x)*powers[y];
+                hash+=word.charAt(x)* POWERS[y];
             } else {
                 hash+=word.charAt(x);
             }
@@ -183,6 +178,16 @@ public class HashTable<K, V> {
                 }
             }
         }
+
+        HashTable<Integer, Integer> numbers = new HashTable<>(1);
+        numbers.put(27, 12);
+        numbers.put(1, 5);
+        numbers.put(14, 6);
+        System.out.println(numbers.get(1));
+        numbers.remove(1);
+        System.out.println(numbers.get(1));
+        numbers.remove(14);
+        System.out.println();
     }
 
     public static class Person {
