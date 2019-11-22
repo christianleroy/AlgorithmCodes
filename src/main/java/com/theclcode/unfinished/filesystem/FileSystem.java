@@ -23,9 +23,15 @@ public class FileSystem {
     public int chdir(int m_window, char[] name){
         Window window = getWindow(m_window);
         if(name[0] == '/'){
+            if(window.getLocation() == rootDirectory){
+                return FAILURE;
+            }
             window.setLocation(rootDirectory);
             return SUCCESS;
         }else if(name[0] == '.' && name[1] == '.'){
+            if(rootDirectory == window.getLocation().parent){
+                return FAILURE;
+            }
             window.setLocation(window.getLocation().parent);
             return SUCCESS;
         } else {
@@ -81,15 +87,13 @@ public class FileSystem {
     public void run(){
         init();
         mkdir(1, "a".toCharArray());
-        mkdir(1, "b".toCharArray());
-
+        mkdir(1, "ab".toCharArray());
         chdir(1, "a".toCharArray());
+        mkdir(1, "a".toCharArray());
+        mkdir(1, "b".toCharArray());
         mkdir(1, "c".toCharArray());
-        chdir(1, "/".toCharArray());
-        chdir(0, "b".toCharArray());
-
-        mvdir(1, "a".toCharArray());
-        System.out.println(rmdir(1, "b".toCharArray()));
+        System.out.println(rmdir(0, "a".toCharArray()));
+        System.out.println(mkdir(0, "a".toCharArray()));
         System.out.println();
     }
 
@@ -149,7 +153,7 @@ public class FileSystem {
                 return FAILURE;
             } else {
                 treeNode.isDirectory = true;
-                treeNode.parent = this;
+                treeNode.parent = this.getRoot();
                 treeNode.name = name;
                 getRoot().childrenDirectories.add(treeNode);
                 return SUCCESS;
@@ -199,14 +203,16 @@ public class FileSystem {
         public int findAndDelete(char[] name){
             TreeNode treeNode = find(name);
             int deletedDirectories = 0;
-            if(treeNode != null){
+            while(treeNode != null){
                 treeNode.remove();
-                deletedDirectories = 1;
+                deletedDirectories += 1;
                 Node<TreeNode> child = treeNode.getRoot().childrenDirectories.head;
                 while(child != null){
                     deletedDirectories += child.value.countSubdirectories();
                     child = child.next;
                 }
+                treeNode.getChildren()[26] = null;
+                treeNode = find(name);
             }
             return deletedDirectories;
         }
@@ -236,8 +242,9 @@ public class FileSystem {
             if(treeNode.isDirectory){
                 return treeNode;
             }
+            TreeNode toFind = treeNode;
             while(!treeNode.isDirectory){
-                for(int i = 0; i< treeNode.getChildren().length; i++){
+                for(int i = 0; i< treeNode.getChildren().length-1; i++){
                     if(treeNode.getChildren()[i] != null){
                         if(treeNode.getChildren()[i].isDirectory){
                             return treeNode.getChildren()[i];
@@ -246,7 +253,7 @@ public class FileSystem {
                         break;
                     }
                 }
-                if(treeNode == null){
+                if(treeNode == null || treeNode == toFind){
                     break;
                 }
             }
