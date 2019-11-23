@@ -252,7 +252,7 @@ public class Main {
 			for(int i=0; i<name.length && name[i]!='\0'; i++){
 				int index = name[i]-97;
 				if(treeNode.children[index] == null){
-					treeNode.children[index] = new TreeNode(this);
+					treeNode.children[index] = new TreeNode(this.getRoot());
 					treeNode.size++;
 				}
 				treeNode = treeNode.children[index];
