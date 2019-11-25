@@ -1,4 +1,4 @@
-package com.theclcode.unfinished.filesystem;
+package com.theclcode.unfinished.windowexplorer;
 
 import java.util.Scanner;
 
@@ -147,7 +147,7 @@ public class Main {
 				}
 				else if (cmd2 <= 10)
 				{
-					mstrcpy(str, "..");
+					mstrcpy(str, "src/main");
 				}
 				else
 				{
