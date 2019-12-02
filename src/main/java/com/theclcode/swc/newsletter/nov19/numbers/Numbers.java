@@ -1,4 +1,4 @@
-package com.theclcode.unfinished.numbers;
+package com.theclcode.swc.newsletter.nov19.numbers;
 
 import java.util.Scanner;
 
@@ -48,6 +48,7 @@ public class Numbers {
                 }
                 if(c != numbers[j][1] || d!=numbers[j][2]){
                     isValid = false;
+                    break;
                 }
             }
             if(isValid){

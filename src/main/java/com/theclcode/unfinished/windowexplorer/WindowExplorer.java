@@ -9,6 +9,8 @@ public class WindowExplorer {
     private static Root root;
     private static Window left;
     private static Window right;
+    final static int SUCCESS = 1;
+    final static int FAILURE = 0;
 
     static void init() {
         root = new Root();
@@ -18,11 +20,10 @@ public class WindowExplorer {
 
     static int mkdir(int m_window, char name[]) {
         Window window = getWindow(m_window);
-
         if(window.location == null){
-//            root.add(name);
+
         } else {
-//            window.location.add(name);
+
         }
         return 0;
     }
@@ -160,9 +161,19 @@ public class WindowExplorer {
     }
 
     static class Root {
-        TreeNode[] level1 = new TreeNode[26];
-        TreeNode[] level2 = new TreeNode[26];
-        TreeNode[] level3 = new TreeNode[26];
+        private TreeNode[] levels = new TreeNode[26];
+
+        public int add(char[] dirName){
+            for(int i=0; i<dirName.length && dirName[i] != '\0'; i++){
+                int loc = dirName[i] - 'a';
+                if(i<4){
+
+                } else {
+
+                }
+            }
+            return FAILURE;
+        }
     }
 
     static class TreeNode {
@@ -173,7 +184,6 @@ public class WindowExplorer {
     static class Directory {
         DirectoryName name;
         LinkedList<Directory> directories;
-
     }
 
     static class DirectoryName {
