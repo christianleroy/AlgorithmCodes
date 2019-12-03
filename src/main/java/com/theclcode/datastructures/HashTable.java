@@ -47,7 +47,7 @@ public class HashTable<K, V> {
         int index = getAddress(key);
         Node<K, V> node = table[index];
         while (node != null) {
-            if (key instanceof String) {
+            if (key instanceof String && node.key instanceof String) {
                 String _key = key.toString();
                 String nodeKey = node.key.toString();
                 if (_key.length() == nodeKey.length()) {
@@ -126,6 +126,8 @@ public class HashTable<K, V> {
 
     public static void main(String[] args) {
         HashTable<String, String> mgaWords = new HashTable<>(10);
+        mgaWords.put(null, "Null World");
+        System.out.println(mgaWords.get(null));
         mgaWords.put("Mapa", "Map");
         mgaWords.put("Sansinukob", "Universe");
         mgaWords.put("Daigdig", "Earth");

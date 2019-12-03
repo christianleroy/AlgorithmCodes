@@ -27,6 +27,9 @@ public class StackLinkedList<E> {
             head = null;
         }
         tail = tail.prev;
+        if(tail != null){
+            tail.next = null;
+        }
         size--;
         return node.value;
     }
