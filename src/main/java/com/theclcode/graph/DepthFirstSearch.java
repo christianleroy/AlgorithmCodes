@@ -71,7 +71,7 @@ public class DepthFirstSearch {
         int size = 0;
 
         public void add(E value){
-            Node<E> node = new Node(value);
+            Node<E> node = new Node<>(value);
             if(tail == null){
                 head = tail = node;
             } else {
@@ -87,10 +87,12 @@ public class DepthFirstSearch {
                return null;
            }
            Node<E> node = tail;
-           if(head == tail){
-               head = null;
-           }
            tail = tail.prev;
+           if(tail == null){
+               head = null;
+           } else {
+               tail.next = null;
+           }
            size--;
            return node.value;
         }

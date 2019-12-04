@@ -48,12 +48,12 @@ public class HashTable<K, V> {
         Node<K, V> node = table[index];
         while (node != null) {
             if (key instanceof String && node.key instanceof String) {
-                String _key = key.toString();
+                String keyWord = key.toString();
                 String nodeKey = node.key.toString();
-                if (_key.length() == nodeKey.length()) {
+                if (keyWord.length() == nodeKey.length()) {
                     boolean isEqual = true;
-                    for (char i = 0; i < _key.length(); i++) {
-                        if (_key.charAt(i) != nodeKey.charAt(i)) {
+                    for (char i = 0; i < keyWord.length(); i++) {
+                        if (keyWord.charAt(i) != nodeKey.charAt(i)) {
                             isEqual = false;
                             break;
                         }
@@ -73,13 +73,13 @@ public class HashTable<K, V> {
     public void remove(K key){
         Node<K, V> node = find(key);
         if(node != null){
+            int index = getAddress(key);
             if(node.next != null){
                 node.next.prev = node.prev;
             }
             if(node.prev != null){
                 node.prev.next = node.next;
             }
-            int index = getAddress(key);
             if(table[index] == node){
                 table[index] = node.next;
             }
