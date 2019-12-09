@@ -32,7 +32,6 @@ public class SortedLinkedList {
             head = tail = node;
         } else {
             Node existing = head;
-            boolean inserted = false;
             while(existing != null) {
                 if(existing.value > node.value){
                     node.prev = existing.prev;
@@ -44,15 +43,16 @@ public class SortedLinkedList {
                         head = node;
                     }
                     existing.prev = node;
-                    inserted = true;
                     break;
+                } else {
+                    if(existing == tail){
+                        tail.next = node;
+                        node.prev = tail;
+                        tail = node;
+                        break;
+                    }
                 }
                 existing = existing.next;
-           }
-           if(!inserted){
-               tail.next = node;
-               node.prev = tail;
-               tail = node;
            }
         }
         size++;

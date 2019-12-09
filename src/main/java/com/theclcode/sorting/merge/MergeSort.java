@@ -5,9 +5,9 @@ import java.util.Arrays;
 public class MergeSort {
 
     public static void main(String[] args){
-        int[] inputArray = {15,13,1,2,5,13,12,10,9,7,9,8,4,4,3,2,0,1,7,-32};
-        mergeSort(inputArray, 0, inputArray.length-1);
-        System.out.println(Arrays.toString(inputArray));
+        int[] arr = {15,13,1,2,5,13,12,10,9,7,9,8,4,4,3,2,0,1,7,-32, 32,-1, 4, 5,9, 10, 12, -12, -12, -11, 40};
+        mergeSort(arr, 0, arr.length-1);
+        System.out.println(Arrays.toString(arr));
     }
 
     public static void mergeSort(int[] array, int start, int end){
