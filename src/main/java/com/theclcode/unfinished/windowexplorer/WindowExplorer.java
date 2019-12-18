@@ -1,6 +1,9 @@
 package com.theclcode.unfinished.windowexplorer;
 
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
 
 public class WindowExplorer {
 
@@ -8,75 +11,34 @@ public class WindowExplorer {
 
     final static int SUCCESS = 1;
     final static int FAILURE = 0;
-    static TreeNode[][][] levels;
+    static Directory root;
     static Window left;
     static Window right;
 
     static void init() {
-        left = new Window(0, null);
-        right = new Window(1, null);
-        levels = new TreeNode[26][26][26];
+        root = new Directory();
+        left = new Window(0, root);
+        right = new Window(1, root);
     }
 
     static int mkdir(int m_window, char name[]) {
         Window window = getWindow(m_window);
-        TreeNode directory;
-        TreeNode newDirectory;
-        if(window.getLocation() == null){
-            directory = levels[name[0]-'a'][name[1]-'a'][name[2]-'a'];
-            if(directory == null){
-                char[] prefix = new char[]{name[0], name[1], name[2]};
-                Directory dirDirectory = new Directory(prefix);
-                directory = new TreeNode(null, dirDirectory);
-                levels[name[0]-'a'][name[1]-'a'][name[2]-'a'] = directory;
-            }
-            newDirectory = new TreeNode(null, new Directory(name));
-
-        } else {
-            directory = window.getLocation();
-            newDirectory = new TreeNode(directory, new Directory(name));
-        }
-        if(directory.containsDirectory(new Directory(name))){
-            return FAILURE;
-        }
-        directory.getSubdirectories().add(newDirectory);
-        return SUCCESS;
+        return window.getLocation().create(name);
     }
 
     static int chdir(int m_window, char name[]) {
         Window window = getWindow(m_window);
-        if(name[0] == '\\'){
-            window.setLocation(null);
-            return SUCCESS;
-        } else if(name[0] == '.' && name[1] == '.'){
-            if(window.getLocation().getParent() == null){
-                return FAILURE;
-            }
-            window.setLocation(window.getLocation().getParent());
-            return SUCCESS;
-        } else {
-            TreeNode directory;
-            if(window.getLocation() == null){
-                directory = levels[name[0]-97][name[1]-97][name[2]-97];
-            } else {
-                directory = window.getLocation();
-            }
-            if(directory == null || directory.getSubdirectories().size == 0){
-                return FAILURE;
-            }
-            window.setLocation(directory.getSubdirectories().getFirst());
-            return SUCCESS;
-        }
+        return window.getLocation().change(window, name);
     }
 
     static int rmdir(int m_window, char name[]) {
         Window window = getWindow(m_window);
-        return 0;
+        return window.getLocation().remove(window, name);
     }
 
     static int mvdir(int m_window, char name[]) {
-
-        return 0;
+        Window window = getWindow(m_window);
+        return window.getLocation().move(window, name);
     }
 
     static Window getWindow(int m_window){
@@ -89,101 +51,271 @@ public class WindowExplorer {
 
     static class Window {
         private int id;
-        private TreeNode location;
+        private Directory location;
 
-        public Window(int id, TreeNode location) {
+        public Window(int id, Directory location) {
             this.id = id;
             this.location = location;
         }
 
-        public void setLocation(TreeNode location) {
+        public void setLocation(Directory location) {
             this.location = location;
         }
 
-        public TreeNode getLocation() {
+        public Directory getLocation() {
             return location;
         }
     }
 
-    static class TreeNode {
-        private TreeNode parent;
-        private Directory directory;
-        private LinkedList<TreeNode> subdirectories = new LinkedList<>();
-
-        public TreeNode(TreeNode parent, Directory directory){
-            this.parent = parent;
-            this.directory = directory;
-        }
-
-        public void setParent(TreeNode parent) {
-            this.parent = parent;
-        }
-
-        public TreeNode getParent() {
-            return parent;
-        }
-
-        public void setDirectory(Directory directory) {
-            this.directory = directory;
-        }
-
-        public Directory getDirectory() {
-            return directory;
-        }
-
-        public LinkedList<TreeNode> getSubdirectories() {
-            return subdirectories;
-        }
-
-        public LinkedList.Node<TreeNode> find(Directory directory){
-            LinkedList.Node<TreeNode> node = subdirectories.getHead();
-            while(node != null){
-                if(node.value.getDirectory().isEqual(directory)){
-                    return node;
-                }
-                node = node.next;
-            }
-            return null;
-        }
-
-        public LinkedList.Node<TreeNode> findByPrefix(char[] prefix){
-            LinkedList.Node<TreeNode> node = subdirectories.getHead();
-            while(node != null){
-
-                node = node.next;
-            }
-            return null;
-        }
-
-        public boolean containsDirectory(Directory dirDirectory){
-            return find(dirDirectory) != null;
-        }
-    }
-
     static class Directory {
-        private char[] dirName;
+
+        private char[] name;
         private int hash;
+        private LinkedList<Directory>[][][] subdirectories = new LinkedList[26][26][26];
+        private List<LinkedList<Directory>> subdirectoryList = new ArrayList<>();
+        private int numberOfSubdirectories = 0;
+        private Directory parent;
+
         private final static int BASE = 37;
         private final static int[] POWERS = {1, BASE, BASE * BASE};
 
-        public Directory(char[] value){
-            this.dirName = new char[value.length];
-            for(int i = 0; i<this.dirName.length && value[i] != '\0'; i++){
-                this.dirName[i] = value[i];
+
+        public Directory(){
+            this.name = new char[]{'/'};
+            this.parent = null;
+        }
+
+        public Directory(char[] value, Directory parent){
+            this.name = new char[value.length];
+            for(int i = 0; i<this.name.length && value[i] != '\0'; i++){
+                this.name[i] = value[i];
             }
+            this.parent = parent;
             setHash();
         }
 
-        public char[] getDirName() {
-            return dirName;
+        public char[] getName() {
+            return name;
+        }
+
+        public void setParent(Directory parent) {
+            this.parent = parent;
+        }
+
+        public int create(char[] name){
+            LinkedList<Directory> location = subdirectories[name[0]-97][name[1]-97][name[2]-97];
+            Directory directory = new Directory(name, this);
+            if(location == null){
+                location = new LinkedList<>();
+                location.add(directory);
+                subdirectories[name[0]-97][name[1]-97][name[2]-97] = location;
+                numberOfSubdirectories++;
+                subdirectoryList.add(location);
+                return SUCCESS;
+            } else {
+                LinkedList.Node<Directory> node = location.getHead();
+                while(node != null){
+                    if(node.value.isEqual(directory)){
+                        return FAILURE;
+                    }
+                    node = node.next;
+                }
+                location.add(directory);
+                numberOfSubdirectories++;
+                return SUCCESS;
+            }
+        }
+
+        public LinkedList<Directory> getLocation(char[] name){
+                LinkedList<Directory> location = null;
+                int[] level = new int[3];
+                level[0] = name[0]-97;
+                if(name[1] != '\0'){
+                    level[1] = name[1]-97;
+                    if(name[2] != '\0'){
+                        level[2] = name[2]-97;
+                        if(this.subdirectories[level[0]][level[1]][level[2]] != null
+                                && this.subdirectories[level[0]][level[1]][level[2]].size > 0){
+                            location = this.subdirectories[level[0]][level[1]][level[2]];
+                        }
+                    } else {
+                        for(int i=0; i<26; i++){
+                            if(this.subdirectories[level[0]][level[1]][i] != null
+                                    && this.subdirectories[level[0]][level[1]][i].size >0){
+                                location = this.subdirectories[level[0]][level[1]][i];
+                                break;
+                            }
+                        }
+                    }
+
+                } else {
+                    for(int i=0; i<26; i++){
+                        for(int j=0; j<26; j++){
+                            if(this.subdirectories[level[0]][i][j] != null && this.subdirectories[level[0]][i][j].size > 0){
+                                location = this.subdirectories[level[0]][i][j];
+                                break;
+                            }
+                        }
+                    }
+                }
+                return location;
+        }
+
+        public List<LinkedList<Directory>> getLocations(char[] name){
+            List<LinkedList<Directory>> locations = new ArrayList<>();
+            int[] level = new int[3];
+            level[0] = name[0]-97;
+            if(name[1] != '\0'){
+                level[1] = name[1]-97;
+                if(name[2] != '\0'){
+                    level[2] = name[2]-97;
+                    if(this.subdirectories[level[0]][level[1]][level[2]] != null
+                            && this.subdirectories[level[0]][level[1]][level[2]].size > 0){
+                        locations.add(this.subdirectories[level[0]][level[1]][level[2]]);
+                    }
+                } else {
+                    for(int i=0; i<26; i++){
+                        if(this.subdirectories[level[0]][level[1]][i] != null
+                                && this.subdirectories[level[0]][level[1]][i].size >0){
+                            locations.add(this.subdirectories[level[0]][level[1]][i]);
+                        }
+                    }
+                }
+
+            } else {
+                for(int i=0; i<26; i++){
+                    for(int j=0; j<26; j++){
+                        if(this.subdirectories[level[0]][i][j] != null && this.subdirectories[level[0]][i][j].size > 0){
+                            locations.add(this.subdirectories[level[0]][i][j]);
+                        }
+                    }
+                }
+            }
+            return locations;
+        }
+
+        public int change(Window window, char[] name){
+            if(name[0] == '/'){
+                window.setLocation(root);
+                return SUCCESS;
+            } else if(name[0] == '.' && name[1] == '.'){
+                if(window.getLocation().equals(root)){
+                    return FAILURE;
+                }
+                window.setLocation(window.getLocation().parent);
+                return SUCCESS;
+            }
+            LinkedList<Directory> location = getLocation(name);
+            if(location == null || location.size == 0){
+                return FAILURE;
+            }
+            window.setLocation(location.getFirst());
+            return SUCCESS;
+        }
+
+        public int remove(Window window, char[] name){
+            Window otherWindow = getWindow(window.id == 0 ? 1 : 0);
+            int deleted = 0;
+            List<LinkedList<Directory>> locations = getLocations(name);
+            for(LinkedList<Directory> location : locations){
+                deleted += location.size;
+                LinkedList.Node<Directory> node = location.getHead();
+                while(node != null){
+                    if(node.value == otherWindow.getLocation()){
+                        otherWindow.setLocation(window.getLocation());
+                    }
+                    deleted = node.value.recursiveDelete(window, deleted);
+                    node = node.next;
+                }
+                numberOfSubdirectories -= location.size;
+                location.removeAll();
+            }
+            return deleted;
+        }
+
+        public int move(Window window, char[] name){
+            Window otherWindow = getWindow(window.id == 0 ? 1 : 0);
+            LinkedList<Directory> location = getLocation(name);
+            if(window.getLocation() == otherWindow.getLocation() || location == null
+                    || location.size == 0 || otherWindow.getLocation().hasSubdirectory(location.getFirst())
+                    || location.getFirst().hasDescendant(otherWindow.getLocation())){
+                return FAILURE;
+            } else {
+                    Directory directoryToMove = location.getFirst();
+                    location.remove(location.getFirst());
+                    directoryToMove.parent.numberOfSubdirectories--;
+                    otherWindow.getLocation().insert(directoryToMove);
+            }
+            return SUCCESS;
+        }
+
+        private void insert(Directory directory){
+            LinkedList<Directory> location = getLocation(directory.getName());
+            if(location != null){
+                location.add(directory);
+            } else {
+                location = new LinkedList<>();
+                location.add(directory);
+                subdirectories[directory.getName()[0]-97][directory.getName()[1]-97][directory.getName()[2]-97] = location;
+                subdirectoryList.add(location);
+            }
+            directory.setParent(this);
+            numberOfSubdirectories++;
+        }
+
+        private boolean hasDescendant(Directory directory){
+            boolean found = false;
+            for(LinkedList<Directory> directoryLinkedList : subdirectoryList){
+                LinkedList.Node<Directory> node = directoryLinkedList.getHead();
+                while(node != null){
+                    if(node.value == directory){
+                        return true;
+                    }
+                    if(node.value.hasDescendant(directory)){
+                        found = true;
+                        break;
+                    }
+                    node = node.next;
+                }
+            }
+            return found;
+        }
+
+        private boolean hasSubdirectory(Directory directory){
+            for(LinkedList<Directory> directoryLinkedList : subdirectoryList){
+                LinkedList.Node<Directory> node = directoryLinkedList.getHead();
+                while(node != null){
+                    if (node.value.isEqual(directory)) {
+                        return true;
+                    }
+                    node = node.next;
+                }
+            }
+            return false;
+        }
+
+        private int recursiveDelete(Window window, int deleted){
+            Window otherWindow = getWindow(window.id == 0 ? 1 : 0);
+            deleted += this.numberOfSubdirectories;
+            for(LinkedList<Directory> subdirectory : subdirectoryList){
+                LinkedList.Node<Directory> node = subdirectory.getHead();
+                while(node != null){
+                    if(node.value == otherWindow.getLocation()){
+                        otherWindow.setLocation(window.getLocation());
+                    }
+                    deleted = node.value.recursiveDelete(window, deleted);
+                    node = node.next;
+                }
+            }
+            return deleted;
         }
 
         private void setHash(){
-            for(int i = 0, j = 2; i<this.dirName.length && this.dirName[i] != '\0'; i++, j--){
+            for(int i = 0, j = 2; i<this.name.length && this.name[i] != '\0'; i++, j--){
                 if(i<3){
-                    this.hash += this.dirName[i] * POWERS[j];
+                    this.hash += this.name[i] * POWERS[j];
                 } else {
-                    this.hash += this.dirName[i];
+                    this.hash += this.name[i];
                 }
             }
         }
@@ -197,11 +329,11 @@ public class WindowExplorer {
                 return false;
             }
             boolean isEqual = true;
-            for(int i = 0; i< directory.getDirName().length; i++){
-                if(directory.getDirName()[i] == '\0' && this.dirName[i] == '\0'){
+            for(int i = 0; i< directory.getName().length; i++){
+                if(directory.getName()[i] == '\0' && this.name[i] == '\0'){
                     break;
                 }
-                if(directory.getDirName()[i] != this.getDirName()[i]){
+                if(directory.getName()[i] != this.getName()[i]){
                     isEqual = false;
                     break;
                 }
@@ -229,12 +361,12 @@ public class WindowExplorer {
                 head = tail = node;
                 size++;
             } else {
-                if(value instanceof TreeNode){
+                if(value instanceof Directory){
                     Node<E> existing = getHead();
-                    char[] nodeName = ((TreeNode) value).getDirectory().getDirName();
+                    char[] nodeName = ((Directory) value).getName();
                     boolean inserted = false;
                     while(existing != null){
-                        char[] existingName = ((TreeNode) existing.value).getDirectory().getDirName();
+                        char[] existingName = ((Directory) existing.value).getName();
                         for(int i=0; i<nodeName.length && i<existingName.length; i++){
                             if(nodeName[i] <= existingName[i]){
                                 if(nodeName[i] == existingName[i]){
@@ -312,6 +444,12 @@ public class WindowExplorer {
 
         public Node<E> getHead() {
             return head;
+        }
+
+        public void removeAll() {
+            this.size = 0;
+            this.head = null;
+            this.tail = null;
         }
 
         static class Node<E>  {
@@ -421,29 +559,141 @@ public class WindowExplorer {
         }
     }
 
-    public static void main(String[] args) {
-//        sc = new Scanner(System.in);
-//
-//        int T = sc.nextInt();
-//
-//        for (int tc = 1; tc <= T; tc++) {
-//            System.out.printf("Case #%d:\n", tc);
-//            run();
-//        }
+    public static void main(String[] args) throws IOException {
+        sc = new Scanner(System.in);
 
-        init();
-        char[] c = new char[]{'a','a','a','a',0};
-        System.out.println(mkdir(0, c));
-        c = new char[]{'a','a','a','a','a'};
-        System.out.println(mkdir(0, c));
-        c = new char[]{'a','a','a',0,0};
-        System.out.println(mkdir(0, c));
-        System.out.println(chdir(1, c));
-        System.out.println(mkdir(1, c));
-        c = new char[]{'z','a','a',0,0};
-        System.out.println(mkdir(1, c));
-        c = new char[]{'b','a','a',0,0};
-        System.out.println(mkdir(1, c));
-        System.out.println();
+        int T = sc.nextInt();
+
+        for (int tc = 1; tc <= T; tc++) {
+            System.out.printf("Case #%d:\n", tc);
+            run();
+        }
+
+//        init();
+//        char str[] = new char[100];
+//        char[] root = new char[]{'/'};
+//        char[] up = new char[]{'.','.'};
+
+//        copy(str, "aaaaa");
+//        System.out.println(mkdir(0, str));
+//        copy(str, "bbbbb");
+//        System.out.println(mkdir(0, str));
+//        copy(str, "aaa");
+//        System.out.println(chdir(1, str));
+//        copy(str, "aaaaa");
+//        System.out.println(mkdir(1, str));
+//        copy(str, "bbb");
+//        System.out.println(chdir(0, str));
+//        copy(str, "ccccc");
+//        System.out.println(mkdir(0, str));
+//        copy(str, "ccc");
+//        System.out.println(mvdir(0, str));
+//        System.out.println(chdir(0, root));
+//        System.out.println(chdir(1, up));
+//        copy(str, "aaa");
+//        System.out.println(chdir(0, str));
+//        copy(str, "ccc");
+//        System.out.println(chdir(0, str));
+//        copy(str, "ddddd");
+//        System.out.println(mkdir(0, str));
+//        copy(str, "aaa");
+//        System.out.println(rmdir(1, str));
+//        copy(str, "abcde");
+//        System.out.println(mkdir(1, str));
+//        copy(str, "abc");
+//        System.out.println(chdir(1, str));
+//        copy(str, "defgh");
+//        System.out.println(mkdir(1, str));
+//        copy(str, "ijklm");
+//        System.out.println(mkdir(1, str));
+//        copy(str, "i");
+//        System.out.println(chdir(1, str));
+//        copy(str, "ab");
+//        System.out.println(mvdir(0, str));
+//        copy(str, "abc");
+//        System.out.println(chdir(0, str));
+//        System.out.println(chdir(1, up));
+//        copy(str, "i");
+//        System.out.println(mvdir(0, str));
+//        System.out.println(chdir(0, root));
+//        System.out.println(chdir(1, root));
+//        copy(str, "b");
+//        System.out.println(rmdir(0, str));
+//        copy(str, "a");
+//        System.out.println(rmdir(1, str));
+//
+//
+//        //break
+//        System.out.println("===============honest==============");
+//
+//        copy(str, "aaaaccc");
+//        System.out.println(mkdir(0, str));
+//        copy(str, "aaaabb");
+//        System.out.println(mkdir(0, str));
+//        copy(str, "aaaaa");
+//        System.out.println(mkdir(0, str));
+//        copy(str, "aaa");
+//        System.out.println(chdir(1, str));
+//        copy(str, "bbbbbbb");
+//        System.out.println(mkdir(1, str));
+//        copy(str, "bbbbbbbb");
+//        System.out.println(mkdir(1, str));
+//        copy(str, "bbbbbbbbb");
+//        System.out.println(mkdir(1, str));
+//        copy(str, "bbbbbbbbaaa");
+//        System.out.println(mkdir(1, str));
+//        copy(str, "bbbbbbb");
+//        System.out.println(mkdir(0, str));
+//        copy(str, "bbbbbbb");
+//        System.out.println(mkdir(0, str));
+//        copy(str, "b");
+//        System.out.println(chdir(1, str));
+//        System.out.println(chdir(0, str));
+//        copy(str, "xxxxx");
+//        System.out.println(mkdir(1, str));
+//        copy(str, "yyyyy");
+//        System.out.println(mkdir(1, str));
+//        System.out.println(chdir(0, root));
+//        copy(str, "a");
+//        System.out.println(rmdir(0, str));
+//        System.out.println();
+
+//        copy(str, "aaaaa");
+//        System.out.println(mkdir(0, str));
+//        copy(str, "bbbbb");
+//        System.out.println(mkdir(0, str));
+//        copy(str, "b");
+//        System.out.println(chdir(1, str));
+//        copy(str, "aaaaa");
+//        System.out.println(mkdir(1, str));
+//        copy(str, "aaa");
+//        System.out.println(mvdir(0, str));
+
+//        copy(str, "aaaaa");
+//        System.out.println(mkdir(0, str));
+//        copy(str, "abaab");
+//        System.out.println(mkdir(0, str));
+//        copy(str, "acaac");
+//        System.out.println(mkdir(0, str));
+//        copy(str, "a");
+//        System.out.println(chdir(1, str));
+//        copy(str, "bbbba");
+//        System.out.println(mkdir(1, str));
+//        copy(str, "bbbbb");
+//        System.out.println(mkdir(1, str));
+//        copy(str, "xbbbb");
+//        System.out.println(mkdir(1, str));
+//        copy(str, "zzzzz");
+//        System.out.println(mkdir(1, str));
+//        copy(str, "a");
+//        System.out.println(rmdir(0, str));
+//        System.out.println();
+
+
+
+    }
+
+    static void copy(char[] str, String word){
+        mstrcpy(str, word);
     }
 }
