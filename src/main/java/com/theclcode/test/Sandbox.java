@@ -3,76 +3,93 @@ package com.theclcode.test;
 import java.util.Arrays;
 
 public class Sandbox {
+
     public static void main(String[] args) {
-        SortedLinkedList sortedLinkedList = new SortedLinkedList();
-        sortedLinkedList.add(5);
-        sortedLinkedList.add(1);
-        sortedLinkedList.add(4);
-        sortedLinkedList.add(-4);
-        sortedLinkedList.add(3);
-        sortedLinkedList.add(9);
-        sortedLinkedList.add(0);
-        sortedLinkedList.add(1);
-        sortedLinkedList.add(190);
-        sortedLinkedList.add(189);
 
-        SortedLinkedList.Node node = sortedLinkedList.getHead();
-        while(node != null){
-            System.out.println(node.value);
-            node = node.next;
+        StackQueueLinkedList<Integer> linkedList = new StackQueueLinkedList<>();
+
+        linkedList.add(1);
+        linkedList.add(2);
+        linkedList.add(3);
+        linkedList.add(4);
+        linkedList.add(5);
+
+        while (!linkedList.isEmpty()){
+            System.out.println(linkedList.removeFirst());
         }
+
+        linkedList.add(5);
+        linkedList.add(4);
+        linkedList.add(3);
+        linkedList.add(2);
+        linkedList.add(1);
+
+        while (!linkedList.isEmpty()){
+            System.out.println(linkedList.removeLast());
+        }
+        System.out.println();
     }
-    static class SortedLinkedList {
 
-        Node head;
-        Node tail;
-        int size;
+   static class StackQueueLinkedList<E> {
 
-        public Node getHead() {
-            return head;
-        }
+       int size;
+       Node<E> head;
+       Node<E> tail;
 
-        public void add(int value){
-            Node node = new Node(value);
-            if(head == null){
-                head = tail = node;
-            } else {
-                Node existing = head;
-                while(existing != null){
-                    if(existing.value > node.value){
-                        node.next = existing;
-                        node.prev = existing.prev;
-                        if(existing.prev != null){
-                            existing.prev.next = node;
-                        }
-                        existing.prev = node;
-                        if(existing == head){
-                            head = node;
-                        }
-                        size++;
-                        break;
-                    } else {
-                        if(existing == tail){
-                            tail.next = node;
-                            node.prev = tail;
-                            tail = node;
-                            size++;
-                            break;
-                        }
-                    }
-                    existing = existing.next;
-                }
-            }
-        }
+       public boolean isEmpty(){
+           return size == 0;
+       }
 
-       static class Node {
-            int value;
-            Node prev;
-            Node next;
+       public void add(E value){
+           Node<E> node = new Node<>(value);
+           if(head == null){
+               head = tail = node;
+           } else {
+               tail.next = node;
+               node.prev = tail;
+               tail = node;
+           }
+           size++;
+       }
 
-            Node(int value){
-                this.value = value;
-            }
-        }
-    }
+       public E removeFirst(){
+           if(head == null){
+               return null;
+           }
+           Node<E> node = head;
+           head = node.next;
+           if(head != null){
+               head.prev = null;
+           } else {
+               tail = null;
+           }
+           size--;
+           return node.value;
+       }
+
+       public E removeLast(){
+           if(tail == null){
+                return null;
+           }
+           Node<E> node = tail;
+           tail = node.prev;
+           if(tail != null){
+               tail.next = null;
+           } else {
+               head = null;
+           }
+           size--;
+           return node.value;
+       }
+
+       class Node<E> {
+           E value;
+           Node<E> prev;
+           Node<E> next;
+
+           Node(E value){
+               this.value = value;
+           }
+       }
+   }
 }
