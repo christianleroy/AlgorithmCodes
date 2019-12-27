@@ -82,6 +82,9 @@ public class HashTable<K, V> {
             }
             if(table[index] == node){
                 table[index] = node.next;
+                if(node.next != null){
+                    node.next.prev = null;
+                }
             }
         }
     }
