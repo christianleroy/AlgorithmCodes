@@ -1,4 +1,4 @@
-package com.theclcode.unfinished.study.factory;
+package com.theclcode.swc.newsletter.may19.factory;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
