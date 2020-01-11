@@ -5,13 +5,32 @@ import java.util.Scanner;
 class NextWordPrediction {
 
     /**************** START OF USER SOLUTION ****************/
+
+    static HashTable<Word, Integer> searchedWords;
+    static Trie root;
     
     static void init() {
-
+		searchedWords = new HashTable<>(1013);
+		root = new Trie();
     }
 
     static void search(char[] words) {
-        
+        Word word = new Word(words);
+        if(searchedWords.contains(word)){
+        	Integer count = searchedWords.get(word);
+        	searchedWords.put(word, ++count);
+		} else {
+        	searchedWords.put(word, 1);
+		}
+        Trie trie = root;
+        for(int i=0; i<words.length && words[i] != '\0'; i++){
+			if(trie.node[i-97] == null){
+				trie.node[i-97] = new Trie();
+			} else {
+				trie.node[i-97].count++;
+			}
+			trie = trie.node[i-97];
+        }
     }
 
     static int autoComplete(char[] prefix, char[][] autoWords) {
@@ -19,6 +38,16 @@ class NextWordPrediction {
         return 0;
     }
 
+
+	static class Trie {
+    	int count;
+    	Trie[] node;
+		LinkedList<Word> topWords = new LinkedList<>();
+    	Trie(){
+    		count = 1;
+    		node = new Trie[26];
+		}
+	}
 
 
     static class LinkedList<E> {
@@ -33,14 +62,60 @@ class NextWordPrediction {
 			} else {
 				if(value instanceof Word){
 					Word word = (Word) value;
-					if(size == 5){
+					Integer wordCount = searchedWords.get(word);
+					Node<E> existing = head;
+					while(existing != null){
+						Word existingWord = (Word) existing.value;
+						Integer existingWordCount = searchedWords.get(existingWord);
+						boolean inserted = false;
+						if(wordCount == existingWordCount){
+							char[] wordVal = word.value;
+							char[] exWordVal = existingWord.value;
+							for(int i=0; i<wordVal.length && i<exWordVal.length; i++){
+								if(wordVal[i] <= exWordVal[i]){
+									if(wordVal[i] == exWordVal[i]){
+										if((i == wordVal.length-1 || wordVal[i+1] == '\0')
+												&& (i < exWordVal.length-1 && exWordVal[i+1] != '\0')){
+										} else{
+											continue;
+										}
+									}
+									node.next = existing;
+									node.prev = existing.prev;
+									if(existing.prev != null){
+										existing.prev.next = node;
+									}
+									existing.prev = node;
+									if(existing == head){
+										head = node;
+									}
+									inserted = true;
+								}
+								break;
+							}
+							if(inserted){
+								break;
+							}
+						} else if(wordCount > existingWordCount){
+							node.next = existing;
+							node.prev = existing.prev;
+							if(existing.prev != null){
+								existing.prev.next = node;
+							}
+							if(existing == head){
+								head = node;
+							}
+							existing.prev = node;
+							break;
 
-					} else {
-						Node<E> existing = head;
-						while(existing != null){
-
-							existing = existing.next;
 						}
+						if(!inserted && existing == tail){
+							tail.next = node;
+							node.prev = tail;
+							tail = node;
+							break;
+						}
+						existing = existing.next;
 					}
 				} else {
 					tail.next = node;
@@ -50,8 +125,12 @@ class NextWordPrediction {
 
 			}
 			size++;
+			if(size > 5){
+				tail = tail.prev;
+				tail.next = null;
+				size--;
+			}
 		}
-
 
 		static class Node<E> {
 			E value;
@@ -64,72 +143,139 @@ class NextWordPrediction {
 		}
 	}
 
-	static class HashTable<K, V>{
-    	int capacity;
-    	Node<K, V>[] table;
-    	static final int BASE = 37;
-    	static final int[] POWERS = {1, BASE, BASE * BASE};
+	public static class HashTable<K, V>{
 
-    	public HashTable(){
-    		this(13);
+		int capacity;
+		Node<K, V>[] table;
+		static final int BASE = 37;
+		static final int[] POWERS = {1, BASE, BASE * BASE};
+
+		public HashTable(){
+			this(13);
 		}
 
-    	public HashTable(int capacity){
-    		this.capacity = capacity;
-    		this.table = new Node[capacity];
+		public HashTable(int capacity){
+			this.capacity = capacity;
+			table = new Node[capacity];
+		}
+
+		public void remove(K key){
+			Node<K, V> node = find(key);
+			if(node != null){
+				int index = getAddress(key);
+				if(node.next != null){
+					node.next.prev = node.prev;
+				}
+				if(node.prev != null){
+					node.prev.next = node.next;
+				}
+				if(table[index] == node){
+					table[index] = node.next;
+					if(node.next != null){
+						node.next.prev = null;
+					}
+				}
+			}
+		}
+
+		public Node<K, V>[] getTable() {
+			return table;
+		}
+
+		public V get(K key){
+			Node<K, V> node = find(key);
+			if(node == null){
+				return null;
+			}
+			return node.value;
+		}
+
+		public boolean contains(K key){
+			return find(key) != null;
 		}
 
 		public void put(K key, V value){
-    		int index = getAddress(key);
-    		if(table[index] == null){
-    			Node<K, V> node = new Node<>(key, value);
-    			table[index] = node;
+			int index = getAddress(key);
+			if(table[index] == null){
+				Node<K, V> node = new Node<>(key, value);
+				table[index] = node;
 			} else {
-//    			Node<K, V> node = find()
-			}
-		}
-
-		Node<K, V> find(K key){
-    		int index = getAddress(key);
-    		Node<K, V> node = table[index];
-    		while(node != null){
-    			if(key instanceof Word && node.key instanceof String){
-
-				} else if((key == null && node.key == null) || (node.key != null && node.key.equals(key))){
-    				return node;
-				}
-    			node = node.next;
-			}
-    		return null;
-		}
-
-		int getAddress(K key){
-    		return key == null ? 0 : hash(key) % capacity;
-		}
-
-		int hash(K key){
-    		String word = key.toString();
-			int hash = 0;
-    		for(int i=0, y=2; i<word.length(); i++, y--){
-    			if(i < 3){
-    				hash += word.charAt(i) * POWERS[y];
+				Node<K, V> node = find(key);
+				if(node == null){
+					node = new Node<>(key, value);
+					Node<K, V> existing = table[index];
+					node.next = existing;
+					existing.prev = node;
+					table[index] = node;
 				} else {
-    				hash += word.charAt(i);
+					node.value = value;
 				}
 			}
-    		return hash;
 		}
 
+		private Node<K, V> find(K key){
+			int index = getAddress(key);
+			Node<K, V> node = table[index];
+			while(node != null){
+				if(key instanceof Word && node.key instanceof Word){
+					Word keyWord = (Word) key;
+					Word nodeWord = (Word) node.key;
+					if(keyWord.same(nodeWord)){
+						return node;
+					}
+				}
+				else if(key instanceof String && node.key instanceof String){
+					String keyWord = key.toString();
+					String nodeKey = node.key.toString();
+					if(keyWord.length() == nodeKey.length()){
+						boolean isEqual = true;
+						for(int i=0; i<keyWord.length(); i++){
+							if(keyWord.charAt(i) != nodeKey.charAt(i)){
+								isEqual = false;
+								break;
+							}
+						}
+						if(isEqual){
+							return  node;
+						}
+					}
+				} else if((key == null && node.key == null) || (node.key != null && node.key.equals(key))){
+					return node;
+				}
+				node = node.next;
+			}
+			return null;
+		}
 
-    	class Node<K, V>{
-    		K key;
-    		V value;
-    		Node<K, V> prev;
-    		Node<K, V> next;
+		private int getAddress(K key){
+			return key == null ? 0 : hash(key) % capacity;
+		}
 
-    		Node(K key, V value){
-    			this.key = key;
-    			this.value = value;
+		private int hash(K key){
+			if(key instanceof Word){
+				return ((Word) key).hash;
+			}
+			String word = key.toString();
+			int hash = 0;
+			for(int i=0, y=2; i<word.length(); i++, y--){
+				if(i<3){
+					hash += word.charAt(i) * POWERS[y];
+				} else {
+					hash += word.charAt(i);
+				}
+			}
+			return hash;
+		}
+
+		class Node<K, V>{
+			K key;
+			V value;
+			Node<K, V> prev;
+			Node<K, V> next;
+
+			Node(K key, V value){
+				this.key = key;
+				this.value = value;
 			}
 		}
 	}
@@ -150,6 +296,21 @@ class NextWordPrediction {
 
 		public boolean same(Object obj) {
     		Word compare = (Word) obj;
+    		if(this.hash == compare.hash){
+    			boolean isEqual = true;
+    			for(int i=0; i<value.length; i++){
+    				if(value[i] == '\0' && compare.value[i] == '\0'){
+    					break;
+					}
+    				if(value[i] != compare.value[i]){
+    					isEqual = false;
+    					break;
+					}
+    			}
+    			if(isEqual){
+    				return true;
+				}
+			}
 			return false;
 		}
 
@@ -295,45 +456,57 @@ class NextWordPrediction {
 		return accepted;
 	}
 
-	public static void main(String[] args) throws Exception {
-		int test, T;
-		int n, m, initSearchN;
-		
-		Scanner sc = new Scanner(System.in);
-		
-		T = sc.nextInt();
-		orgWordsN = sc.nextInt();
+//	public static void main(String[] args) throws Exception {
+//		int test, T;
+//		int n, m, initSearchN;
+//
+//		Scanner sc = new Scanner(System.in);
+//
+//		T = sc.nextInt();
+//		orgWordsN = sc.nextInt();
+//
+//		for (int i = 0; i < orgWordsN; ++i) {
+//			String inputStr;
+//
+//			wordsLen[0][i] = sc.nextInt();
+//			inputStr = sc.next();
+//
+//			for (int j = 0; j < inputStr.length(); ++j) {
+//				words[0][i][j] = inputStr.charAt(j);
+//			}
+//		}
+//		for (test = 1; test <= T; ++test) {
+//
+//			seed = sc.nextInt();
+//			n = sc.nextInt();
+//			m = sc.nextInt();
+//			startPt = sc.nextInt();
+//			newWordsN = sc.nextInt();
+//			initSearchN = sc.nextInt();
+//
+//			makeWords(startPt, n);
+//
+//			init();
+//
+//			while (initSearchN-- > 0) {
+//				int idx = getRandomWordIndex(n);
+//
+//				search(words[idx / INDEX_DIV][idx % INDEX_DIV]);
+//			}
+//            System.out.printf("Case #%d:\n", test);
+//            run(sc, n, m);
+//		}
+//	}
 
-		for (int i = 0; i < orgWordsN; ++i) {
-			String inputStr;
-			
-			wordsLen[0][i] = sc.nextInt();
-			inputStr = sc.next();
-			
-			for (int j = 0; j < inputStr.length(); ++j) {
-				words[0][i][j] = inputStr.charAt(j);	
-			}
-		}
-		for (test = 1; test <= T; ++test) {
-
-			seed = sc.nextInt();
-			n = sc.nextInt();
-			m = sc.nextInt();
-			startPt = sc.nextInt();
-			newWordsN = sc.nextInt();
-			initSearchN = sc.nextInt();
-
-			makeWords(startPt, n);
-
-			init();
-
-			while (initSearchN-- > 0) {
-				int idx = getRandomWordIndex(n);
-
-				search(words[idx / INDEX_DIV][idx % INDEX_DIV]);
-			}
-            System.out.printf("Case #%d:\n", test);
-            run(sc, n, m);
-		}
-	}
+//	public static void main(String[] args) {
+//		Word word = new Word("abc".toCharArray());
+//		Word _word = new Word("abcd".toCharArray());
+//		HashTable<Word, String> table = new HashTable<>();
+//		table.put(word, "Hey");
+//		table.put(_word, "Hey din");
+//		System.out.println(table.get(word));
+//		System.out.println(table.get(_word));
+//		table.put(word, "Hey ka rin.");
+//		System.out.println(table.get(word));
+//	}
 }

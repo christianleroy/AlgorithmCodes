@@ -134,6 +134,7 @@ public class HashTable<K, V> {
         mgaWords.put("Mapa", "Map");
         mgaWords.put("Sansinukob", "Universe");
         mgaWords.put("Daigdig", "Earth");
+        System.out.println(mgaWords.get("Daigdig"));
         mgaWords.put("Daigdig", "World");
         mgaWords.put("Arkamad", "Pluto");
         System.out.println(mgaWords.get("Arkamad"));

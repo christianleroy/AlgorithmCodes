@@ -4,207 +4,214 @@ import java.util.Arrays;
 
 public class Sandbox {
 
-   static class HashTable<K, V>{
-
-        int capacity;
-        Node<K, V>[] table;
-        static final int BASE = 37;
-        static final int[] POWERS = {1, BASE, BASE * BASE};
-
-        public HashTable(int capacity){
-            this.capacity = capacity;
-            table = new Node[capacity];
-        }
-
-        public HashTable(){
-            this(13);
-        }
-
-        private Node<K, V> find(K key){
-            int index = getAddress(key);
-            Node<K, V> node = table[index];
-            while(node != null){
-                if(key instanceof String && node.key instanceof String){
-                    String keyWord = key.toString();
-                    String nodeKey = node.key.toString();
-
-                    if(keyWord.length() == nodeKey.length()){
-                        boolean isEqual = true;
-                        for(int i=0; i<keyWord.length(); i++){
-                            if(keyWord.charAt(i) != nodeKey.charAt(i)){
-                                isEqual = false;
-                                break;
-                            }
-                        }
-                        if(isEqual){
-                            return node;
-                        }
-                    }
-                } else if((key == null && node.key == null) || (node.key != null && node.key.equals(key))){
-                    return node;
-                }
-                node = node.next;
-            }
-            return null;
-        }
-
-        public void put(K key, V value){
-            int index = getAddress(key);
-            if(table[index] == null){
-                Node<K, V> node = new Node<>(key, value);
-                table[index] = node;
-            } else {
-                Node<K, V> node = find(key);
-                if(node == null){
-                    node = new Node<>(key, value);
-                    Node<K, V> existing = table[index];
-                    node.next = existing;
-                    existing.prev = node;
-                    table[index] = node;
-                } else {
-                    node.value = value;
-                }
-
-            }
-        }
-
-        public boolean contains(K key){
-            return find(key) != null;
-        }
-
-        public void remove(K key){
-            Node<K, V> node = find(key);
-            if(node != null){
-                int index = getAddress(key);
-                if(node.next != null){
-                    node.next.prev = node.prev;
-                }
-                if(node.prev != null){
-                    node.prev.next = node.next;
-                }
-                if(table[index] == node){
-                    table[index] = node.next;
-                    if(node.next != null){
-                        node.next.prev = null;
-                    }
-                }
-            }
-        }
-
-        public V get(K key){
-            Node<K, V> node = find(key);
-            if(node == null){
-                return null;
-            }
-            return node.value;
-        }
-
-       public Node<K, V>[] getTable() {
-           return table;
-       }
-
-       private int getAddress(K key){
-            return key == null ? 0 : hash(key) % capacity;
-        }
-
-        private int hash(K key){
-            String word = key.toString();
-            int hash = 0;
-            for(int i=0, y=2; i<word.length(); i++, y--){
-                if(i < 3){
-                    hash += word.charAt(i) * POWERS[y];
-                } else {
-                    hash += word.charAt(i);
-                }
-            }
-            return hash;
-        }
-
-       static class Node<K, V>{
-           K key;
-           V value;
-           Node<K, V> prev;
-           Node<K, V> next;
-
-           Node(K key, V value){
-               this.key = key;
-               this.value = value;
-           }
-       }
-   }
-
     public static void main(String[] args) {
-        HashTable<String, String> mgaWords = new HashTable<>(10);
-        mgaWords.put(null, "Null World");
-        System.out.println(mgaWords.get(null));
-        mgaWords.put("Mapa", "Map");
-        mgaWords.put("Sansinukob", "Universe");
-        mgaWords.put("Daigdig", "Earth");
-        mgaWords.put("Daigdig", "World");
-        mgaWords.put("Arkamad", "Pluto");
-        System.out.println(mgaWords.get("Arkamad"));
-        System.out.println(mgaWords.get("Daigdig"));
 
-        HashTable<Double, Double> mgaDouble = new HashTable<>(10);
-        mgaDouble.put(1.5, 1.5*2);
-        mgaDouble.put(1.75, 1.75*2);
-        mgaDouble.put(2.0, 2.0*2);
-        mgaDouble.put(2.0, 3.0*2);
+        int[] arr = {15,13,1,2,5,13,12,10,9,7,9,8,4,4,3,2,0,1,7,-32, 32,-1, 4, 5,9, 10, 12, -12, -12, -11, 40};
+        mergeSort(arr, 0, arr.length-1);
+        System.out.println(Arrays.toString(arr));
+//        Word word1 = new Word("abc".toCharArray());
+//        Word word2 = new Word("dbc".toCharArray());
+//        Word word3 = new Word("d".toCharArray());
+//        Word word4 = new Word("bbb".toCharArray());
+//        Word word5 = new Word("zzzzz".toCharArray());
+//        Word word6 = new Word("z".toCharArray());
+//
+//        LinkedList<Word> list = new LinkedList<>();
+//        list.add(word1);
+//        list.add(word2);
+//        list.add(word3);
+//        list.add(word4);
+//        list.add(word5);
+//        list.add(word6);
+//        word6 = new Word("a".toCharArray());
+//        list.add(word6);
+//        word6 = new Word("zzzzzzzzzzzzzzzzzzzzzzz".toCharArray());
+//        word6.count = 65;
+//        list.add(word6);
+//        System.out.println();
 
-        HashTable<Person, Integer> mgaPeople = new HashTable<>(10);
-        Person[] people = new Person[]{new Person("A"), new Person("B"), new Person("C")};
-        mgaPeople.put(people[0], 25);
-        mgaPeople.put(people[1], 20);
-        mgaPeople.put(people[2], 25);
-        mgaPeople.put(people[2], 26);
-        mgaPeople.put(null, null);
-        System.out.println(mgaPeople.get(null));
-        mgaPeople.put(null, 16);
-        System.out.println(mgaPeople.get(null));
-        mgaPeople.remove(null);
-        System.out.println(mgaPeople.get(null));
-
-        HashTable<String, Integer> map = new HashTable<>(1);
-        String name = "Tristan";
-        map.put(name, 25);
-        map.put("John", 45);
-        map.put("Side", 35);
-        System.out.println(map.contains("Side"));
-        System.out.println(map.get("Side"));
-        map.remove("Side");
-        System.out.println(map.contains("Side"));
-        System.out.println(map.get("Side"));
-        System.out.println(map.contains("Tristan"));
-        map.put("Christian", 25);
-        map.put("Leroy", 25);
-
-        HashTable.Node[] table = map.getTable();
-
-        for(int i=0; i<table.length; i++){
-            if(table[i] != null){
-                HashTable.Node node = table[i];
-                while(node != null){
-                    System.out.println(node.key+": "+node.value);
-                    node = node.next;
-                }
-            }
-        }
-
-        HashTable<Integer, Integer> numbers = new HashTable<>(1);
-        numbers.put(27, 12);
-        numbers.put(1, 5);
-        numbers.put(14, 6);
-        System.out.println(numbers.get(1));
-        numbers.remove(1);
-        System.out.println(numbers.get(1));
-        numbers.remove(14);
-        System.out.println();
     }
 
-    public static class Person {
-        String name;
-        Person(String name){
-            this.name = name;
+    static void mergeSort(int[] arr, int start, int end){
+        if(start < end){
+            int middle = (start+end) / 2;
+            mergeSort(arr, start, middle);
+            mergeSort(arr, middle+1, end);
+            merge(arr, start, middle, end);
+        }
+    }
+
+    private static void merge(int[] arr, int start, int middle, int end) {
+        int[] left = new int[(middle-start) + 1];
+        int[] right = new int[(end+1) - (middle+1)];
+
+        for(int i=0; i<left.length; i++){
+            left[i] = arr[start+i];
+        }
+        for(int j=0; j<right.length; j++){
+            right[j] = arr[middle+1+j];
+        }
+
+        for(int index=start, i=0, j=0; index<=end; index++){
+            if(j == right.length || (i < left.length && left[i] <= right[j])){
+                arr[index] = left[i++];
+            } else {
+                arr[index] = right[j++];
+            }
+        }
+    }
+
+    static void insertionSort(int[] arr){
+        for(int i=1; i<arr.length; i++){
+            int currVal = arr[i];
+            int prev = i-1;
+            while(prev >= 0 && currVal <= arr[prev]){
+                arr[prev+1] = arr[prev];
+                prev--;
+            }
+            arr[prev + 1] = currVal;
+        }
+    }
+
+    static class Word {
+        char[] value;
+        int hash;
+        static final int BASE = 37;
+        static final int[] POWERS = {1, BASE, BASE * BASE};
+        int count;
+
+        Word(char[] value){
+            this.value = new char[value.length];
+            for(int i=0; i<value.length && value[i] != '\0'; i++){
+                this.value[i] = value[i];
+            }
+            setHash();
+        }
+
+        public boolean same(Object obj) {
+            Word compare = (Word) obj;
+            if(this.hash == compare.hash){
+                boolean isEqual = true;
+                for(int i=0; i<value.length; i++){
+                    if(value[i] == '\0' && compare.value[i] == '\0'){
+                        break;
+                    }
+                    if(value[i] != compare.value[i]){
+                        isEqual = false;
+                        break;
+                    }
+                }
+                if(isEqual){
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        void setHash(){
+            int hash = 0;
+            for(int i=0, y=2; i<this.value.length && this.value[i] != '\0'; i++, y--){
+                if(i < 3){
+                    hash += this.value[i] * POWERS[y];
+                } else {
+                    hash += this.value[i];
+                }
+            }
+            this.hash = hash;
+        }
+    }
+
+    static class LinkedList<E> {
+        int size;
+        Node<E> head;
+        Node<E> tail;
+
+        public void add(E value){
+            Node<E> node = new Node<>(value);
+            if(head == null){
+                head = tail = node;
+            } else {
+                if(value instanceof Word){
+                    Word word = (Word) value;
+                    Integer wordCount = word.count;
+                    Node<E> existing = head;
+                    while(existing != null){
+                        Word existingWord = (Word) existing.value;
+                        Integer existingWordCount = existingWord.count;
+                        boolean inserted = false;
+                        if(wordCount == existingWordCount){
+                            char[] wordVal = word.value;
+                            char[] exWordVal = existingWord.value;
+                            for(int i=0; i<wordVal.length && i<exWordVal.length; i++){
+                                if(wordVal[i] <= exWordVal[i]){
+                                    if(wordVal[i] == exWordVal[i]){
+                                        if((i == wordVal.length-1 || wordVal[i+1] == '\0')
+                                                && (i < exWordVal.length-1 && exWordVal[i+1] != '\0')){
+                                        } else{
+                                            continue;
+                                        }
+                                    }
+                                    node.next = existing;
+                                    node.prev = existing.prev;
+                                    if(existing.prev != null){
+                                        existing.prev.next = node;
+                                    }
+                                    existing.prev = node;
+                                    if(existing == head){
+                                        head = node;
+                                    }
+                                    inserted = true;
+                                }
+                                break;
+                            }
+                            if(inserted){
+                                break;
+                            }
+                        } else if(wordCount > existingWordCount){
+                            node.next = existing;
+                            node.prev = existing.prev;
+                            if(existing.prev != null){
+                                existing.prev.next = node;
+                            }
+                            if(existing == head){
+                                head = node;
+                            }
+                            existing.prev = node;
+                            break;
+
+                        }
+                        if(!inserted && existing == tail){
+                            tail.next = node;
+                            node.prev = tail;
+                            tail = node;
+                            break;
+                        }
+                        existing = existing.next;
+                    }
+                } else {
+                    tail.next = node;
+                    node.prev = tail;
+                    tail = node;
+                }
+
+            }
+            size++;
+            if(size > 5){
+                tail = tail.prev;
+                tail.next = null;
+                size--;
+            }
+        }
+
+
+        static class Node<E> {
+            E value;
+            Node<E> prev;
+            Node<E> next;
+
+            Node(E value){
+                this.value = value;
+            }
         }
     }
 
