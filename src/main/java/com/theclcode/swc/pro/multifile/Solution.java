@@ -1,4 +1,4 @@
-package com.theclcode.unfinished.multifile;
+package com.theclcode.swc.pro.multifile;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,7 +7,7 @@ import java.util.StringTokenizer;
 
 class Solution {
 	private static BufferedReader br;
-	private static UserSolution usersolution = new UserSolution();
+	private static MultipleFile usersolution = new MultipleFile();
 
 	private static char[] toCharArray(String s)
 	{
