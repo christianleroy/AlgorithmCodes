@@ -28,7 +28,7 @@ public class SortedWordLinkedList {
         wordList.add(new Word("zz".toCharArray()));
 
         for(Word word : wordList) {
-            LinkedList.Node<Word> existing = words.getHead();
+            LinkedList.Node<Word> existing = words.head;
             LinkedList.Node<Word> newWord = new LinkedList.Node<>(word);
             boolean inserted = false;
             while (existing != null) {
@@ -49,8 +49,8 @@ public class SortedWordLinkedList {
                             existing.prev.next = newWord;
                         }
                         existing.prev = newWord;
-                        if(existing == words.getHead()){
-                            words.setHead(newWord);
+                        if(existing == words.head){
+                            words.head = newWord;
                         }
                         inserted = true;
                     }
@@ -92,14 +92,6 @@ public class SortedWordLinkedList {
                 tail = node;
             }
             size++;
-        }
-
-        public void setHead(Node<E> head) {
-            this.head = head;
-        }
-
-        public Node<E> getHead() {
-            return head;
         }
 
         public void setTail(Node<E> tail) {
