@@ -13,6 +13,10 @@ public class SortedWordLinkedListWithDelimeter {
         linkedList.add(mstrcpy(new char[6], "ccc".toCharArray()));
         linkedList.add(mstrcpy(new char[6], "cccc".toCharArray()));
         linkedList.add(mstrcpy(new char[6], "a".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "bbbbb".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "cccc".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "zzzzz".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "aa".toCharArray()));
         linkedList.add(mstrcpy(new char[6], "zzzzz".toCharArray()));
 
         LinkedList.Node node = linkedList.getHead();
