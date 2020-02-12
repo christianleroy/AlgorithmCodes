@@ -41,6 +41,8 @@ public class DoublyLinkedList<E>{
         head = head.next;
         if(head != null){
             head.prev = null;
+        } else {
+            tail = null;
         }
         size--;
         return node.getValue();
@@ -59,9 +61,19 @@ public class DoublyLinkedList<E>{
                 }
                 if(node == head){
                     head = node.next;
+                    if(head != null){
+                        head.prev = null;
+                    } else {
+                        tail = null;
+                    }
                 }
                 if(node == tail){
                     tail = node.prev;
+                    if(tail != null){
+                        tail.next = null;
+                    } else {
+                        head = null;
+                    }
                 }
                 size--;
                 return node.value;

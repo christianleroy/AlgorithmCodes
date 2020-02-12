@@ -30,7 +30,6 @@ public class SortedWordLinkedListWithDelimeter {
     {
         int c = 0;
         while(c < src.length && (dst[c] = src[c]) != 0) ++c;
-        dst[c] = 0;
         return dst;
     }
 
