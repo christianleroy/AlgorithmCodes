@@ -1,7 +1,6 @@
-package com.theclcode.datastructures;
+package com.theclcode.datastructures.unionfind;
 
 public class UnionFind {
-
 
     public static void main(String[] args) {
         Node node1 = new Node(1);
@@ -11,6 +10,10 @@ public class UnionFind {
         Node node5 = new Node(5);
         Node node6 = new Node(6);
         Node node7 = new Node(7);
+        Node node8 = new Node(8);
+        Node node9 = new Node(9);
+        Node node10 = new Node(10);
+        Node node11 = new Node(11);
 
         node3.setParent(node1);
         System.out.println(node3.getParent().id); //1
@@ -43,6 +46,16 @@ public class UnionFind {
         node6.setParent(node1);
         node7.setParent(node1);
         System.out.println(node1.size); //7
+
+        node9.setParent(node8);
+        node11.setParent(node10);
+
+        System.out.println(node9.getParent().id); //8
+        System.out.println(node11.getParent().id); //10
+        node9.setParent(node10);
+        System.out.println(node9.getParent().id); //10
+        System.out.println(node8.getParent().id); //10
+        System.out.println(node10.getParent().size); //4
     }
 
     static class Node {
@@ -63,8 +76,8 @@ public class UnionFind {
 
         public void setParent(Node parent) {
             if(getParent() != parent.getParent()){
-                this.parent = parent.getParent();
-                this.parent.size += this.size;
+                parent.getParent().size += this.getParent().size;
+                this.getParent().parent = parent.getParent();
             }
         }
     }
