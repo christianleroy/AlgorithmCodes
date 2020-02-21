@@ -52,13 +52,14 @@ public class UnionFindWithHeight {
 
         public void setParent(Node<E> node){
             Node<E> nodeParent = node.getParent();
-            if(getParent() != nodeParent){
-                if(getParent().height <= nodeParent.height){
-                    nodeParent.size += this.getParent().size;
-                    if(this.getParent().height == nodeParent.height){
+            Node<E> thisParent = getParent();
+            if(thisParent != nodeParent){
+                if(thisParent.height <= nodeParent.height){
+                    nodeParent.size += thisParent.size;
+                    if(thisParent.height == nodeParent.height){
                         nodeParent.height++;
                     }
-                    this.getParent().parent = nodeParent;
+                    thisParent.parent = nodeParent;
 
                 } else {
                     node.setParent(this);
