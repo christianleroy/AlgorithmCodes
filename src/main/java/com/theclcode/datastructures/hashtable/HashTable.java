@@ -1,4 +1,4 @@
-package com.theclcode.datastructures;
+package com.theclcode.datastructures.hashtable;
 
 public class HashTable<K, V> {
     int capacity = 13;
@@ -37,10 +37,7 @@ public class HashTable<K, V> {
 
     public V get(K key){
         Node<K, V> node = find(key);
-        if(node == null){
-            return null;
-        }
-        return node.value;
+        return node == null ? null : node.value;
     }
 
     private Node<K, V> find(K key) {
