@@ -25,6 +25,19 @@ public class StackQueueLinkedList<E> {
         while (!linkedList.isEmpty()){
             System.out.println(linkedList.removeLast());
         }
+
+        System.out.println(linkedList.size);
+        linkedList.add(59);
+        System.out.println(linkedList.size);
+        System.out.println(linkedList.removeLast());
+        System.out.println(linkedList.size);
+        System.out.println(linkedList.removeFirst());
+        linkedList.add(41);
+        System.out.println(linkedList.size);
+        System.out.println(linkedList.removeFirst());
+        System.out.println(linkedList.size);
+        System.out.println(linkedList.removeLast());
+
         System.out.println();
     }
 
