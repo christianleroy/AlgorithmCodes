@@ -172,7 +172,7 @@ public class MultiUserFile {
 
 		}
 
-		for(int x=i+1, y=0; x<fileExt.length; x++, y++){
+		for(int x=i+1, y=0; x<pattern.length && pattern[x] != '\0'; x++, y++){
 			fileExt[y] = pattern[x];
 		}
 

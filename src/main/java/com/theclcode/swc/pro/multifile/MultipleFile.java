@@ -81,6 +81,8 @@ class MultipleFile {
 			mstrcpy(newDirectory.groupName, user.group);
 
 			newDirectory.permission = permission;
+			_directoryName = new char[10];
+			mstrcpy(_directoryName, directoryName);
 			directory.subdirectories.put(directoryName, newDirectory);
 			return 1;
 		}
