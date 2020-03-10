@@ -1,4 +1,4 @@
-package com.theclcode.unfinished.multiuserfile;
+package com.theclcode.swc.newsletter.mar20.multiuserfile;
 
 import java.util.Scanner;
 
