@@ -20,6 +20,7 @@ public class WorkDistribution {
 		int id;
 		int bossId;
 		LinkedList<Worker> juniors = new LinkedList<>();
+		LinkedList<Work> workQueue = new LinkedList<>();
 
 		int wid = -1;
 		int startTime = -1;
@@ -28,6 +29,114 @@ public class WorkDistribution {
 		Worker(int id, int bossId){
 			this.id = id;
 			this.bossId = bossId;
+		}
+
+		void clear(){
+			if(wid != -1){
+
+				Work currWork = works[wid];
+				currWork.status = DONE;
+				currWork.finishedOn = endTime;
+				this.wid = -1;
+				this.startTime = -1;
+				this.endTime = -1;
+			}
+		}
+
+		void pickWork(Work work, Work currWork, int ctime){
+			if(currWork.originalWorkerId == bossId){
+				Worker boss = workers[bossId];
+				currWork.runTime = workers[currWork.workerId].endTime - ctime;
+				currWork.status = WAIT;
+				currWork.wid = -1;
+				boss.workQueue.add(currWork, QueueType.WORK);
+			} else {
+				LinkedList.Node juniorNode = this.juniors.head;
+				boolean hasAvailableWorker = false;
+				boolean reassigned = false;
+				while (juniorNode != null){
+					Worker junior = (Worker) juniorNode.value;
+					if(junior.startTime == -1){
+						junior.assignWork(work, ctime);
+						hasAvailableWorker = true;
+						reassigned = true;
+					}
+					juniorNode = juniorNode.next;
+				}
+				if(!hasAvailableWorker){
+					juniorNode = this.juniors.head;
+					while(juniorNode != null){
+						Worker junior = (Worker) juniorNode.value;
+						if(junior.assignWork(currWork, ctime)){
+							reassigned = true;
+							break;
+						}
+						juniorNode = juniorNode.next;
+					}
+				}
+				if(!reassigned){
+					if(currWork.workerId != -1){
+						currWork.runTime = workers[currWork.workerId].endTime - ctime;
+						currWork.status = WAIT;
+						currWork.wid = -1;
+					}
+					workQueue.add(currWork, QueueType.WORK);
+				}
+			}
+			pickWork(work, ctime);
+		}
+
+		void pickWork(Work work, int ctime){
+			this.wid = work.wid;
+			this.startTime = ctime;
+			this.endTime = ctime + work.runTime;
+			work.workerId = this.id;
+			work.status = IN_PROGRESS;
+		}
+
+		public boolean assignWork(Work work, int ctime){
+			if(this.wid == -1){
+				pickWork(work, ctime);
+				return true;
+			} else {
+				Work currWork = works[this.wid];
+				if(currWork.originalWorkerId == this.id && work.originalWorkerId == this.id
+						&& hasHigherPriority(currWork, work)){
+					pickWork(work, currWork, ctime);
+					return true;
+				} else if(currWork.originalWorkerId == this.id && work.originalWorkerId == this.bossId){
+					pickWork(work, currWork, ctime);
+					return true;
+				} else if(currWork.originalWorkerId == this.bossId && work.originalWorkerId == this.bossId
+						&& hasHigherPriority(currWork, work)){
+					pickWork(work, currWork, ctime);
+					return true;
+				} else {
+
+					LinkedList.Node juniorsNode = this.juniors.head;
+					while(juniorsNode != null){
+						Worker junior = (Worker) juniorsNode.value;
+						if(junior.startTime == -1){
+							return junior.assignWork(work, ctime);
+						}
+						juniorsNode = juniorsNode.next;
+					}
+					juniorsNode = this.juniors.head;
+					while(juniorsNode != null){
+						Worker junior = (Worker) juniorsNode.value;
+						if(junior.assignWork(work, ctime)){
+							return true;
+						}
+						juniorsNode = juniorsNode.next;
+					}
+				}
+			}
+			return false;
+		}
+
+		private boolean hasHigherPriority(Work currWork, Work newWork){
+			return currWork.priority < newWork.priority
+					|| (currWork.priority == newWork.priority && newWork.wid < currWork.priority);
 		}
 	}
 
@@ -39,7 +148,6 @@ public class WorkDistribution {
 		int originalWorkerId;
 		int workerId;
 		int finishedOn;
-		boolean isBossWork;
 
 		Work(int wid, int imp, int runTime, int workerId){
 			this.wid = wid;
@@ -52,7 +160,7 @@ public class WorkDistribution {
 	}
 
 	enum QueueType {
-		WORKER_ID, WORKER_WORK, WORK
+		WORK
 	}
 
 	static class LinkedList<E> {
@@ -60,6 +168,22 @@ public class WorkDistribution {
 		int size;
 		Node<E> head;
 		Node<E> tail;
+
+		public E removeFirst(){
+			if(head == null){
+				return null;
+			}
+			Node<E> node = head;
+			head = head.next;
+
+			if(head == null){
+				tail = null;
+			} else {
+				head.prev = null;
+			}
+			size--;
+			return node.value;
+		}
 
 		public void remove(E value){
 			Node<E> existing = head;
@@ -94,28 +218,14 @@ public class WorkDistribution {
 			if(size == 0){
 				head = tail = node;
 			} else {
-				if(queueType == QueueType.WORKER_ID){
-					tail.next = node;
-					node.prev = tail;
-					tail = node;
-				} else {
+				if (queueType == QueueType.WORK) {
 					Node<E> existing = head;
 					boolean inserted = false;
-					while(existing != null){
-						if(queueType == QueueType.WORK){
-							Work nw = (Work) node.value;
-							Work ew = (Work) existing.value;
-							if(nw.priority >= ew.priority){
-								if(nw.priority > ew.priority || nw.wid < ew.wid){
-									insertNode(node, existing);
-									inserted = true;
-									break;
-								}
-							}
-						} else if(queueType == QueueType.WORKER_WORK){
-							Worker nw = (Worker) node.value;
-							Worker ew = (Worker) existing.value;
-							if(nw.endTime <= ew.endTime){
+					while (existing != null) {
+						Work nw = (Work) node.value;
+						Work ew = (Work) existing.value;
+						if (nw.priority >= ew.priority) {
+							if(nw.priority > ew.priority || nw.wid < ew.wid) {
 								insertNode(node, existing);
 								inserted = true;
 								break;
@@ -123,11 +233,15 @@ public class WorkDistribution {
 						}
 						existing = existing.next;
 					}
-					if(!inserted){
+					if (!inserted) {
 						tail.next = node;
 						node.prev = tail;
 						tail = node;
 					}
+				} else {
+					tail.next = node;
+					node.prev = tail;
+					tail = node;
 				}
 			}
 			size++;
@@ -157,6 +271,7 @@ public class WorkDistribution {
 	}
 
 	static Worker ceo;
+	static LinkedList<Worker> workersList;
 	static LinkedList<Worker> workersAtWork;
 	static LinkedList<Work> workQueue;
 	static Worker[] workers;
@@ -170,101 +285,59 @@ public class WorkDistribution {
 
 		workersAtWork = new LinkedList<>();
 		workQueue = new LinkedList<>();
+		workersList = new LinkedList<>();
+		workersList.add(ceo, null);
 	}
 
 	static void addMember(int ctime, int id, int boss) {
 		Worker worker = new Worker(id, boss);
 		workers[id] = worker;
 		Worker theBoss = workers[boss];
-		theBoss.juniors.add(worker, QueueType.WORKER_ID);
+		theBoss.juniors.add(worker, null);
+		workersList.add(worker, null);
 		updateQueues(ctime);
 	}
 
 	static void addWork(int ctime, int wid, int id, int imp, int runtime) {
 		Work work = new Work(wid, imp, runtime, id);
 		works[wid] = work;
-		workQueue.add(work, QueueType.WORK);
+		Worker worker = workers[id];
+		worker.workQueue.add(work, QueueType.WORK);
 		updateQueues(ctime);
 	}
 
-	static void assignWork(Worker worker, Work work, int ctime, LinkedList.Node nodeToRemove){
-		if(worker.startTime != -1){
-			Work currWork = works[worker.wid];
-			currWork.runTime = worker.endTime - ctime;
-			currWork.status = WAIT;
-			currWork.workerId = 0;
-			workQueue.add(currWork, QueueType.WORK);
-
-			if(nodeToRemove != null){
-				workersAtWork.remove(nodeToRemove);
-			} else {
-				workersAtWork.remove(worker);
-			}
-		}
-		work.status = IN_PROGRESS;
-		work.workerId = worker.id;
-		worker.wid = work.wid;
-		worker.startTime = ctime;
-		worker.endTime = ctime+work.runTime;
-
-		workersAtWork.add(worker, QueueType.WORKER_WORK);
-	}
-
 	static void updateQueues(int ctime){
-		dequeueWorkersAtWork(ctime);
-		dequeueWorkQueue(ctime);
+		clearFinishedWork(ctime);
+		addNewWork(ctime);
 	}
 
-	static void dequeueWorkersAtWork(int ctime){
-		LinkedList.Node node = workersAtWork.head;
-		while(node != null){
-			Worker worker = (Worker) node.value;
-			if(ctime >= worker.endTime){
-				Work work = works[worker.wid];
-
-				work.status = DONE;
-				work.finishedOn = worker.endTime;
-
-				worker.startTime = -1;
-				worker.endTime = -1;
-				worker.wid = -1;
-				workersAtWork.remove(node);
+	static void clearFinishedWork(int ctime){
+		LinkedList.Node workerNode = workersList.head;
+		while(workerNode != null){
+			Worker worker = (Worker) workerNode.value;
+			if(worker.startTime != -1 && ctime >= worker.endTime){
+				worker.clear();
 			}
-			node = node.next;
+			workerNode = workerNode.next;
 		}
 	}
 
-	static void dequeueWorkQueue(int ctime){
-		LinkedList.Node node = workQueue.head;
-		while(node != null){
-			Work work = (Work) node.value;
-			if(getWorker(work, ctime)){
-				workQueue.remove(node);
-			}
-			node = node.next;
-		}
-	}
-
-	static boolean getWorker(Work work, int ctime){
-		Worker worker = workers[work.originalWorkerId];
-		if(worker.startTime == -1 || works[worker.wid].priority < work.priority
-				|| (works[worker.wid].priority == work.priority && worker.wid > work.wid) || work.isBossWork){
-			assignWork(worker, work, ctime, null);
-			return true;
-		} else {
-			LinkedList.Node juniorsNode = worker.juniors.head;
-			while(juniorsNode != null){
-				Worker junior = (Worker) juniorsNode.value;
-				if(junior.startTime == -1 || works[junior.wid].priority < work.priority
-					|| (works[junior.wid].priority == work.priority && works[junior.wid].wid > work.wid)
-					|| work.isBossWork){
-					assignWork(junior, work, ctime, juniorsNode);
-					return true;
+	static void addNewWork(int ctime){
+		LinkedList.Node workerNode = workersList.head;
+		while(workerNode != null){
+			Worker worker = (Worker) workerNode.value;
+			if(worker.workQueue.size > 0){
+				LinkedList.Node workNode = worker.workQueue.head;
+				while(workNode != null){
+					Work work = (Work) workNode.value;
+					if(worker.assignWork(work, ctime)){
+						worker.workQueue.remove(workNode);
+					}
+					workNode = workNode.next;
 				}
-				juniorsNode = juniorsNode.next;
 			}
+			workerNode = workerNode.next;
 		}
-		return false;
 	}
 
 	static RESULT workStatus(int ctime, int wid) {
