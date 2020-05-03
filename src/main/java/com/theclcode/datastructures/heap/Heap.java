@@ -28,10 +28,31 @@ public class Heap {
     }
 
     //@TODO
-    static void delete(int[] arr, int index){
-        int value = arr[0];
-        swap(arr, arr[0], arr[index]);
+    static int delete(int[] arr, int index){
+        int removed = arr[0];
+        int value = arr[index];
+        swap(arr, 0, index);
+        replace(arr, 0);
+        return removed;
 
+    }
+
+    static void replace(int[] arr, int index){
+        if(index < arr.length){
+            int value = arr[index];
+            int left = arr[index+1];
+            int right = arr[index+2];
+
+            if(value <= left || value <= right){
+                if(left >= right){
+                    swap(arr, index, index+1);
+                    replace(arr, index+1);
+                } else {
+                    swap(arr, index, index+2);
+                    replace(arr, index+2);
+                }
+            }
+        }
     }
 
     static void swap(int[] arr, int left, int right){
