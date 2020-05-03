@@ -107,28 +107,26 @@ public class WorkDistribution {
 				} else if(currWork.originalWorkerId == this.id && work.originalWorkerId == this.bossId){
 					pickWork(work, currWork, ctime);
 					return true;
-				} else if(currWork.originalWorkerId == this.bossId && work.originalWorkerId == this.bossId
-						&& hasHigherPriority(currWork, work)){
-					pickWork(work, currWork, ctime);
-					return true;
 				} else {
+					if(work.originalWorkerId != this.bossId){
+						LinkedList.Node juniorsNode = this.juniors.head;
+						while(juniorsNode != null){
+							Worker junior = (Worker) juniorsNode.value;
+							if(junior.startTime == -1){
+								return junior.assignWork(work, ctime);
+							}
+							juniorsNode = juniorsNode.next;
+						}
+						juniorsNode = this.juniors.head;
+						while(juniorsNode != null){
+							Worker junior = (Worker) juniorsNode.value;
+							if(junior.assignWork(work, ctime)){
+								return true;
+							}
+							juniorsNode = juniorsNode.next;
+						}
+					}
 
-					LinkedList.Node juniorsNode = this.juniors.head;
-					while(juniorsNode != null){
-						Worker junior = (Worker) juniorsNode.value;
-						if(junior.startTime == -1){
-							return junior.assignWork(work, ctime);
-						}
-						juniorsNode = juniorsNode.next;
-					}
-					juniorsNode = this.juniors.head;
-					while(juniorsNode != null){
-						Worker junior = (Worker) juniorsNode.value;
-						if(junior.assignWork(work, ctime)){
-							return true;
-						}
-						juniorsNode = juniorsNode.next;
-					}
 				}
 			}
 			return false;

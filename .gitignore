@@ -28,3 +28,4 @@ target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.l
 .idea/sonarlint/*
 .idea/*
 .DS_Store
+target/test-classes/META-INF/AlgorithmCodes.kotlin_module
