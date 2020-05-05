@@ -6,35 +6,50 @@ import java.util.Arrays;
 public class Heap {
 
     public static void main(String[] args) {
-        int[] newArr = {13, 2, 1, 5, 3, 14, 6};
+        int[] newArr = {13, 2, 1, 5, 3, 14, 6, 13, 18, 4, 5};
         for(int i=0; i<newArr.length; i++){
             insert(newArr, i);
         }
-        delete(newArr, newArr.length-1);
         System.out.println(Arrays.toString(newArr));
 
     }
 
-    static void insert(int arr[], int index){
-        int value = arr[index];
-        int parent = index/2;
-        if(index > 0 && value > arr[parent]){
-            swap(arr, index, parent );
-            insert(arr, parent);
-        } else {
-            arr[index] = value;
+    static void insert(int[] arr, int index){
+        int parent = ((index+1)/2)-1;
+        while(parent >= 0 && arr[index] > arr[parent]){
+            swap(arr, index, parent);
+            index = parent;
+            parent = ((index+1)/2)-1;
         }
-
     }
 
     //@TODO
-    static int delete(int[] arr, int index){
-        int removed = arr[0];
-        int value = arr[index];
-        swap(arr, 0, index);
-        replace(arr, 0);
-        return removed;
-
+    static void delete(int[] arr, int lastIndex){
+        swap(arr, 0, lastIndex--);
+        int index = 0;
+        int left = 1;
+        int right = 2;
+        while(left < lastIndex || right < lastIndex){
+            if(left < lastIndex && right < lastIndex){
+                if(arr[left] >= arr[right] && arr[left] > arr[index]){
+                    swap(arr, index, left);
+                    index = left;
+                } else {
+                    swap(arr, index, right);
+                    index = right;
+                }
+            } else {
+                if(left < lastIndex && arr[left] > arr[index]){
+                    swap(arr, index, left);
+                    index = left;
+                } else if(right < lastIndex && arr[right] > arr[index]){
+                    swap(arr, index, right);
+                    index = right;
+                }
+            }
+            left = index+1;
+            right = index+2;
+        }
     }
 
     static void replace(int[] arr, int index){
