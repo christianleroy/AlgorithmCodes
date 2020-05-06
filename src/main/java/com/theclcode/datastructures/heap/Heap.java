@@ -35,7 +35,7 @@ public class Heap {
         int right = ((index+1)*2+1)-1;
         while(left < lastIndex || right < lastIndex){
             if(left < lastIndex && right < lastIndex){
-                int max = max(arr, left, right);
+                int max = arr[left] >= arr[right] ? left : right;
                 if(arr[index] >= arr[max]){
                     break;
                 }
@@ -55,10 +55,6 @@ public class Heap {
             right = ((index+1)*2+1)-1;
         }
 
-    }
-
-    static int max(int[] arr, int left, int right){
-        return arr[left] >= arr[right] ? left : right;
     }
 
     static void swap(int[] arr, int left, int right){
