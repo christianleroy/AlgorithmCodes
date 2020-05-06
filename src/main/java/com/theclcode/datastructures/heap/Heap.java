@@ -6,9 +6,14 @@ import java.util.Arrays;
 public class Heap {
 
     public static void main(String[] args) {
-        int[] newArr = {13, 2, 1, 5, 3, 14, 6, 13, 18, 4, 5};
+        int[] newArr = {15,13,1,2,5,13,12,10,9,7,9,8,4,4,3,2,0,1,7,-32, 32,-1, 4, 5,9, 10, 12, -12, -12, -11, 40};
         for(int i=0; i<newArr.length; i++){
             insert(newArr, i);
+        }
+        System.out.println(Arrays.toString(newArr));
+        int l = newArr.length-1;
+        while(l > 0){
+            delete(newArr, l--);
         }
         System.out.println(Arrays.toString(newArr));
 
@@ -23,51 +28,37 @@ public class Heap {
         }
     }
 
-    //@TODO
     static void delete(int[] arr, int lastIndex){
-        swap(arr, 0, lastIndex--);
+        swap(arr, 0, lastIndex);
         int index = 0;
-        int left = 1;
-        int right = 2;
+        int left = ((index+1)*2)-1;
+        int right = ((index+1)*2+1)-1;
         while(left < lastIndex || right < lastIndex){
             if(left < lastIndex && right < lastIndex){
-                if(arr[left] >= arr[right] && arr[left] > arr[index]){
-                    swap(arr, index, left);
-                    index = left;
-                } else {
-                    swap(arr, index, right);
-                    index = right;
+                int max = max(arr, left, right);
+                if(arr[index] >= arr[max]){
+                    break;
                 }
+                swap(arr, max, index);;
+                index = max;
+
+            } else if(left < lastIndex && arr[left] > arr[index]){
+                swap(arr, left, index);
+                index = left;
+            } else if(right < lastIndex && arr[right] > arr[index]){
+                swap(arr, right, index);
+                index = right;
             } else {
-                if(left < lastIndex && arr[left] > arr[index]){
-                    swap(arr, index, left);
-                    index = left;
-                } else if(right < lastIndex && arr[right] > arr[index]){
-                    swap(arr, index, right);
-                    index = right;
-                }
+                break;
             }
-            left = index+1;
-            right = index+2;
+            left = ((index+1)*2)-1;
+            right = ((index+1)*2+1)-1;
         }
+
     }
 
-    static void replace(int[] arr, int index){
-        if(index < arr.length){
-            int value = arr[index];
-            int left = arr[index+1];
-            int right = arr[index+2];
-
-            if(value <= left || value <= right){
-                if(left >= right){
-                    swap(arr, index, index+1);
-                    replace(arr, index+1);
-                } else {
-                    swap(arr, index, index+2);
-                    replace(arr, index+2);
-                }
-            }
-        }
+    static int max(int[] arr, int left, int right){
+        return arr[left] >= arr[right] ? left : right;
     }
 
     static void swap(int[] arr, int left, int right){
