@@ -18,6 +18,12 @@ public class SortedWordLinkedListWithDelimeter {
         linkedList.add(mstrcpy(new char[6], "zzzzz".toCharArray()));
         linkedList.add(mstrcpy(new char[6], "aa".toCharArray()));
         linkedList.add(mstrcpy(new char[6], "zzzzz".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "gimme".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "z".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "lll".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "llll".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "show".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "love".toCharArray()));
 
         LinkedList.Node node = linkedList.getHead();
         while(node != null){
@@ -47,15 +53,14 @@ public class SortedWordLinkedListWithDelimeter {
                 Node existing = head;
                 boolean inserted = false;
                 while(existing != null){
-                    char[] exVal = existing.value;
                     int i=0;
                     boolean equal = true;
-                    for(; i < value.length && value[i] != '\0' && exVal[i] != '\0'; i++){
-                        if(value[i] == exVal[i]){
+                    for(; i < value.length && value[i] != '\0'; i++){
+                        if(value[i] == existing.value[i]){
                             continue;
                         }
                         equal = false;
-                        if(value[i] < exVal[i]){
+                        if(value[i] < existing.value[i]){
                             insertNode(node, existing);
                             inserted = true;
                         }
@@ -63,7 +68,7 @@ public class SortedWordLinkedListWithDelimeter {
                     }
                     if(inserted){
                         break;
-                    } else if(equal && value[i] == '\0' && exVal[i] != '\0'){
+                    } else if(equal || (value[i] == '\0' && existing.value[i] != '\0')){
                         insertNode(node, existing);
                         inserted = true;
                         break;
