@@ -52,7 +52,7 @@ public class SortedWordLinkedListWithDelimeter {
             } else {
                 Node existing = head;
                 boolean inserted = false;
-                while(existing != null){
+                while(existing != null && !inserted){
                     int i=0;
                     boolean equal = true;
                     for(; i < value.length && value[i] != '\0'; i++){
@@ -66,12 +66,9 @@ public class SortedWordLinkedListWithDelimeter {
                         }
                         break;
                     }
-                    if(inserted){
-                        break;
-                    } else if(equal || (value[i] == '\0' && existing.value[i] != '\0')){
+                    if(!inserted && equal || (value[i] == '\0' && existing.value[i] != '\0')){
                         insertNode(node, existing);
                         inserted = true;
-                        break;
                     }
                     existing = existing.next;
                 }
