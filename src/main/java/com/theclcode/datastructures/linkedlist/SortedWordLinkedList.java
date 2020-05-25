@@ -1,4 +1,4 @@
-package com.theclcode.examples;
+package com.theclcode.datastructures.linkedlist;
 
 import java.util.ArrayList;
 import java.util.List;

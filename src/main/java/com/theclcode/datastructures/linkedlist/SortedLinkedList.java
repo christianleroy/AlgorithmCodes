@@ -1,4 +1,4 @@
-package com.theclcode.datastructures;
+package com.theclcode.datastructures.linkedlist;
 
 public class SortedLinkedList {
 

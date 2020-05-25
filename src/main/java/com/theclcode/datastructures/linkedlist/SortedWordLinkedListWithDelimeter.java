@@ -1,4 +1,4 @@
-package com.theclcode.examples;
+package com.theclcode.datastructures.linkedlist;
 
 public class SortedWordLinkedListWithDelimeter {
 

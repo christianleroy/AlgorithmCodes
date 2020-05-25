@@ -1,4 +1,4 @@
-package com.theclcode.datastructures;
+package com.theclcode.datastructures.linkedlist;
 
 public class DoublyLinkedList<E>{
 
@@ -8,8 +8,8 @@ public class DoublyLinkedList<E>{
         linkedList.add("a");
         linkedList.add("b");
         System.out.println(linkedList.isEmpty());
-        linkedList.remove();
-        linkedList.remove();
+        System.out.println(linkedList.remove());
+        System.out.println(linkedList.remove());
         System.out.println(linkedList.isEmpty());
     }
 
