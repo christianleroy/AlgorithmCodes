@@ -66,7 +66,7 @@ public class SortedWordLinkedListWithDelimeter {
                         }
                         break;
                     }
-                    if(!inserted && equal || (value[i] == '\0' && existing.value[i] != '\0')){
+                    if(!inserted && (equal || (value[i] == '\0' && existing.value[i] != '\0'))){
                         insertNode(node, existing);
                         inserted = true;
                     }
