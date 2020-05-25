@@ -24,18 +24,29 @@ public class SortedWordLinkedListWithDelimeter {
         linkedList.add(mstrcpy(new char[6], "llll".toCharArray()));
         linkedList.add(mstrcpy(new char[6], "show".toCharArray()));
         linkedList.add(mstrcpy(new char[6], "love".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "love".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "asdg".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "hwef".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "love".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "rrrem".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "ahjwe".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "jjkkj".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "bvnm".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "jjkkj".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "ghjk".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "jjjkm".toCharArray()));
+        linkedList.add(mstrcpy(new char[6], "jjkkj".toCharArray()));
 
         LinkedList.Node node = linkedList.getHead();
-        while(node != null){
+        while (node != null) {
             System.out.println(new String(node.value));
             node = node.next;
         }
     }
 
-    static char[] mstrcpy(char dst[], char src[])
-    {
+    static char[] mstrcpy(char[] dst, char[] src) {
         int c = 0;
-        while(c < src.length && (dst[c] = src[c]) != 0) ++c;
+        while (c < src.length && (dst[c] = src[c]) != 0) ++c;
         return dst;
     }
 
@@ -45,34 +56,33 @@ public class SortedWordLinkedListWithDelimeter {
         Node head;
         Node tail;
 
-        public void add(char[] value){
+        public void add(char[] value) {
             Node node = new Node(value);
-            if(head == null){
+            if (size == 0) {
                 head = tail = node;
             } else {
                 Node existing = head;
                 boolean inserted = false;
-                while(existing != null && !inserted){
-                    int i=0;
+                while (existing != null && !inserted) {
+                    int i = 0;
                     boolean equal = true;
-                    for(; i < value.length && value[i] != '\0'; i++){
-                        if(value[i] == existing.value[i]){
-                            continue;
+                    for (; i < value.length && value[i] != '\0'; i++) {
+                        if (value[i] != existing.value[i]) {
+                            equal = false;
+                            if (value[i] < existing.value[i]) {
+                                insertNode(node, existing);
+                                inserted = true;
+                            }
+                            break;
                         }
-                        equal = false;
-                        if(value[i] < existing.value[i]){
-                            insertNode(node, existing);
-                            inserted = true;
-                        }
-                        break;
                     }
-                    if(!inserted && (equal || (value[i] == '\0' && existing.value[i] != '\0'))){
+                    if (!inserted && equal) {
                         insertNode(node, existing);
                         inserted = true;
                     }
                     existing = existing.next;
                 }
-                if(!inserted){
+                if (!inserted) {
                     node.prev = tail;
                     tail.next = node;
                     tail = node;
@@ -84,11 +94,11 @@ public class SortedWordLinkedListWithDelimeter {
         private void insertNode(Node node, Node existing) {
             node.next = existing;
             node.prev = existing.prev;
-            if(existing.prev != null){
+            if (existing.prev != null) {
                 existing.prev.next = node;
             }
             existing.prev = node;
-            if(existing == head){
+            if (existing == head) {
                 head = node;
             }
         }
@@ -102,7 +112,7 @@ public class SortedWordLinkedListWithDelimeter {
             Node prev;
             Node next;
 
-            Node(char[] value){
+            Node(char[] value) {
                 this.value = value;
             }
         }
