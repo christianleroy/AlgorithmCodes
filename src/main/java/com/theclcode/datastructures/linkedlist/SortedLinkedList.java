@@ -2,73 +2,84 @@ package com.theclcode.datastructures.linkedlist;
 
 public class SortedLinkedList {
 
-    Node head;
-    Node tail;
-    int size = 0;
-
     public static void main(String[] args) {
-        SortedLinkedList sortedLinkedList = new SortedLinkedList();
-        sortedLinkedList.add(5);
-        sortedLinkedList.add(1);
-        sortedLinkedList.add(4);
-        sortedLinkedList.add(-4);
-        sortedLinkedList.add(3);
-        sortedLinkedList.add(9);
-        sortedLinkedList.add(0);
-        sortedLinkedList.add(1);
-        sortedLinkedList.add(190);
-        sortedLinkedList.add(189);
+        LinkedList linkedList = new LinkedList();
+        linkedList.add(5);
+        linkedList.add(1);
+        linkedList.add(4);
+        linkedList.add(-4);
+        linkedList.add(3);
+        linkedList.add(9);
+        linkedList.add(0);
+        linkedList.add(1);
+        linkedList.add(1010);
+        linkedList.add(-51);
+        linkedList.add(35);
+        linkedList.add(36);
+        linkedList.add(35);
+        linkedList.add(239);
+        linkedList.add(139);
+        linkedList.add(-189);
+        linkedList.add(87);
+        linkedList.add(-23);
+        linkedList.add(-200);
 
-        Node node = sortedLinkedList.getHead();
-        while(node != null){
+        LinkedList.Node node = linkedList.getHead();
+        while (node != null) {
             System.out.println(node.value);
             node = node.next;
         }
+
     }
 
-    public void add(int value){
-        Node node = new Node(value);
-        if(head == null){
-            head = tail = node;
-        } else {
-            Node existing = head;
-            while(existing != null) {
-                if(existing.value > node.value){
-                    node.prev = existing.prev;
-                    node.next = existing;
-                    if(existing.prev != null){
-                        existing.prev.next = node;
-                    }
-                    if(existing == head){
-                        head = node;
-                    }
-                    existing.prev = node;
-                    break;
-                } else {
-                    if(existing == tail){
-                        tail.next = node;
-                        node.prev = tail;
-                        tail = node;
-                        break;
-                    }
-                }
-                existing = existing.next;
-           }
+    static class LinkedList {
+        Node head;
+        Node tail;
+        int size;
+
+        public Node getHead() {
+            return head;
         }
-        size++;
-    }
 
-    public Node getHead() {
-        return head;
-    }
+        public void add(int value) {
+            Node node = new Node(value);
+            if (size == 0) {
+                head = tail = node;
+            } else {
+                Node existing = head;
+                boolean inserted = false;
+                while (existing != null && !inserted) {
+                    if (value <= existing.value) {
+                        node.next = existing;
+                        node.prev = existing.prev;
+                        if (existing.prev != null) {
+                            existing.prev.next = node;
+                        }
+                        existing.prev = node;
+                        if (existing == head) {
+                            head = node;
+                        }
+                        inserted = true;
+                    }
+                    existing = existing.next;
+                }
+                if (!inserted) {
+                    tail.next = node;
+                    node.prev = tail;
+                    tail = node;
+                }
+            }
+            size++;
+        }
 
-    static class Node {
-        int value;
-        Node next;
-        Node prev;
+        class Node {
+            int value;
+            Node prev;
+            Node next;
 
-        Node(Integer value){
-            this.value = value;
+            Node(int value) {
+                this.value = value;
+            }
         }
     }
 }

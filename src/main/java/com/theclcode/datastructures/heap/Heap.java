@@ -2,7 +2,6 @@ package com.theclcode.datastructures.heap;
 
 import java.util.Arrays;
 
-//Unfinished
 public class Heap {
 
     public static void main(String[] args) {

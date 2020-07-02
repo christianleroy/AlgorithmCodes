@@ -64,9 +64,8 @@ public class SortedWordLinkedListWithDelimeter {
                 Node existing = head;
                 boolean inserted = false;
                 while (existing != null && !inserted) {
-                    int i = 0;
                     boolean equal = true;
-                    for (; i < value.length && value[i] != '\0'; i++) {
+                    for (int i=0; i < value.length && value[i] != '\0'; i++) {
                         if (value[i] != existing.value[i]) {
                             equal = false;
                             if (value[i] < existing.value[i]) {
