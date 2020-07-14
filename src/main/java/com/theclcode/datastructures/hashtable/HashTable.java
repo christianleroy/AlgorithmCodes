@@ -77,11 +77,9 @@ public class HashTable<K, V> {
             if(node.prev != null){
                 node.prev.next = node.next;
             }
-            if(table[index] == node){
-                table[index] = node.next;
-                if(node.next != null){
-                    node.next.prev = null;
-                }
+            if(table[index] == node && (table[index] = node.next) != null){
+                table[index].prev = null;
+
             }
         }
     }
@@ -169,6 +167,8 @@ public class HashTable<K, V> {
         System.out.println(map.contains("Tristan"));
         map.put("Christian", 25);
         map.put("Leroy", 25);
+        map.put("Ler", 26);
+        System.out.println(map.get("Ler"));
 
         HashTable.Node[] table = map.getTable();
 
@@ -190,6 +190,8 @@ public class HashTable<K, V> {
         numbers.remove(1);
         System.out.println(numbers.get(1));
         numbers.remove(14);
+        System.out.println(numbers.get(14));
+        System.out.println(numbers.get(27));
         System.out.println();
     }
 
