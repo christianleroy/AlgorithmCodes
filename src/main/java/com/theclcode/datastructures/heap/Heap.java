@@ -33,8 +33,8 @@ public class Heap {
         int index = 0;
         int left = ((index + 1) * 2) - 1;
         int right = ((index + 1) * 2 + 1) - 1;
-        boolean inserted = true;
-        while (inserted && (left < lastIndex || right < lastIndex)) {
+        boolean inserted;
+        do {
             inserted = false;
             if (left < lastIndex && right < lastIndex) {
                 int max = arr[left] >= arr[right] ? left : right;
@@ -54,7 +54,7 @@ public class Heap {
             }
             left = ((index + 1) * 2) - 1;
             right = ((index + 1) * 2 + 1) - 1;
-        }
+        } while (inserted && (left < lastIndex || right < lastIndex));
 
     }
 
