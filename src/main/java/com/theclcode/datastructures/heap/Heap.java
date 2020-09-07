@@ -2,6 +2,7 @@ package com.theclcode.datastructures.heap;
 
 import java.util.Arrays;
 
+//Max
 public class Heap {
 
     public static void main(String[] args) {

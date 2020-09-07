@@ -1,4 +1,4 @@
-package com.theclcode.swc.newsletter.june20;
+package com.theclcode.swc.newsletter.june20.corporatedistancing;
 
 import java.util.Scanner;
 

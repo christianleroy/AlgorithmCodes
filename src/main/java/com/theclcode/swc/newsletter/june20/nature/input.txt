@@ -1,0 +1,24 @@
+2
+8 15
+3
+1 tiger deer
+3
+2 cattle horse
+1 deer grass
+1 horse grass
+3
+1 snake mouse
+1 mouse corn
+3
+2 corn snake
+2 cattle tiger
+3
+1 cattle grass
+3
+2 6
+3
+2 bacteria fungi
+3
+1 bacteria bacteria
+3
+2 fungi fungi
