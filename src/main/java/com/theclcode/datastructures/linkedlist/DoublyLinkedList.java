@@ -1,25 +1,21 @@
 package com.theclcode.datastructures.linkedlist;
 
-public class DoublyLinkedList<E>{
+public class DoublyLinkedList<E> {
 
     public static void main(String[] args) {
         DoublyLinkedList<String> linkedList = new DoublyLinkedList<>();
         System.out.println(linkedList.isEmpty());
         linkedList.add("a");
         linkedList.add("b");
-        System.out.println(linkedList.isEmpty());
-        System.out.println(linkedList.remove());
-        System.out.println(linkedList.remove());
-        System.out.println(linkedList.isEmpty());
     }
 
+    private int size;
     private Node<E> head;
     private Node<E> tail;
-    private int size;
 
-    public void add(E value){
-        Node<E> node = new Node(value);
-        if(head==null){
+    public void add(E value) {
+        Node<E> node = new Node<>(value);
+        if (head == null) {
             head = tail = node;
         } else {
             tail.next = node;
@@ -29,58 +25,23 @@ public class DoublyLinkedList<E>{
         size++;
     }
 
-    public boolean isEmpty(){
-        return head==null;
+    public boolean isEmpty() {
+        return size == 0;
     }
 
-    public E remove(){
-        if(head==null){
+    public E removeFirst() {
+        if (head == null) {
             return null;
         }
         Node<E> node = head;
         head = head.next;
-        if(head != null){
+        if (head != null) {
             head.prev = null;
         } else {
             tail = null;
         }
         size--;
         return node.getValue();
-    }
-
-    public E remove(E value){
-        Node<E> existingNode = getHead();
-        while(existingNode != null){
-            if(value.equals(existingNode.getValue())){
-                Node<E> node = existingNode;
-                if(node.next != null){
-                    node.next.prev=  node.prev;
-                }
-                if(node.prev != null){
-                     node.prev.next = node.next;
-                }
-                if(node == head){
-                    head = node.next;
-                    if(head != null){
-                        head.prev = null;
-                    } else {
-                        tail = null;
-                    }
-                }
-                if(node == tail){
-                    tail = node.prev;
-                    if(tail != null){
-                        tail.next = null;
-                    } else {
-                        head = null;
-                    }
-                }
-                size--;
-                return node.value;
-            }
-            existingNode = existingNode.next;
-        }
-        return null;
     }
 
     public Node<E> getHead() {
@@ -93,7 +54,7 @@ public class DoublyLinkedList<E>{
 
     public static class Node<E> {
 
-        private E value;
+        private final E value;
         private Node<E> next;
         private Node<E> prev;
 
