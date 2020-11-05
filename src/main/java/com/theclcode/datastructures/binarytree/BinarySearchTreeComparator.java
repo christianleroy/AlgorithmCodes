@@ -17,7 +17,7 @@ public class BinarySearchTreeComparator<E> {
         if (this.root == null) {
             this.root = node;
         } else {
-            if(!this.find(value)){
+            if (!this.find(value)) {
                 this.root.findLocation(node);
             }
         }
@@ -45,17 +45,53 @@ public class BinarySearchTreeComparator<E> {
         Node<E> node = this.root;
         while (node != null) {
             if (node.value.equals(value)) {
-                if (parent != null) {
-                    boolean isLeft = this.comparator.compare(parent.value, value) > 0;
-                    if (node.left != null && node.right != null) {
-
-                    } else if (node.left != null) {
-
-                    } else if(node.right != null){
-
-                    } else {
-
+                if (node.left != null && node.right != null) {
+                    Node<E> replacement = node.right;
+                    Node<E> replacementParent = node;
+                    while (replacement.left != null) {
+                        replacementParent = replacement;
+                        replacement = replacement.left;
                     }
+                    if (replacement.right != null) {
+                        replacementParent.right = replacement.right;
+                    }
+                    replacementParent.left = null;
+                    if(parent != null){
+                        if(this.comparator.compare(parent.value, value) > 0){
+
+                        }
+                    } else {
+                        this.root = replacement;
+                    }
+                } else if (node.left != null) {
+                    if(parent != null){
+                        if(this.comparator.compare(parent.value, node.value) < 0){
+                            parent.left = node.left;
+                        } else {
+                            parent.right = node.left;
+                        }
+                    } else {
+                        this.root = node.left;
+                    }
+                } else if (node.right != null) {
+                    if(parent != null && this.comparator.compare(parent.value, node.value) < 0 ){
+                        if(this.comparator.compare(parent.value, node.value) < 0){
+                            parent.left = node.right;
+                        } else {
+                            parent.right = node.right;
+                        }
+                    } else {
+                        this.root = node.right;
+                    }
+                } else {
+                    if(parent != null) {
+                        if (this.comparator.compare(parent.value, node.value) > 0) {
+                            parent.left = null;
+                        } else {
+                            parent.right = null;
+                        }
+                    }
+                    break;
                 }
             } else {
                 parent = node;
@@ -119,30 +155,41 @@ public class BinarySearchTreeComparator<E> {
 
     public static void main(String[] args) {
         BinarySearchTreeComparator<Integer> i = new BinarySearchTreeComparator<>(Integer::compare);
-        i.insert(15);
+
+        i.insert(10);
         i.insert(5);
-        i.insert(21);
-        i.insert(22);
-        i.insert(2);
-        i.insert(6);
-        i.printList();
+        i.insert(15);
+        i.insert(12);
+        i.insert(20);
+        i.delete(15);
 
-        System.out.println(i.find(15));
-        System.out.println(i.find(5));
-        System.out.println(i.find(21));
-        System.out.println(i.find(22));
-        System.out.println(i.find(2));
-        System.out.println(i.find(6));
+        System.out.println();
 
-        System.out.println(i.find(-2));
-        System.out.println(i.find(69));
-        System.out.println(i.find(74));
-        System.out.println(i.find(12));
-        System.out.println(i.find(55));
-        System.out.println(i.find(212));
 
-        i.insert(212);
-        System.out.println(i.find(212));
+//        i.insert(15);
+//        i.insert(5);
+//        i.insert(21);
+//        i.insert(22);
+//        i.insert(2);
+//        i.insert(6);
+//        i.printList();
+//
+//        System.out.println(i.find(15));
+//        System.out.println(i.find(5));
+//        System.out.println(i.find(21));
+//        System.out.println(i.find(22));
+//        System.out.println(i.find(2));
+//        System.out.println(i.find(6));
+//
+//        System.out.println(i.find(-2));
+//        System.out.println(i.find(69));
+//        System.out.println(i.find(74));
+//        System.out.println(i.find(12));
+//        System.out.println(i.find(55));
+//        System.out.println(i.find(212));
+//
+//        i.insert(212);
+//        System.out.println(i.find(212));
 
     }
 }
