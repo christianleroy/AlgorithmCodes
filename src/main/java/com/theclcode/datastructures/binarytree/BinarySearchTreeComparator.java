@@ -39,10 +39,6 @@ public class BinarySearchTreeComparator<E> {
 
     public void delete(E value) {
         System.out.format("Deleting %s. ", value);
-        if (this.root == null) {
-            return;
-        }
-
         Node<E> parent = null;
         Node<E> node = this.root;
         boolean deleted = false;
@@ -61,17 +57,11 @@ public class BinarySearchTreeComparator<E> {
                         replacement.right = node.right;
                     }
                     replacement.left = node.left;
-                    deleted = true;
-                } else if (node.left != null) {
-                    replaceChild(parent, node.value, node.left);
-                    deleted = true;
-                } else if (node.right != null) {
-                    replaceChild(parent, node.value, node.right);
-                    deleted = true;
                 } else {
-                    replaceChild(parent, node.value, null);
-                    deleted = true;
+                    Node<E> replacement = node.left != null ? node.left : node.right;
+                    replaceChild(parent, node.value, replacement);
                 }
+                deleted = true;
             } else {
                 parent = node;
                 if (this.comparator.compare(node.value, value) > 0) {
@@ -197,6 +187,10 @@ public class BinarySearchTreeComparator<E> {
         bst.printList();
         bst.delete(120);
         bst.delete(117);
+        bst.printList();
+        bst.delete(-1);
+        bst.delete(1000);
+        bst.delete(-5);
         bst.printList();
     }
 }
