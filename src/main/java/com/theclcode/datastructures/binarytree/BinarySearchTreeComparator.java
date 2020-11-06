@@ -2,7 +2,6 @@ package com.theclcode.datastructures.binarytree;
 
 import java.util.Comparator;
 
-//Incomplete
 public class BinarySearchTreeComparator<E> {
 
     private Node<E> root;
@@ -13,6 +12,7 @@ public class BinarySearchTreeComparator<E> {
     }
 
     public void insert(E value) {
+        System.out.format("Inserting %s. ", value);
         Node<E> node = new Node<>(value, this.comparator);
         if (this.root == null) {
             this.root = node;
@@ -28,70 +28,49 @@ public class BinarySearchTreeComparator<E> {
     }
 
     public void printList() {
-        this.root.printList();
+        System.out.println();
+        if(this.root != null){
+            this.root.printList();
+        } else {
+            System.out.println("The BST is empty!");
+        }
+        System.out.println();
     }
 
     public void delete(E value) {
-            /*
-            1. If  no children, just derefence.
-            2. If has one child, the child takes old parent's spot
-            3. If two children, go right, then find lowest value
-             */
+        System.out.format("Deleting %s. ", value);
         if (this.root == null) {
             return;
         }
 
         Node<E> parent = null;
         Node<E> node = this.root;
-        while (node != null) {
+        boolean deleted = false;
+        while (node != null && !deleted) {
             if (node.value.equals(value)) {
                 if (node.left != null && node.right != null) {
                     Node<E> replacement = node.right;
-                    Node<E> replacementParent = node;
+                    Node<E> replacementParent = null;
                     while (replacement.left != null) {
                         replacementParent = replacement;
                         replacement = replacement.left;
                     }
-                    if (replacement.right != null) {
-                        replacementParent.right = replacement.right;
+                    replaceChild(parent, value, replacement);
+                    if (replacementParent != null) {
+                        replacementParent.left = replacement.right;
+                        replacement.right = node.right;
                     }
-                    replacementParent.left = null;
-                    if(parent != null){
-                        if(this.comparator.compare(parent.value, value) > 0){
-
-                        }
-                    } else {
-                        this.root = replacement;
-                    }
+                    replacement.left = node.left;
+                    deleted = true;
                 } else if (node.left != null) {
-                    if(parent != null){
-                        if(this.comparator.compare(parent.value, node.value) < 0){
-                            parent.left = node.left;
-                        } else {
-                            parent.right = node.left;
-                        }
-                    } else {
-                        this.root = node.left;
-                    }
+                    replaceChild(parent, node.value, node.left);
+                    deleted = true;
                 } else if (node.right != null) {
-                    if(parent != null && this.comparator.compare(parent.value, node.value) < 0 ){
-                        if(this.comparator.compare(parent.value, node.value) < 0){
-                            parent.left = node.right;
-                        } else {
-                            parent.right = node.right;
-                        }
-                    } else {
-                        this.root = node.right;
-                    }
+                    replaceChild(parent, node.value, node.right);
+                    deleted = true;
                 } else {
-                    if(parent != null) {
-                        if (this.comparator.compare(parent.value, node.value) > 0) {
-                            parent.left = null;
-                        } else {
-                            parent.right = null;
-                        }
-                    }
-                    break;
+                    replaceChild(parent, node.value, null);
+                    deleted = true;
                 }
             } else {
                 parent = node;
@@ -103,6 +82,18 @@ public class BinarySearchTreeComparator<E> {
             }
         }
 
+    }
+
+    private void replaceChild(Node<E> parent, E value, Node<E> replacement) {
+        if (parent != null) {
+            if (this.comparator.compare(parent.value, value) > 0) {
+                parent.left = replacement;
+            } else {
+                parent.right = replacement;
+            }
+        } else {
+            this.root = replacement;
+        }
     }
 
     static class Node<E> {
@@ -136,7 +127,7 @@ public class BinarySearchTreeComparator<E> {
             if (this.left != null) {
                 this.left.printList();
             }
-            System.out.println(this.value);
+            System.out.print(this.value + " ");
             if (this.right != null) {
                 this.right.printList();
             }
@@ -154,42 +145,58 @@ public class BinarySearchTreeComparator<E> {
     }
 
     public static void main(String[] args) {
-        BinarySearchTreeComparator<Integer> i = new BinarySearchTreeComparator<>(Integer::compare);
+        BinarySearchTreeComparator<Integer> bst = new BinarySearchTreeComparator<>(Integer::compare);
+        bst.insert(100);
+        bst.insert(90);
+        bst.insert(110);
+        bst.insert(109);
+        bst.insert(120);
 
-        i.insert(10);
-        i.insert(5);
-        i.insert(15);
-        i.insert(12);
-        i.insert(20);
-        i.delete(15);
+        bst.printList();
+        bst.delete(109);
+        bst.printList();
+        bst.insert(121);
+        bst.printList();
+        bst.delete(121);
+        bst.printList();
+        bst.insert(105);
+        bst.printList();
+        bst.insert(80);
+        bst.insert(95);
+        bst.printList();
+        bst.insert(80);
+        bst.insert(95);
+        bst.printList();
+        bst.delete(90);
+        bst.delete(80);
+        bst.printList();
+        bst.delete(95);
+        bst.delete(100);
+        bst.printList();
+        bst.delete(105);
+        bst.printList();
+        bst.delete(110);
+        bst.printList();
+        bst.delete(120);
+        bst.printList();
 
-        System.out.println();
-
-
-//        i.insert(15);
-//        i.insert(5);
-//        i.insert(21);
-//        i.insert(22);
-//        i.insert(2);
-//        i.insert(6);
-//        i.printList();
-//
-//        System.out.println(i.find(15));
-//        System.out.println(i.find(5));
-//        System.out.println(i.find(21));
-//        System.out.println(i.find(22));
-//        System.out.println(i.find(2));
-//        System.out.println(i.find(6));
-//
-//        System.out.println(i.find(-2));
-//        System.out.println(i.find(69));
-//        System.out.println(i.find(74));
-//        System.out.println(i.find(12));
-//        System.out.println(i.find(55));
-//        System.out.println(i.find(212));
-//
-//        i.insert(212);
-//        System.out.println(i.find(212));
-
+        bst.insert(100);
+        bst.insert(90);
+        bst.insert(110);
+        bst.insert(109);
+        bst.insert(120);
+        bst.insert(115);
+        bst.insert(125);
+        bst.insert(118);
+        bst.insert(117);
+        bst.insert(119);
+        bst.printList();
+        bst.delete(110);
+        bst.printList();
+        bst.delete(118);
+        bst.printList();
+        bst.delete(120);
+        bst.delete(117);
+        bst.printList();
     }
 }
