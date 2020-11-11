@@ -5,42 +5,37 @@ import java.util.Arrays;
 public class QuickSort {
 
     public static void main(String[] args) {
-        int[] array = {100,51,24,31,2,9,1,5,6,7,7,15,17,129,5,4,3,2,1,Integer.MAX_VALUE};
-        quickSort(array, 0, array.length-1);
-        System.out.println(Arrays.toString(array));
+        int[] arr = {15, 13, 1, 2, 5, 13, 12, 10, 9, 7, 9, 8, 4, 4, 3, 2, 0, 1, 7, -32, 32, -1, 4, 5, 9,
+                10, 12, -12, -12, -11, 40, 100, 109, -23, 41, 55, -2, 102, 110, 20, 200, 350, 200, -200, 4, 3, 2, 1, 301, 19, 18, 45, 366, 66, 66, -20, -19};
+        System.out.println(Arrays.toString(arr));
+        quickSort(arr, 0, arr.length - 1);
+        System.out.println(Arrays.toString(arr));
     }
 
-    public static void quickSort(int[] array, int low, int high){
-        if(low < high){
-            int end = partition(array, low, high);
-            quickSort(array, low, end);
-            quickSort(array, end+1, high);
+    static void quickSort(int[] arr, int start, int end) {
+        if (start < end) {
+            int middle = partition(arr, start, end);
+            quickSort(arr, start, middle - 1);
+            quickSort(arr, middle + 1, end);
         }
     }
 
-    public static int partition(int[] array, int low, int high){
-        int pivot = array[low];
-        int start = low;
-        int end = high;
-        while(start < end){
-            do{
-                start++;
-            }while(start<high-1 && array[start]<=pivot);
-            do{
-                end--;
-            }while(end>low && array[end]>pivot);
-
-            if(start<end){
-                swap(array, start, end);
+    private static int partition(int[] arr, int start, int end) {
+        int pivot = arr[end];
+        int i = start - 1;
+        for (int j = start; j < end; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+                swap(arr, i, j);
             }
         }
-        swap(array, low, end);
-        return end;
+        swap(arr, i + 1, end);
+        return i + 1;
     }
 
-    public static void swap(int[] array, int left, int right){
-        int temp = array[right];
-        array[right] = array[left];
-        array[left] = temp;
+    private static void swap(int[] arr, int left, int right) {
+        int temp = arr[left];
+        arr[left] = arr[right];
+        arr[right] = temp;
     }
 }
