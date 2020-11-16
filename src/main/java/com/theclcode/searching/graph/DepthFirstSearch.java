@@ -1,4 +1,4 @@
-package com.theclcode.graph;
+package com.theclcode.searching.graph;
 
 import java.util.ArrayList;
 import java.util.List;
