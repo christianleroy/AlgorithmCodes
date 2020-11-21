@@ -1,5 +1,6 @@
 package com.theclcode.problems.houserobber;
 
+//Backtracking, recursion, complete search
 public class HouseRobberBacktracking {
 
     private int max = 0;

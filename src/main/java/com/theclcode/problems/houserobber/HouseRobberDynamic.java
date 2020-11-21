@@ -1,5 +1,6 @@
 package com.theclcode.problems.houserobber;
 
+//Dynamic
 public class HouseRobberDynamic {
 
     private Integer[] answerTable;
