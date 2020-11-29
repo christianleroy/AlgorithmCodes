@@ -14,7 +14,8 @@ public class HouseRobberBacktracking {
                 {3, 0, 1, 5, 4, 2, 6},
                 {7, 1, 2, 5, 6, 12, 5, 0, 1, 1, 5, 9, 19},
                 {6, 16, 0, 4, 5, 2, 1, 22, 13, 0, 23},
-                {1, 2}
+                {1, 2},
+                {3, 0, 1, 4}
         };
         for(int i=0; i<houses.length; i++){
             System.out.println(new HouseRobberBacktracking().rob(houses[i]));
