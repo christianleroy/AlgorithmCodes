@@ -39,10 +39,11 @@ public class BonetrousleMath {
         }
 
         long min = (noOfBoxesNeeded * (noOfBoxesNeeded + 1)) / 2;
-        long max = (noOfBoxesNeeded * (2 * boxesAvailable) - noOfBoxesNeeded + 1) / 2;
+        //b(2k-b+1)/2
+        long max = (noOfBoxesNeeded * ((2 * boxesAvailable) - noOfBoxesNeeded + 1)) / 2;
 
         if (sticksNeeded < min || sticksNeeded > max) {
-            return new long[]{-1L};
+            return new long[]{-1};
         }
 
         long res[] = LongStream.iterate(1, e -> e + 1).limit(noOfBoxesNeeded).toArray();
