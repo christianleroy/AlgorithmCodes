@@ -1,5 +1,6 @@
-package com.theclcode.problems.climbingstairs;
+package com.theclcode.smallproblems.climbingstairs;
 
+//fibonacci (modified)
 public class ClimbingStairs {
     private Integer[] table;
 
