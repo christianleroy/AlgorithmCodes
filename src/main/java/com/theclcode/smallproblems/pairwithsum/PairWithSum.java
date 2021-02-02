@@ -22,6 +22,7 @@ public class PairWithSum {
             } else if(a[i] + a[y] < b){
                 i++;
             } else {
+                System.out.println(a[i] + " " + a[y]);
                 System.out.println("Found!");
                 break;
             }
