@@ -7,10 +7,10 @@ public class Solution {
     static int stackMarker=0;
 
     public static void main(String[] args){
-        char[] arr = {'A', 'B', 'C', 'D'};
-//        permute(arr, 0, arr.length-1);
-        init(arr);
-        combine(arr, 0, 4);
+        char[] arr = "abcde".toCharArray();
+        permute(arr, 0, arr.length-1);
+//        init(arr);
+//        combine(arr, 0, 4);
     }
 
     static void swap(char[] arr, int left, int right){
@@ -21,7 +21,7 @@ public class Solution {
 
     static void permute(char[] arr, int start, int end){
         if(start==end){
-            System.out.println(Arrays.toString(arr));
+            System.out.print(new String(arr) + " ");
         } else {
             for(int i=start; i<=end; i++){
                 swap(arr, start, i);
