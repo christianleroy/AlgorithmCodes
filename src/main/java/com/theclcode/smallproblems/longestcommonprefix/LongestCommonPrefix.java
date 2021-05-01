@@ -6,18 +6,18 @@ public class LongestCommonPrefix {
     public static void main(String[] args) {
         String[][] words = {
                 {""}, //
-                {"a","b",""}, //
+                {"a", "b", ""}, //
                 null, //
                 {"abc"}, //abc
                 {"a", "b", "c"}, //
                 {"a", "aa", "aaa"}, //a
-                {"ab", "aba", ""," abaaba"}, //
+                {"ab", "aba", "", " abaaba"}, //
                 {"flight", "fight", "fence"}, //f
                 {"flight", "flower", "flow"}, //fl
                 {"a", "ab", null, "abc"}, //
                 {"a", "ab", "abc"} //a
         };
-        for(String[] _words: words){
+        for (String[] _words : words) {
             System.out.format("Case: %s %n", longestCommonPrefix(_words));
         }
 
@@ -36,7 +36,7 @@ public class LongestCommonPrefix {
         boolean isFirst = true;
 
         for (String word : strs) {
-            if(word == null || word.length() == 0){
+            if (word == null || word.length() == 0) {
                 return "";
             }
             Node node = root;

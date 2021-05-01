@@ -3,7 +3,6 @@ package com.theclcode.problems.repeatedstring;
 //linked lists
 public class RepeatedString {
 
-
     public static void main(String[] args) {
         System.out.println(repeatedString("abcac", 10));
         System.out.println(repeatedString("aba", 10));
@@ -30,7 +29,6 @@ public class RepeatedString {
         }
         return div;
     }
-
 
     private static class LinkedList {
 

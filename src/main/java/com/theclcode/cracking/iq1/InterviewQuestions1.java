@@ -12,17 +12,35 @@ public class InterviewQuestions1 {
     //Check if string has all unique cahracters
     public static void isUnique() {
         String[] words = {"abc", "abba", "abcd", "dfefg", "azdhq"};
-        for(String word: words) {
+        for (String word : words) {
             boolean[] characters = new boolean[26];
             boolean isUnique = true;
-            for(int i = 0; i < word.length(); i++) {
+            for (int i = 0; i < word.length(); i++) {
                 int idx = word.charAt(i) - 'a';
-                if(characters[idx]) {
+                if (characters[idx]) {
                     isUnique = false;
                 }
                 characters[idx] = true;
             }
             System.out.format("%s: %s %n", word, isUnique);
+        }
+
+    }
+
+    public static void isUniqueBit() {
+        String[] words = {"abs", "abc", "weird", "words", "worded", "wordiee"};
+        for (String word : words) {
+            int checker = 0;
+            boolean isUnique = true;
+            for (int i = 0; i < word.length(); i++) {
+                int val = word.charAt(i) - 'a';
+                if ((checker & 1 << val) > 0) {
+                    isUnique = false;
+                    break;
+                }
+                checker |= 1 << val;
+            }
+            System.out.format("%s is unique? %s %n", word, isUnique);
         }
     }
 
@@ -34,18 +52,18 @@ public class InterviewQuestions1 {
         String wordA = "abcd";
         String wordB = "adbc";
 
-        if(wordA.length() != wordB.length()) {
+        if (wordA.length() != wordB.length()) {
             isPermutation = false;
         }
 
-        for(int i = 0; i < wordA.length(); i++) {
+        for (int i = 0; i < wordA.length(); i++) {
             int idx = wordA.charAt(i) - 'a';
             characters[idx] = true;
         }
 
-        for(int j = 0; j < wordB.length(); j++) {
+        for (int j = 0; j < wordB.length(); j++) {
             int idx = wordB.charAt(j) - 'a';
-            if(!characters[idx]) {
+            if (!characters[idx]) {
                 isPermutation = false;
             }
         }
@@ -56,11 +74,11 @@ public class InterviewQuestions1 {
 
     //Check if word is a permutation of a palindrome
     public static void isPermutationPalindrome() {
-        String[] words = { "abbaz", "azza", "aoctact", "abba azza", "acto", "aboa", "abbaba", "aba aba"};
-        for(String word: words) {
+        String[] words = {"abbaz", "azza", "aoctact", "abba azza", "acto", "aboa", "abbaba", "aba aba"};
+        for (String word : words) {
             int[] count = new int[26];
-            for(int i =0; i < word.length(); i++){
-                if(' ' == word.charAt(i)){
+            for (int i = 0; i < word.length(); i++) {
+                if (' ' == word.charAt(i)) {
                     continue;
                 }
                 int idx = word.charAt(i) - 'a';
@@ -68,11 +86,11 @@ public class InterviewQuestions1 {
             }
             boolean isPalindrome = true;
             int oddCount = 0;
-            for(int i : count) {
-                if(i % 2 != 0) {
+            for (int i : count) {
+                if (i % 2 != 0) {
                     oddCount++;
                 }
-                if(oddCount > 1) {
+                if (oddCount > 1) {
                     isPalindrome = false;
                     break;
                 }

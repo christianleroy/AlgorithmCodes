@@ -42,15 +42,15 @@ public class RotateArray {
         }
     }
 
-    private void rotateArrayBetter(int[] nums, int k) {
+    private void rotateArrayBetter(int[] nums, int shifts) {
         int visited = 0;
-        k = k % nums.length;
-        if (k > 0) {
+        shifts = shifts % nums.length;
+        if (shifts > 0) {
             for (int i = 0; visited < nums.length; i++) {
                 int r = i;
                 int curr = nums[r];
                 do {
-                    int s = (r + k) % nums.length;
+                    int s = (r + shifts) % nums.length;
                     int temp = nums[s];
                     nums[s] = curr;
                     curr = temp;
