@@ -1,15 +1,21 @@
-package com.theclcode.cracking.iq1;
+package com.theclcode.cracking.arraysandstrings;
 
-public class InterviewQuestions1 {
-
+public class ArraysAndStringsInterviewQuestionsA {
 
     public static void main(String[] args) {
 //        isUnique();
 //        checkPermutation();
-        isPermutationPalindrome();
+//        isPermutationPalindrome();
+        checkPermutationBig();
     }
 
-    //Check if string has all unique cahracters
+    //
+
+    /**
+     * Check if string characters are all unique
+     * Time: O(N)
+     * Space: O(1)
+     */
     public static void isUnique() {
         String[] words = {"abc", "abba", "abcd", "dfefg", "azdhq"};
         for (String word : words) {
@@ -26,7 +32,12 @@ public class InterviewQuestions1 {
         }
 
     }
-
+    /**
+     * Check if string characters are all unique
+     * Uses bit shifting instead of a fixed boolean array
+     * Time: O(N)
+     * Space: O(1)
+     */
     public static void isUniqueBit() {
         String[] words = {"abs", "abc", "weird", "words", "worded", "wordiee"};
         for (String word : words) {
@@ -44,7 +55,12 @@ public class InterviewQuestions1 {
         }
     }
 
-    //Check if wordB is a permutation of wordA
+    /**
+     * Check if wordB is a permutation of wordA
+     * Supports only small case unique alphabet strings
+     * Time: O(N) where N is the String length of wordA or wordB
+     * SpacE: O(1)
+     */
     public static void checkPermutation() {
         boolean[] characters = new boolean[26];
         boolean isPermutation = true;
@@ -71,8 +87,43 @@ public class InterviewQuestions1 {
 
     }
 
+    /**
+     * Check if wordB is a permutation of wordA
+     * Supports ASCII, non-unique character strings
+     * Time: O(N) where N is the String length of wordA or wordB
+     * SpacE: O(1)
+     */
+    public static void checkPermutationBig() {
+        String[][] words = {{"abcd", "adbc"}, {"actocat", "tacocat"}, {"abba", "azza"}};
+        for(String[] pair: words) {
 
-    //Check if word is a permutation of a palindrome
+            String wordA = pair[0];
+            String wordB = pair[1];
+
+            int[] checker = new int[128];
+            boolean isPermutation = true;
+            for(char c : wordA.toCharArray()) {
+                checker[c]++;
+            }
+
+            for(char c : wordB.toCharArray()) {
+                checker[c]--;
+                if(checker[c] < 0) {
+                    isPermutation = false;
+                    break;
+                }
+            }
+
+            System.out.format("%s is permutation of %s? %s%n", wordB, wordA, isPermutation);
+        }
+    }
+
+    /**
+     * Check if word is a permutation of a palindrome
+     * Supports small case alphabet strings only
+     * Time: O(N)
+     * Space: O(1)
+     */
     public static void isPermutationPalindrome() {
         String[] words = {"abbaz", "azza", "aoctact", "abba azza", "acto", "aboa", "abbaba", "aba aba"};
         for (String word : words) {
