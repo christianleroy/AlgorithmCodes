@@ -8,10 +8,10 @@ public class BinaryAddition {
         int c;
 
         do {
-            c = a & b;
-            a = a ^ b;
-            b = c << 1;
-        } while (c > 0);
+            c = a & b; // Get all 1+1 = 0 carry 1
+            a = a ^ b; // Get all 1+0 = 1
+            b = c << 1; //Shift all carry 1s to the right
+        } while (c > 0); //While there are carry overs, continue.
 
         System.out.println(a);
     }

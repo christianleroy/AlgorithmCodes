@@ -7,7 +7,7 @@ public class CircularPrinter {
     // AZGB - would take 13 seconds. A to Z is 1 (will turn left), Z to G would be 7 (right movement), G to B (5, left)
 
     public static void main(String[] args) {
-        String[] words = {"AZGB", "ABCD"};
+        String[] words = {"AZGB", "ABCD", "AGHZD"};
         for(String word : words) {
             System.out.println(getTime(word));
         }
