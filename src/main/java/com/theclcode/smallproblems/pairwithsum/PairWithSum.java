@@ -15,12 +15,12 @@ public class PairWithSum {
         unsorted(numbers, toFind);
     }
 
-    private static void unsorted(int[] numbers, int toFind){
+    private static void unsorted(int[] numbers, int toFind) {
         Set<Integer> tracker = new HashSet<>();
         boolean found = false;
-        for(int i : numbers) {
+        for (int i : numbers) {
             int key = toFind - i;
-            if(tracker.contains(i)) {
+            if (tracker.contains(i)) {
                 System.out.format("%s, %s %n", i, key);
                 found = true;
                 break;
@@ -34,13 +34,13 @@ public class PairWithSum {
     private static void sorted(int[] numbers, int toFind) {
         int[] copy = Arrays.stream(numbers).sorted().toArray();
         System.out.println(Arrays.toString(copy));
-        for(int i=0, y=copy.length-1; i<copy.length;){
-            if(i == y){
+        for (int i = 0, y = copy.length - 1; i < copy.length; ) {
+            if (i == y) {
                 break;
             }
-            if(copy[i] + copy[y] > toFind){
+            if (copy[i] + copy[y] > toFind) {
                 y--;
-            } else if(copy[i] + copy[y] < toFind){
+            } else if (copy[i] + copy[y] < toFind) {
                 i++;
             } else {
                 System.out.println(copy[i] + ", " + copy[y]);

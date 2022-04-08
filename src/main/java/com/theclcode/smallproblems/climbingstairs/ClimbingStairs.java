@@ -7,6 +7,7 @@ public class ClimbingStairs {
     private Integer[] table;
 
     public static void main(String[] args) {
+        // Output refers to the nth value in the Fibonacci sequence if it starts with 1, 2, 3.. instead of 0, 1, 1, 2...
         printFiboRecursive();
         System.out.println();
         printFiboDp();
@@ -35,8 +36,16 @@ public class ClimbingStairs {
         if(n == 0) {
             return 0;
         }
-        this.table = new Integer[n + 1];
         return fiboRecursive(n);
+    }
+
+    public static int fiboRecursive(int n) {
+        if (n < 0) {
+            return 0;
+        } else if (n == 0) {
+            return 1;
+        }
+        return fiboRecursive(n - 1) + fiboRecursive(n - 2);
     }
 
     public int climbStairsDp(int n) {
@@ -57,14 +66,5 @@ public class ClimbingStairs {
             table[n] = fiboDp(n - 1) + fiboDp(n - 2);
         }
         return table[n];
-    }
-
-    public static int fiboRecursive(int n) {
-        if (n < 0) {
-            return 0;
-        } else if (n == 0) {
-            return 1;
-        }
-        return fiboRecursive(n - 1) + fiboRecursive(n - 2);
     }
 }
