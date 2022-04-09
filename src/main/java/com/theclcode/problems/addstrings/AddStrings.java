@@ -8,6 +8,8 @@ public class AddStrings {
         System.out.println(new AddStrings().addStrings("9234", "111"));
         System.out.println(new AddStrings().addStrings("9333852702227987",
                 "85731737104263"));
+        System.out.println(new AddStrings().addStrings("204234",
+                "0"));
     }
 
 
@@ -25,8 +27,8 @@ public class AddStrings {
             sum = a + b + carry;
             carry = sum / 10;
             stringBuilder.insert(0, (char) ((sum % 10) + '0'));
-            i = i >= 0 ? i - 1 : i;
-            j = j >= 0 ? j - 1 : j;
+            i--;
+            j--;
         }
 
         if (carry > 0) {

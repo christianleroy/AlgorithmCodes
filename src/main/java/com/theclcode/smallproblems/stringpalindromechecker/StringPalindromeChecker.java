@@ -1,4 +1,4 @@
-package com.theclcode.smallproblems;
+package com.theclcode.smallproblems.stringpalindromechecker;
 
 public class StringPalindromeChecker {
 
