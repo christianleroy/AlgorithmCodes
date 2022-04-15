@@ -14,22 +14,23 @@ public class BinarySearch {
         System.out.format(LOG_FORMAT, 360, binarySearch(arr, 0, arr.length - 1, 360));
     }
 
-    static int binarySearch(int[] arr, int start, int end, int item) {
+    static int binarySearch(int[] nums, int start, int end, int target) {
         if (start == end) {
-            return arr[start] == item ? start : -1;
+            return nums[start] == target ? start : -1;
         }
-        int middle = (start + end) / 2;
-        if (arr[middle] == item) {
-            return middle;
-        } else if (item < arr[middle]) {
-            return binarySearch(arr, start, middle, item);
+        int idx = (start + end) / 2;
+        if (nums[idx] == target) {
+            return idx;
+        }
+        if (target < nums[idx]) {
+            return binarySearch(nums, start, idx, target);
         } else {
-            return binarySearch(arr, middle + 1, end, item);
+            return binarySearch(nums, idx + 1, end, target);
         }
     }
 
 
-    public static void mainSimplified(){
+    public static void mainSimplified() {
         int[] arr = {1, 2, 3, 4, 5};
         System.out.println(bst(arr, 0, 4, 1));
         System.out.println(bst(arr, 0, 4, 2));
@@ -40,13 +41,13 @@ public class BinarySearch {
     }
 
     //Simplified
-    public static int bst(int[] arr, int start, int end, int item){
-        if(start < end){
+    public static int bst(int[] arr, int start, int end, int item) {
+        if (start < end) {
             int middle = (start + end) / 2;
-            if(item == arr[middle]){
+            if (item == arr[middle]) {
                 return middle;
             } else {
-                if(item < arr[middle]){
+                if (item < arr[middle]) {
                     return bst(arr, start, middle - 1, item);
                 } else {
                     return bst(arr, middle + 1, end, item);
