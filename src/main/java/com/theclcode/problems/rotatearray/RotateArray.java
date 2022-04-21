@@ -47,16 +47,16 @@ public class RotateArray {
         shifts = shifts % nums.length;
         if (shifts > 0) {
             for (int i = 0; visited < nums.length; i++) {
-                int r = i;
-                int curr = nums[r];
+                int currIdx = i;
+                int currVal = nums[currIdx];
                 do {
-                    int s = (r + shifts) % nums.length;
-                    int temp = nums[s];
-                    nums[s] = curr;
-                    curr = temp;
-                    r = s;
+                    int shiftedIdx = (currIdx + shifts) % nums.length;
+                    int temp = nums[shiftedIdx];
+                    nums[shiftedIdx] = currVal;
+                    currVal = temp;
+                    currIdx = shiftedIdx;
                     visited++;
-                } while (r != i);
+                } while (currIdx != i);
             }
         }
     }
