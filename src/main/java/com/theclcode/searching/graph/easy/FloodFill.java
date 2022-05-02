@@ -1,4 +1,4 @@
-package com.theclcode.searching.easy;
+package com.theclcode.searching.graph.easy;
 
 // https://leetcode.com/problems/flood-fill/
 public class FloodFill {

@@ -1,4 +1,4 @@
-package com.theclcode.binarysearch;
+package com.theclcode.searching.binarysearch;
 
 public class SearchInsertPosition {
 

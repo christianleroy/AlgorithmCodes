@@ -1,4 +1,4 @@
-package com.theclcode.binarysearch;
+package com.theclcode.searching.binarysearch;
 
 //https://leetcode.com/problems/first-bad-version/
 public class FirstBadVersion {
