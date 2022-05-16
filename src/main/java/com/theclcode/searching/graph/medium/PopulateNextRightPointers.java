@@ -1,10 +1,10 @@
-package com.theclcode.searching.easy;
+package com.theclcode.searching.graph.medium;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
 
 public class PopulateNextRightPointers {
-    
+
     public static void main(String[] args) {
 
         Node node = new Node(1);
