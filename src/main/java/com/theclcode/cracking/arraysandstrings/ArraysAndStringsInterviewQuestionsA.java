@@ -3,10 +3,10 @@ package com.theclcode.cracking.arraysandstrings;
 public class ArraysAndStringsInterviewQuestionsA {
 
     public static void main(String[] args) {
-//        isUnique();
+        isUnique();
 //        checkPermutation();
 //        isPermutationPalindrome();
-        checkPermutationBig();
+//        checkPermutationBig();
     }
 
     //
@@ -25,6 +25,7 @@ public class ArraysAndStringsInterviewQuestionsA {
                 int idx = word.charAt(i) - 'a';
                 if (characters[idx]) {
                     isUnique = false;
+                    break;
                 }
                 characters[idx] = true;
             }
