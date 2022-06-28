@@ -3,7 +3,7 @@ package com.theclcode.searching.binarysearch;
 public class SearchInsertPosition {
 
     public static void main(String[] args) {
-        int[] nums = {1, 3};
+        int[] nums = {1, 2, 3, 4, 5};
 
         for(int i = 0; i <= 4; i++) {
             System.out.format("Target: %s, Index: %s%n", i, searchInsert(nums, i));

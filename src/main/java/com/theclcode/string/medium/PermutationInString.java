@@ -5,7 +5,7 @@ public class PermutationInString {
     
     public static void main(String[] args) {
         String s1 = "xa";
-        String s2 = "ayx";
+        String s2 = "ayxxyayx";
         System.out.println(checkInclusion(s1, s2));
     }
 
