@@ -54,6 +54,28 @@ public class BinarySearchTree {
                 right.printInOrder();
             }
         }
+
+        public void printPreOrder() {
+            System.out.println(value);
+            if(left != null) {
+                left.printPreOrder();
+            }
+
+            if(right != null) {
+                right.printPreOrder();
+            }
+        }
+
+        public void printPostOrder() {
+            if(left != null) {
+                left.printPostOrder();
+            }
+
+            if(right != null) {
+                right.printPostOrder();
+            }
+            System.out.println(value);
+        }
     }
 }
 

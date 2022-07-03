@@ -1,13 +1,14 @@
 package com.theclcode.problems.addtwonumbers;
 
+// Numbers are processed in reverse. So 911 + 21 would actually be 119 + 12
 public class AddTwoNumbers {
 
     public static void main(String[] args) {
         ListNode l1 = new ListNode(9);
         ListNode root1 = l1;
-        l1.next = new ListNode(9);
+        l1.next = new ListNode(1);
         l1 = l1.next;
-        l1.next = new ListNode(9);
+        l1.next = new ListNode(1);
         l1 = l1.next;
         l1.next = new ListNode(9);
         l1 = l1.next;
