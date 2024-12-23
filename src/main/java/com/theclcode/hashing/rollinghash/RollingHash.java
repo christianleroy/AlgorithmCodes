@@ -32,6 +32,7 @@ public class RollingHash {
                 currentHash+=hashes[window.length-1];
             }
             if(currentHash == hashToFind){
+                // Need to do letter by letter verification in case of hash collisions (false positives)
                 System.out.println("Found at index: " + i);
             }
         }

@@ -102,7 +102,7 @@ public class HashTable<K, V> {
         int hash=0;
         for(int x=0, y=2; x<=length; x++, y--){
             if(x<3){
-                hash+=word.charAt(x)* POWERS[y];
+                hash+=word.charAt(x)* POWERS[y]; // Only used in first three characters to save time, but typically should be done for the entire key.
             } else {
                 hash+=word.charAt(x);
             }
