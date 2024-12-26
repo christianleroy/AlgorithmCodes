@@ -28,8 +28,9 @@ public class DepthFirstSearch {
         _6.getAdjacent().add(_7);
         _8.getAdjacent().add(_9);
 
-//        _1.recursiveDfs();
+        // Both will be DFS, but stack will process right first and recursive will do left first
         _1.stackDfs();
+        _1.recursiveDfs();
     }
 
 
