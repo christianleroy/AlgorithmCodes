@@ -1,4 +1,4 @@
-package com.theclcode.smallproblems.binaryaddition;
+package com.theclcode.bitoperations.binaryaddition;
 
 // AKA Sum of Two Array in Leetcode
 public class BinaryAddition {
