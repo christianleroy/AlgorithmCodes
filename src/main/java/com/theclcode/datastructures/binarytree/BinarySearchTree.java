@@ -17,6 +17,8 @@ public class BinarySearchTree {
         node.insert(9);
         node.insert(3);
         node.printInOrder();
+        node.printPreOrder();
+        node.printPostOrder();
     }
 
     static class Node {
