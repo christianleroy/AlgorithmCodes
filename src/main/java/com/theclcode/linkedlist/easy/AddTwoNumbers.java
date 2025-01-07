@@ -1,4 +1,4 @@
-package com.theclcode.problems.addtwonumbers;
+package com.theclcode.linkedlist.easy;
 
 // Numbers are processed in reverse. So 911 + 21 would actually be 119 + 12
 public class AddTwoNumbers {

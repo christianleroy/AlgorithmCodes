@@ -1,4 +1,4 @@
-package com.theclcode.problems.addstrings;
+package com.theclcode.string.easy.addstrings;
 
 public class AddStrings {
 

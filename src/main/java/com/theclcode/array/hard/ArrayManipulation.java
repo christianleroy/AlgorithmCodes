@@ -1,8 +1,8 @@
-package com.theclcode.problems.arraymanipulation;
+package com.theclcode.array.hard;
 
 import java.util.Scanner;
 
-// https://www.hackerrank.com/challenges/crush/problem
+//
 public class ArrayManipulation {
 
     private static long arrayManipulation(int n, int[][] queries) {
