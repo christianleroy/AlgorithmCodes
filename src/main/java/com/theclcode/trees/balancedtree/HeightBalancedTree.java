@@ -1,6 +1,7 @@
-package com.theclcode.problems.balancedtree.height;
+package com.theclcode.trees.balancedtree;
 
-public class Solution {
+// A height-balanced binary tree is defined as a binary tree in which the height of the left and the right subtree of any node differ by not more than 1
+public class HeightBalancedTree {
 
     public static class Node {
         int value;
