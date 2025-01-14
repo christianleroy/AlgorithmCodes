@@ -34,16 +34,18 @@ public class EditDistance {
         for (int i = 0; i < word1.length(); i++) {
             for (int j = 0; j < word2.length(); j++) {
                 int prevBest = -1;
+
                 if (i > 0 && j > 0) {
                     prevBest = dp[i - 1][j - 1];
-                }
-                if (j > 0) {
-                    prevBest = prevBest == -1 ? dp[i][j - 1] : Math.min(prevBest, dp[i][j - 1]);
+                } else {
+                    if (j > 0) {
+                        prevBest = prevBest == -1 ? dp[i][j - 1] : Math.min(prevBest, dp[i][j - 1]);
+                    }
+                    if (i > 0) {
+                        prevBest = prevBest == -1 ? dp[i - 1][j] : Math.min(prevBest, dp[i - 1][j]);
+                    }
                 }
 
-                if (i > 0) {
-                    prevBest = prevBest == -1 ? dp[i - 1][j] : Math.min(prevBest, dp[i - 1][j]);
-                }
                 int val;
                 if (word1.charAt(i) != word2.charAt(j)) {
                     val = 1 + (prevBest == -1 ? 0 : prevBest);
