@@ -20,8 +20,8 @@ public class Sandbox {
 //        int[] newInterval = {12,13};
 
 //        {3,6},{7,13}
-//        int[][] intervals = {{3,6},{7,11}};
-//        int[] newInterval = {10,13};
+        int[][] intervals = {{3,6},{7,11}};
+        int[] newInterval = {10,13};
 
 //        newInterval within or before the first intervals element
 //        {1,6},{7,11}
@@ -40,9 +40,9 @@ public class Sandbox {
 //        int[][] intervals = {{3,6},{7,11}};
 //        int[] newInterval = {2,15};
 
-//        {5,15}
-        int[][] intervals = {{3,6},{7,11}};
-        int[] newInterval = {5,15};
+//        {3,15}
+//        int[][] intervals = {{3,6},{7,11}};
+//        int[] newInterval = {5,15};
 
 //        {1,11}
 //        int[][] intervals = {{3,6},{7,11}};
@@ -62,6 +62,7 @@ public class Sandbox {
         int newEnd = newInterval[1];
         int startIdx = -1;
         int endIdx = -1;
+        int marker = -1;
 
         List<Integer[]> ints = new ArrayList<>();
 
@@ -71,56 +72,43 @@ public class Sandbox {
 
         if(newEnd < intervals[0][0]) {
             ints.add(new Integer[]{newStart, newEnd});
-            startIdx = 0;
-            endIdx = 0;
+            marker = 0;
         } else if(newStart > intervals[intervals.length-1][1]) {
-            startIdx=0;
-            endIdx = 0;
-        }else {
-
-            if(newStart < intervals[0][0]) {
-                startIdx = 0;
-                intervals[0][0] = newStart;
-            }
-
-            for(int i = 0; endIdx == -1 && i < intervals.length; i++) {
+            marker = 0;
+            endIdx = intervals.length;
+        } else {
+            for(int i = 0; i < intervals.length; i++) {
                 if(startIdx == -1) {
                     if(newStart >= intervals[i][0] && newStart <= intervals[i][1]) {
                         startIdx = i;
+                        marker = i + 1;
+                        intervals[startIdx][0] = Math.min(intervals[startIdx][0], newStart);
                     } else {
                         Integer[] interval = new Integer[]{intervals[i][0], intervals[i][1]};
                         ints.add(interval);
                     }
-                } else {
+                } else if(endIdx == -1){
                     if(newEnd < intervals[i][0]) {
                         Integer[] interval = new Integer[]{intervals[startIdx][0], Math.max(newEnd, intervals[i - 1][1])};
                         ints.add(interval);
-                        endIdx = i;
+                        marker = endIdx = i;
                     } else if(newEnd >= intervals[i][0] && newEnd <= intervals[i][1]) {
                         Integer[] interval = new Integer[]{intervals[startIdx][0], Math.max(newEnd, intervals[i][1])};
                         ints.add(interval);
-                        endIdx = i+1;
+                        marker = endIdx = i+1;
                     }
                 }
             }
-            if(endIdx == -1) {
-                endIdx = startIdx + 1;
-                intervals[intervals.length-1][1] = Math.max(newEnd, intervals[intervals.length-1][1]);
-            }
+
         }
 
-        for(int j = endIdx; j < intervals.length; j++) {
-//            if(startIdx == -1 && j == intervals.length-1) {
-//                break;
-//            }
+        for(int j = marker; j < intervals.length; j++) {
             ints.add(new Integer[]{intervals[j][0], intervals[j][1]});
         }
 
-//        if(startIdx == -1) {
-//            ints.add(new Integer[]{Math.min(newStart, intervals[intervals.length-1][0]), newEnd});
-//        } else if(newStart > intervals[intervals.length-1][1]) {
-//            ints.add(new Integer[]{newStart, newEnd});
-//        }
+        if(endIdx == intervals.length) {
+            ints.add(new Integer[]{newStart, Math.max(intervals[intervals.length-1][1],newEnd)});
+        }
 
         int[][] result = new int[ints.size()][2];
 
