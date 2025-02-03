@@ -21,10 +21,9 @@ public class InsertIntervals {
         for (int[] interval : intervals) {
             if(newEnd < interval[0]) {
                 // This marks the end of newInterval position, as we know the current interval is larger than newInterval
-                // We add the rest of intervals to our result set here.
+                // We add the rest of intervals to our result set here and return it. We're done.
                 // If newInterval did not overlap with any interval, we simply add it to the result.
                 // If we found an overlap, it was processed on the else block, and then finally inserted to the result set here.
-                // When we reach here, we're done processing and can return the result.
                 result.add(new int[]{newStart, newEnd});
                 for(int j = i; j < intervals.length; j++){
                     result.add(intervals[j]);

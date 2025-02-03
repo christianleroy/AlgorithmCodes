@@ -1,6 +1,6 @@
 package com.theclcode.datastructures.linkedlist;
 
-//Full featured singly-linked list
+//Full-featured singly-linked list
 public class LinkedList<E> {
 
     private int size;
@@ -9,23 +9,34 @@ public class LinkedList<E> {
 
     public static void main(String[] args) {
         LinkedList<String> linkedList = new LinkedList<>();
-        linkedList.add("b"); // b
-        linkedList.insert(-1, "a"); // a b
-        linkedList.add("c"); // a b c
-        linkedList.insert(-1000, "-a"); //-a a b c
-        linkedList.insert(5, "d"); // -a a b c d
-        linkedList.insert(2, "aa"); //-a a aa b c d
-        linkedList.insert(10, "e"); //-a a aa b c d e
-        linkedList.push("alpha"); //alpha -a a aa b c d e
-        linkedList.add("omega"); //alpha -a a aa b c d e omega
-        System.out.println(linkedList.remove(0)); //-a a aa b c d e omega
-        System.out.println(linkedList.remove(0)); //a aa b c d e omega
 
-        LinkedList.Node<String> node = linkedList.getHead();
+        linkedList.add("hey");
+        linkedList.add("low");
+        linkedList.add("bro");
+
+
+        linkedList.printLinkedList();
+        linkedList.removeLast();
+
+        linkedList.add("yow");
+        linkedList.printLinkedList();
+        linkedList.removeLast();
+        linkedList.printLinkedList();
+        linkedList.removeLast();
+        linkedList.printLinkedList();
+        System.out.println(linkedList.size);
+        linkedList.removeLast();
+        System.out.println(linkedList.size);
+        linkedList.printLinkedList();
+    }
+
+    private void printLinkedList() {
+        Node<E> node = getHead();
         while (node != null) {
             System.out.print(node.value + " ");
             node = node.next;
         }
+        System.out.println();
     }
 
     public void add(E value) {
@@ -83,9 +94,18 @@ public class LinkedList<E> {
             node = head;
             head = null;
             tail = null;
+        } else {
+            Node<E> newTail = traverse(size-1);
+            if(newTail != null) {
+                node = tail;
+                newTail.next = null;
+                tail = newTail;
+            } else {
+                return null;
+            }
         }
         size--;
-        return null;
+        return node.value;
     }
 
     public E remove(int index) {
