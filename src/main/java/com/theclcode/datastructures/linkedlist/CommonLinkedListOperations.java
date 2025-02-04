@@ -3,56 +3,56 @@ package com.theclcode.datastructures.linkedlist;
 public class CommonLinkedListOperations {
     public static void main(String[] args) {
 
-        Node[] arr = new Node[5];
+        Node[] arr = new Node[15];
 
         for (int i = 0; i < arr.length; i++) {
             arr[i] = new Node(i + 1);
+            if(i > 0) {
+                arr[i - 1].next = arr[i];
+            }
         }
 
-        arr[0].next = arr[1];
-        arr[1].next = arr[2];
-        arr[2].next = arr[3];
-        arr[3].next = arr[4];
-
-        reverseRunner(arr);
         removeTailRunner(arr);
+//        reverseRunner(arr);
     }
 
 
     static void reverseRunner(Node[] arr) {
-
         print(arr[0]);
         reverseLinkedList(arr[0]);
         print(arr[arr.length - 1]);
     }
 
     static void reverseLinkedList(Node head){
-
-        Node prev;
+        Node prev = null;
         Node node = head;
-        Node next = node.next;
 
-        while(next != null) {
+        while(node != null) {
+            Node next = node.next;
+            node.next = prev;
             prev = node;
             node = next;
-            if(prev == head) {
-                prev.next = null;
-            }
-            next = node.next;
-            node.next = prev;
-
         }
     }
 
     static void removeTailRunner(Node[] arr) {
+        print(arr[0]);
         removeTail(arr[0]);
+        print(arr[0]);
     }
 
     static void removeTail(Node head) {
 
+        Node prev = null;
         Node node = head;
+
         while(node.next != null) {
+            prev = node;
             node = node.next;
+        }
+
+        if(prev != null) {
+            prev.next = null;
         }
 
         System.out.println("The tail is: " + node.value);
