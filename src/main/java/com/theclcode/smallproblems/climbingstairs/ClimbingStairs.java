@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 //fibonacci
 public class ClimbingStairs {
-    private Integer[] table;
+    private int[] table;
 
     public static void main(String[] args) {
         // Output refers to the nth value in the Fibonacci sequence if it starts with 1, 2, 3.. instead of 0, 1, 1, 2...
@@ -52,7 +52,7 @@ public class ClimbingStairs {
         if(n == 0) {
             return 0;
         }
-        this.table = new Integer[n + 1];
+        this.table = new int[n + 1];
         return fiboDp(n);
     }
 
