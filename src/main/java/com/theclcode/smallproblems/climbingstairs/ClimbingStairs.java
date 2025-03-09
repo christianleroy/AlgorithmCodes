@@ -62,8 +62,13 @@ public class ClimbingStairs {
         } else if (n == 0) {
             return 1;
         }
-        if (table[n] == null) {
-            table[n] = fiboDp(n - 1) + fiboDp(n - 2);
+
+        for(int i = 0; i <= n; i++) {
+            if(i < 2) {
+                table[i] = 1;
+            } else {
+                table[i] = table[i-1] + table[i-2];
+            }
         }
         return table[n];
     }
