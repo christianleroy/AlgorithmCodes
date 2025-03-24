@@ -21,7 +21,7 @@ public class HeightBalancedTree {
         public boolean isBalanced(){
             int left = findHeight(node.left, 0);
             int right = findHeight(node.right, 0);
-            if(left-right>=-1 && left-right<=1){
+            if(Math.abs(left-right) <= 1){
                 return true;
             }
             return false;
