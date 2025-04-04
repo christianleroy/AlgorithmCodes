@@ -4,9 +4,9 @@ public class ArraysAndStringsInterviewQuestionsA {
 
     public static void main(String[] args) {
 //        isUnique();
-        checkPermutation();
+//        checkPermutation();
 //        isPermutationPalindrome();
-//        checkPermutationBig();
+        checkPermutationBig();
     }
 
     //
@@ -100,7 +100,7 @@ public class ArraysAndStringsInterviewQuestionsA {
      * SpacE: O(1)
      */
     public static void checkPermutationBig() {
-        String[][] words = {{"abcd", "adbc"}, {"actocat", "tacocat"}, {"abba", "azza"}};
+        String[][] words = {{"abcd", "dabc"}, {"actocat", "tacocat"}, {"abba", "azza"},{"abcdef","abcdefg"}};
         for(String[] pair: words) {
 
             String wordA = pair[0];
@@ -108,15 +108,20 @@ public class ArraysAndStringsInterviewQuestionsA {
 
             int[] checker = new int[128];
             boolean isPermutation = true;
-            for(char c : wordA.toCharArray()) {
-                checker[c]++;
-            }
 
-            for(char c : wordB.toCharArray()) {
-                checker[c]--;
-                if(checker[c] < 0) {
-                    isPermutation = false;
-                    break;
+            if(wordA.length() != wordB.length()) {
+                isPermutation = false;
+            } else {
+                for(char c : wordA.toCharArray()) {
+                    checker[c]++;
+                }
+
+                for(char c : wordB.toCharArray()) {
+                    checker[c]--;
+                    if(checker[c] < 0) {
+                        isPermutation = false;
+                        break;
+                    }
                 }
             }
 
