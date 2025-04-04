@@ -3,8 +3,8 @@ package com.theclcode.cracking.arraysandstrings;
 public class ArraysAndStringsInterviewQuestionsA {
 
     public static void main(String[] args) {
-        isUnique();
-//        checkPermutation();
+//        isUnique();
+        checkPermutation();
 //        isPermutationPalindrome();
 //        checkPermutationBig();
     }
@@ -63,27 +63,32 @@ public class ArraysAndStringsInterviewQuestionsA {
      * SpacE: O(1)
      */
     public static void checkPermutation() {
-        boolean[] characters = new boolean[26];
+        int[] wordACharacters = new int[26];
+        int[] wordBCharacters = new int[26];
         boolean isPermutation = true;
 
         String wordA = "abcd";
-        String wordB = "adbc";
+        String wordB = "dbcc";
 
         if (wordA.length() != wordB.length()) {
             isPermutation = false;
         }
 
         for (int i = 0; i < wordA.length(); i++) {
-            int idx = wordA.charAt(i) - 'a';
-            characters[idx] = true;
+            int wordAIdx = wordA.charAt(i) - 'a';
+            int wordBIdx = wordB.charAt(i) - 'a';
+            wordACharacters[wordAIdx]++;
+            wordBCharacters[wordBIdx]++;
         }
 
-        for (int j = 0; j < wordB.length(); j++) {
-            int idx = wordB.charAt(j) - 'a';
-            if (!characters[idx]) {
+        for(int i = 0; i < wordA.length(); i++) {
+            int idx = wordA.charAt(i) - 'a';
+            if(wordACharacters[idx] != wordBCharacters[idx]) {
                 isPermutation = false;
+                break;
             }
         }
+
         System.out.format("%s is permutation of %s: %s", wordB, wordA, isPermutation);
 
     }
