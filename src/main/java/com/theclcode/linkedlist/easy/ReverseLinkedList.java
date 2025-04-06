@@ -19,7 +19,7 @@ public class ReverseLinkedList {
             trav = trav.next;
         }
 
-        ListNode rev = reverseList(null);
+        ListNode rev = reverseList(node);
 
         while(rev != null) {
             System.out.println(rev.val);
