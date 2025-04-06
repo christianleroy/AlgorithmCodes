@@ -1,4 +1,4 @@
-package com.theclcode.searching.graph;
+package com.theclcode.graph;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,45 +6,45 @@ import java.util.List;
 public class DepthFirstSearch {
 
     public static void main(String[] args) {
-        Node _1 = new Node(1);
-        Node _2 = new Node(2);
-        Node _3 = new Node(3);
-        Node _4 = new Node(4);
-        Node _5 = new Node(5);
-        Node _6 = new Node(6);
-        Node _7 = new Node(7);
-        Node _8 = new Node(8);
-        Node _9 = new Node(9);
-        Node _10 = new Node(10);
 
 
-        _1.getAdjacent().add(_2);
-        _1.getAdjacent().add(_3);
-        _2.getAdjacent().add(_4);
-        _2.getAdjacent().add(_5);
-        _3.getAdjacent().add(_6);
-        _4.getAdjacent().add(_10);
-        _5.getAdjacent().add(_8);
-        _6.getAdjacent().add(_7);
-        _8.getAdjacent().add(_9);
+        Node[] nodes = new Node[10];
+
+        for(int i = 1; i <= 10; i++) {
+            nodes[i-1] = new Node(i);
+        }
+
+        nodes[0].children.add(nodes[1]);
+        nodes[0].children.add(nodes[2]);
+        nodes[0].children.add(nodes[3]);
+
+        nodes[1].children.add(nodes[4]);
+        nodes[1].children.add(nodes[5]);
+
+        nodes[2].children.add(nodes[6]);
+        nodes[3].children.add(nodes[7]);
+        nodes[4].children.add(nodes[8]);
+
+        nodes[7].children.add(nodes[9]);
 
         // Both will be DFS, but stack will process right first and recursive will do left first
-        _1.stackDfs();
-        _1.recursiveDfs();
+        nodes[0].stackDfs();
+        System.out.println();
+        nodes[0].recursiveDfs();
     }
 
 
     static class Node {
         int value;
-        List<Node> adjacent = new ArrayList<>();
+        List<Node> children = new ArrayList<>();
 
         Node(int value){
             this.value = value;
         }
 
         public void recursiveDfs(){
-            System.out.println(value);
-            for(Node child : adjacent){
+            System.out.print(value + " ");
+            for(Node child : children){
                 child.recursiveDfs();
             }
         }
@@ -54,15 +54,15 @@ public class DepthFirstSearch {
             stack.add(this);
             while(!stack.isEmpty()){
                 Node node = stack.remove();
-                System.out.println(node.value);
-                for(Node child : node.getAdjacent()){
+                System.out.print(node.value + " ");
+                for(Node child : node.getChildren()){
                     stack.add(child);
                 }
             }
         }
 
-        public List<Node> getAdjacent() {
-            return adjacent;
+        public List<Node> getChildren() {
+            return children;
         }
     }
 

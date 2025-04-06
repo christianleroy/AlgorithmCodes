@@ -1,4 +1,4 @@
-package com.theclcode.searching.graph.medium;
+package com.theclcode.graph.medium;
 
 //https://leetcode.com/problems/max-area-of-island/
 public class MaxAreaOfIsland {

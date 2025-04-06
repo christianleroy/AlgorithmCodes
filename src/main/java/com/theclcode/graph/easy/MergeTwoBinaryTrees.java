@@ -1,4 +1,4 @@
-package com.theclcode.searching.graph.easy;
+package com.theclcode.graph.easy;
 
 //
 public class MergeTwoBinaryTrees {

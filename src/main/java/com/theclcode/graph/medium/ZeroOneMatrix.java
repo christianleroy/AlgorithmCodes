@@ -1,4 +1,4 @@
-package com.theclcode.searching.graph.medium;
+package com.theclcode.graph.medium;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
