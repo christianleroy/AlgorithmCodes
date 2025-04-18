@@ -1,16 +1,14 @@
 package com.theclcode.problems.permutation;
 
-import java.util.Arrays;
-
-public class Solution {
+public class PermutationCombination {
     static char[] stack;
     static int stackMarker=0;
 
     public static void main(String[] args){
         char[] arr = "abcde".toCharArray();
-        permute(arr, 0, arr.length-1);
-//        init(arr);
-//        combine(arr, 0, 4);
+//        permute(arr, 0, arr.length-1);
+        init(arr);
+        combine(arr, 0, 3);
     }
 
     static void swap(char[] arr, int left, int right){

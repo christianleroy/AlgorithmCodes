@@ -1,5 +1,6 @@
 package com.theclcode.window.medium;
 
+//https://leetcode.com/problems/minimum-swaps-to-group-all-1s-together/submissions/
 public class MinimumSwapsToGroupAllOnesTogether {
     public static void main(String[] args) {
         int[][] _data =
