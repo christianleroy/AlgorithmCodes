@@ -23,7 +23,8 @@ public class CloneGraph {
         nodes[3].neighbors.add(nodes[0]);
         nodes[3].neighbors.add(nodes[2]);
 
-        Node node = cloneGraph(nodes[0]);
+//        Node node = cloneGraph(nodes[0]);
+        Node node = cloneGraphDfs(nodes[0], new HashMap<>());
         print(node);
     }
 
@@ -62,6 +63,37 @@ public class CloneGraph {
             }
 
         }
+        return map.get(node);
+    }
+
+    public static Node cloneGraphDfs(Node node, Map<Node, Node> map) {
+
+        if (node == null) {
+            return null;
+        }
+
+        Node nodeCopy;
+        if(map.containsKey(node)) {
+            nodeCopy = map.get(node);
+        } else {
+            nodeCopy = new Node(node.val);
+            map.put(node, nodeCopy);
+        }
+
+        for(Node neighbor : node.neighbors) {
+            Node neighborCopy;
+            if(!map.containsKey(neighbor)) {
+                neighborCopy = new Node(neighbor.val);
+                map.put(neighbor, neighborCopy);
+
+                cloneGraphDfs(neighbor, map);
+
+            } else{
+                neighborCopy = map.get(neighbor);
+            }
+            nodeCopy.neighbors.add(neighborCopy);
+        }
+
         return map.get(node);
     }
 
