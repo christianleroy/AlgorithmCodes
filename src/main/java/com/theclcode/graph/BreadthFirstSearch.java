@@ -30,15 +30,15 @@ public class BreadthFirstSearch {
 
     public static void nodePrintBfs(Node node) {
 
-        Queue<Node> stack = new ArrayDeque<>();
-        stack.offer(node);
+        Queue<Node> queue = new ArrayDeque<>();
+        queue.offer(node);
 
-        while(!stack.isEmpty()) {
-            node = stack.poll();
+        while(!queue.isEmpty()) {
+            node = queue.poll();
             System.out.println(node.value);
 
             for(Node child : node.children) {
-                stack.offer(child);
+                queue.offer(child);
             }
         }
 
