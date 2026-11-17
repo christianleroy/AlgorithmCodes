@@ -13,6 +13,7 @@ public class Trie {
         System.out.println(trie.get("ch".toCharArray()));
         System.out.println(trie.get("can".toCharArray()));
         System.out.println(trie.get("null".toCharArray()));
+        System.out.println(trie.get("false".toCharArray()));
     }
 
 
